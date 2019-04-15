@@ -1,0 +1,14 @@
+/media/pereca/workspace/soa/soa_1/RestApi/bin/Debug/netcoreapp2.2/RestApi.deps.json
+/media/pereca/workspace/soa/soa_1/RestApi/bin/Debug/netcoreapp2.2/RestApi.runtimeconfig.json
+/media/pereca/workspace/soa/soa_1/RestApi/bin/Debug/netcoreapp2.2/RestApi.runtimeconfig.dev.json
+/media/pereca/workspace/soa/soa_1/RestApi/bin/Debug/netcoreapp2.2/RestApi.dll
+/media/pereca/workspace/soa/soa_1/RestApi/bin/Debug/netcoreapp2.2/RestApi.pdb
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.csprojAssemblyReference.cache
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.csproj.CoreCompileInputs.cache
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.RazorAssemblyInfo.cache
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.RazorAssemblyInfo.cs
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.AssemblyInfoInputs.cache
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.AssemblyInfo.cs
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.RazorTargetAssemblyInfo.cache
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.dll
+/media/pereca/workspace/soa/soa_1/RestApi/obj/Debug/netcoreapp2.2/RestApi.pdb
