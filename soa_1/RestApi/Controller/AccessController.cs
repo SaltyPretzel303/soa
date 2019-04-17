@@ -21,6 +21,9 @@ namespace RestApi.Controller
 		// delete
 
 		[HttpGet]
+		[Route("all")]
+
+		[HttpGet]
 		[Route("specific")]
 		public String getById([FromQuery(Name = "id")] int id)
 		{

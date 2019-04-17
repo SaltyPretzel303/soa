@@ -82,3 +82,6 @@ _[Ss]cripts
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# for data 
+
+soa_1/data/*
