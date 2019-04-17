@@ -48,10 +48,10 @@ namespace DataCollector.Controller
 			{
 
 				JObject json_result = new JObject();
-				JArray users = new JArray();
 
-				foreach (List<String> user in ret_data)
+				for (int i = 0; i < ret_data.Count; i++)
 				{
+					List<String> user = ret_data[i];
 					/*
 					user list{
 						value,value,value,value;
@@ -74,18 +74,16 @@ namespace DataCollector.Controller
 						JObject json_row = new JObject();
 
 						String[] values = row.Split(",");
-						for (int i = 0; i < values.Length; i++)
+						for (int j = 0; j < values.Length; j++)
 						{
-							json_row[columns[i]] = values[i];
+							json_row[columns[j]] = values[j];
 						}
 
 						json_user.Add(json_row);
 
 					}
-					users.Add(json_user);
+					json_result["user_" + i] = json_user;
 				}
-
-				json_result["users"] = users;
 
 				return json_result.ToString();
 			}
