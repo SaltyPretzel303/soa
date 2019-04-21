@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
 
 namespace CRUDService.Data
 {
@@ -23,6 +24,8 @@ namespace CRUDService.Data
 		private Timer timer;
 		public int read_interval { get; private set; }
 
+		private HttpClient client;
+
 		public DataPuller(DatabaseService databse, int read_interval)
 		{
 			this.databse = databse;
@@ -37,23 +40,25 @@ namespace CRUDService.Data
 			this.timer.Interval = this.read_interval;
 			this.timer.Enabled = true;
 
+			this.client = new HttpClient();
+
 		}
 
-		private void timerEvent(Object soure, ElapsedEventArgs args)
+		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
-			String response_data = "";
+			Console.WriteLine("PULLING DATA >>> " + this.read_index);
 
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(DataPuller.DATA_READER_ADDRESS + DataPuller.DATA_RANGE_URL + "?index=" + this.read_index);
-			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-			using (Stream stream = response.GetResponseStream())
-			using (StreamReader reader = new StreamReader(stream))
-			{
-				response_data = reader.ReadToEnd();
-			}
+			Uri uri = new Uri(DataPuller.DATA_READER_ADDRESS + DataPuller.DATA_RANGE_URL + "?index=" + this.read_index);
 
-			JObject json_response = new JObject(response_data);
+			String response_data = this.client.GetStringAsync(uri).Result;
+
+			Console.WriteLine("response <<< ");
+
+			JObject json_response = JObject.Parse(response_data);
 			int user_num = (int)json_response.GetValue("users_count");
+
+			Console.WriteLine("USERS NUM = " + user_num);
 
 			// externalize somehow
 			String user_name_prefix = "user_";

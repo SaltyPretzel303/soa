@@ -9,9 +9,9 @@ namespace CRUDService.Controller
 	public class CrudController : ControllerBase
 	{
 
-		public DatabaseService database { get; private set; }
+		public IDatabaseService database { get; private set; }
 
-		public CrudController(DatabaseService database)
+		public CrudController(IDatabaseService database)
 		{
 			this.database = database;
 		}
@@ -20,9 +20,12 @@ namespace CRUDService.Controller
 		public String getAllData()
 		{
 
-			// database get all
+			if (this.database != null)
+			{
+				return "Database is not null ... :) ... ";
+			}
 
-			return "";
+			return "Database is null ... :( ... ";
 		}
 
 		[HttpGet("{user_id}", Name = "single")]

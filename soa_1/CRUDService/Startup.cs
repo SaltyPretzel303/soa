@@ -14,6 +14,8 @@ namespace CRUDService
 	public class Startup
 	{
 
+		private DataPuller data_puller;
+
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
@@ -22,6 +24,8 @@ namespace CRUDService
 			services.AddMvc();
 
 			services.AddTransient<IDatabaseService, DatabaseService>();
+
+			this.data_puller = new DataPuller(new DatabaseService(), 2000);
 
 		}
 

@@ -9,12 +9,12 @@ namespace DataCollector.Controller
 {
 	[Route("data/[controller]")]
 	[ApiController]
-	public class AccessController : ControllerBase
+	public class ReaderController : ControllerBase
 	{
 
 		public Reader reader;
 
-		public AccessController(Reader reader)
+		public ReaderController(Reader reader)
 		{
 			this.reader = reader;
 
@@ -60,7 +60,7 @@ namespace DataCollector.Controller
 					List<String> user = ret_data[i];
 					/*
 					user list{
-						value,value,value,value;
+						value,valu	e,value,value;
 						value,value,value,value;
 						value,value,value,value;
 					}
@@ -97,6 +97,7 @@ namespace DataCollector.Controller
 			return "Invalid index ... ";
 		}
 
+		// unused
 		[HttpGet]
 		[Route("header")]
 		public String getHeader()

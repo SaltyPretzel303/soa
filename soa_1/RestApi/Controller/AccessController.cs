@@ -15,13 +15,21 @@ namespace RestApi.Controller
 
 		//  CRUD
 		// <><><>
-		// create
 		// read
+		// 		all 
+		// 		specific
+		// create
 		// update
 		// delete
+		// 		user
+		//		row
 
 		[HttpGet]
 		[Route("all")]
+		public String getAllData()
+		{
+			return "";
+		}
 
 		[HttpGet]
 		[Route("specific")]
@@ -35,12 +43,6 @@ namespace RestApi.Controller
 
 		[HttpPost]
 		public IActionResult postData([FromBody] int data)
-		{
-			return null;
-		}
-
-		[HttpPut]
-		public IActionResult putData([FromBody] int data)
 		{
 			return null;
 		}
