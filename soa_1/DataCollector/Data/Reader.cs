@@ -24,7 +24,7 @@ namespace DataCollector.Data
 		public int users_count { get; private set; }
 		public List<int> lines_count;
 
-		private String[] columns;
+		private List<String> columns;
 		// every list inside this list represents rows for user with same index
 		private List<List<String>> data;
 
@@ -38,7 +38,7 @@ namespace DataCollector.Data
 			this.read_interval = read_interval;
 
 			// read first row (identify comlumns)
-			this.columns = File.ReadLines(this.path + prefix + 0 + extension).Take(1).First().Split(",");
+			this.columns = new List<String>(File.ReadLines(this.path + prefix + 0 + extension).Take(1).First().Split(","));
 
 			// initialize the number of available lines for every user
 			this.lines_count = new List<int>();
@@ -112,7 +112,7 @@ namespace DataCollector.Data
 			return null;
 		}
 
-		public String[] getColumns()
+		public List<String> getHeader()
 		{
 			return this.columns;
 		}

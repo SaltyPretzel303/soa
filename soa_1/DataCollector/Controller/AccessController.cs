@@ -32,22 +32,28 @@ namespace DataCollector.Controller
 		[HttpGet]
 		public String homeGet()
 		{
-			return "NOT hello world ... ";
+			return "NOT DEFAULT hello world ... ";
 		}
 
 		[HttpGet("{index}")]
 		[Route("range")]
-		public String getDataFrom([FromQuery]int index)
+		public String getRowsFrom([FromQuery]int index)
 		{
 
 			// try to get data for given index
 			List<List<String>> ret_data = this.reader.getDataFrom(index);
-			String[] columns = this.reader.getColumns();
+			List<String> columns = new List<String>(this.reader.getHeader());
 
-			if (ret_data != null)
+			if (ret_data != null && ret_data.Count > 0)
 			{
 
 				JObject json_result = new JObject();
+
+				// initialize response header
+				// add number of users
+				// add number of rows
+				json_result["users_count"] = ret_data.Count;
+				json_result["rows_count"] = ret_data[0].Count; // count of rows for first user (should be the same for every other)
 
 				for (int i = 0; i < ret_data.Count; i++)
 				{
@@ -91,5 +97,18 @@ namespace DataCollector.Controller
 			return "Invalid index ... ";
 		}
 
+		[HttpGet]
+		[Route("header")]
+		public String getHeader()
+		{
+
+			JArray array = new JArray();
+			foreach (String column in this.reader.getHeader())
+			{
+				array.Add(column);
+			}
+
+			return array.ToString();
+		}
 	}
 }
