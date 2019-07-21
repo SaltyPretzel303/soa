@@ -1,0 +1,89 @@
+
+: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[0]
+      User profile is available. Using '/home/pereca/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+Hosting environment: Development
+Content root path: /media/pereca/workspace/soa/soa_1/SensorService
+Now listening on: http://localhost:5001
+Application started. Press Ctrl+C to shut down.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+      Request starting HTTP/1.1 GET http://localhost:5001/data/reader/range?index=0  
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[3]
+      Route matched with {action = "getRowsFrom", controller = "Reader"}. Executing controller action with signature System.String getRowsFrom(Int32) on controller DataCollector.Controller.ReaderController (SensorSevice).
+Reader is >>NOT<< null in controller constuctor ... 
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[1]
+      Executing action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) - Validation state: Valid
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 19.2083ms.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'System.String'.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) in 62.2569ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[2]
+      Request finished in 199.1575ms 200 text/plain; charset=utf-8
+Read event ...
+Read event ...
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+      Request starting HTTP/1.1 GET http://localhost:5001/data/reader/range?index=0  
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[3]
+      Route matched with {action = "getRowsFrom", controller = "Reader"}. Executing controller action with signature System.String getRowsFrom(Int32) on controller DataCollector.Controller.ReaderController (SensorSevice).
+Reader is >>NOT<< null in controller constuctor ... 
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[1]
+      Executing action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) - Validation state: Valid
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 39.7615ms.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'System.String'.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) in 70.9067ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[2]
+      Request finished in 74.1767ms 200 text/plain; charset=utf-8
+Read event ...
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+      Request starting HTTP/1.1 GET http://localhost:5001/data/reader/range?index=2  
+Reader is >>NOT<< null in controller constuctor ... 
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[3]
+      Route matched with {action = "getRowsFrom", controller = "Reader"}. Executing controller action with signature System.String getRowsFrom(Int32) on controller DataCollector.Controller.ReaderController (SensorSevice).
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[1]
+      Executing action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) - Validation state: Valid
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 25.8707ms.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'System.String'.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) in 29.3025ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[2]
+      Request finished in 29.9793ms 200 text/plain; charset=utf-8
+Read event ...
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+      Request starting HTTP/1.1 GET http://localhost:5001/data/reader/range?index=3  
+Reader is >>NOT<< null in controller constuctor ... 
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[3]
+      Route matched with {action = "getRowsFrom", controller = "Reader"}. Executing controller action with signature System.String getRowsFrom(Int32) on controller DataCollector.Controller.ReaderController (SensorSevice).
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[1]
+      Executing action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) - Validation state: Valid
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 29.3046ms.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'System.String'.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) in 31.623ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[2]
+      Request finished in 32.1037ms 200 text/plain; charset=utf-8
+Read event ...
+Read event ...
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+      Request starting HTTP/1.1 GET http://localhost:5001/data/reader/range?index=4  
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[3]
+      Route matched with {action = "getRowsFrom", controller = "Reader"}. Executing controller action with signature System.String getRowsFrom(Int32) on controller DataCollector.Controller.ReaderController (SensorSevice).
+Reader is >>NOT<< null in controller constuctor ... 
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[1]
+      Executing action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) - Validation state: Valid
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action method DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 61.7019ms.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'System.String'.
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker[2]
+      Executed action DataCollector.Controller.ReaderController.getRowsFrom (SensorSevice) in 65.5847ms
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Internal.WebHost[2]
+      Request finished in 66.2431ms 200 text/plain; charset=utf-8
+Application is shutting down...
