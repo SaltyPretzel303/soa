@@ -12,8 +12,8 @@ namespace CRUDService.Data
 	{
 
 		static private String DATA_READER_ADDRESS = "http://localhost:5001";
-		static private String HEADER_URL = "/data/access/header";
-		static private String DATA_RANGE_URL = "/data/access/range";
+		static private String HEADER_URL = "/data/reader/header";
+		static private String DATA_RANGE_URL = "/data/reader/range";
 
 		// database for storing pulled data
 		public DatabaseService databse { get; private set; }
@@ -25,6 +25,8 @@ namespace CRUDService.Data
 		public int read_interval { get; private set; }
 
 		private HttpClient client;
+
+		// constructors
 
 		public DataPuller(DatabaseService databse, int read_interval)
 		{
@@ -44,18 +46,23 @@ namespace CRUDService.Data
 
 		}
 
+		// methods
+
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
 			Console.WriteLine("PULLING DATA >>> " + this.read_index);
 
-			Uri uri = new Uri(DataPuller.DATA_READER_ADDRESS + DataPuller.DATA_RANGE_URL + "?index=" + this.read_index);
+			String constructed_url = DataPuller.DATA_READER_ADDRESS + DataPuller.DATA_RANGE_URL + "?index=" + this.read_index;
+			Console.WriteLine(constructed_url);
+			Uri uri = new Uri(constructed_url);
 
 			String response_data = this.client.GetStringAsync(uri).Result;
 
 			Console.WriteLine("response <<< ");
 
 			JObject json_response = JObject.Parse(response_data);
+			Console.WriteLine("DataParsed ...");
 			int user_num = (int)json_response.GetValue("users_count");
 
 			Console.WriteLine("USERS NUM = " + user_num);
@@ -81,6 +88,7 @@ namespace CRUDService.Data
 		}
 
 		// not used ...
+		// TODO remove
 		private String requestHeader()
 		{
 

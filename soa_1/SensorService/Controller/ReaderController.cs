@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DataCollector.Controller
 {
+	// port: 5001
 	[Route("data/[controller]")]
 	[ApiController]
 	public class ReaderController : ControllerBase
@@ -32,6 +33,8 @@ namespace DataCollector.Controller
 		[HttpGet]
 		public String homeGet()
 		{
+			// just for testing
+			// leave it
 			return "NOT DEFAULT hello world ... ";
 		}
 

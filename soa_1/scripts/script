@@ -1,0 +1,68 @@
+#!/bin/bash
+
+pid1=-1
+pid2=-1
+
+function sigint_handler () {
+	echo "SIGING HANDLER"	
+	
+	#if [ $pid1 != "-1" ]
+	#then		
+	#	echo "Kill $pid1"
+	#	kill -s SIGINT $pid1
+	#fi
+	
+#	if [ $pid2 != "-1" ]
+#	then
+#		echo -s SIGINT "Kill $pid2"
+#		kill $pid2
+#	fi
+	
+	pkill dotnet	
+		
+	exit 2
+	
+}
+
+# handle SIGINT signal with sigint_handler method
+trap sigint_handler SIGINT
+
+# runing services
+
+# remove output content
+echo "" > ../scripts/output
+
+cd ..
+
+# ___________________________________________________
+# service that reads data from file
+# enter data collector
+cd ./SensorService
+echo "Running SensorService ... "
+
+# redirect first service output to output file
+dotnet run >> ../scripts/output &
+pid1=$!
+
+echo "SensorService ready ... with: $pid1"
+cd .. 
+# ___________________________________________________
+
+# ___________________________________________________
+# service that collects data from DataCollector and write them to database
+cd ./CollectorService
+echo "Running CollectorService"
+
+dotnet run &
+pid2=$!
+
+echo "CollectorService ready ... with: $pid2"
+# ___________________________________________________
+
+# whait for SIGINT
+input=1
+while [ true ]
+do
+	read input
+done
+

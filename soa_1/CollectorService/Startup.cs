@@ -25,7 +25,7 @@ namespace CRUDService
 
 			services.AddTransient<IDatabaseService, DatabaseService>();
 
-			this.data_puller = new DataPuller(new DatabaseService(), 2000);
+			this.data_puller = new DataPuller(new DatabaseService(), 4200);
 
 		}
 

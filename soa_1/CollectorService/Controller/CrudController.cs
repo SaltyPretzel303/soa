@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CRUDService.Controller
 {
+	// port: 50002
 	[Route("data/[controller]")]
 	[ApiController]
 	public class CrudController : ControllerBase
@@ -22,7 +23,7 @@ namespace CRUDService.Controller
 
 			if (this.database != null)
 			{
-				return "Database is not null ... :) ... ";
+				return this.database.getAllRecords();
 			}
 
 			return "Database is null ... :( ... ";

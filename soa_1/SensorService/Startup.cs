@@ -1,10 +1,4 @@
-﻿using System.Xml.Linq;
-using System.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +16,7 @@ namespace DataCollector
 
 			services.AddMvc();
 
-			services.AddSingleton(new Reader("../data/", "user_", ".csv", 60, 1000));
+			services.AddSingleton(new Reader("../data/", "user_", ".csv", 60, 3000));
 
 		}
 

@@ -25,6 +25,7 @@ namespace DataCollector.Data
 		public List<int> lines_count;
 
 		private List<String> columns;
+		
 		// every list inside this list represents rows for user with same index
 		private List<List<String>> data;
 
