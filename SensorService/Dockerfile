@@ -11,6 +11,8 @@ COPY ./src ./src
 COPY ./appsettings.json ./appsettings.json
 COPY ./docker_network.json ./docker_network.json
 
+COPY ./data /data
+
 RUN dotnet build
 RUN dotnet publish
 

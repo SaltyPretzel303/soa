@@ -16,7 +16,7 @@ namespace DataCollector
 
 			services.AddMvc();
 
-			services.AddSingleton(new Reader("../data/", "user_", ".csv", 60, 3000));
+			services.AddSingleton(new Reader("/data/", "user_", ".csv", 60, 3000));
 
 		}
 
