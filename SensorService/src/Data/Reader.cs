@@ -25,9 +25,12 @@ namespace DataCollector.Data
 		public List<int> lines_count;
 
 		private List<String> columns;
-		
+
 		// every list inside this list represents rows for user with same index
+		// single string represents one row - collections of values for every column
 		private List<List<String>> data;
+
+		// constructors
 
 		public Reader(String path, String prefix, String extension, int users_count, int read_interval)
 		{
@@ -66,6 +69,8 @@ namespace DataCollector.Data
 
 		}
 
+		// private methods
+
 		private void ReadEvent(Object source, ElapsedEventArgs args)
 		{
 
@@ -92,6 +97,8 @@ namespace DataCollector.Data
 
 		}
 
+		// public methods
+
 		public List<List<String>> getDataFrom(int index)
 		{
 
@@ -99,10 +106,10 @@ namespace DataCollector.Data
 			{
 				List<List<String>> ret_list = new List<List<String>>();
 
-				foreach (List<String> user in this.data)
+				foreach (List<String> user_rows in this.data)
 				{
-					// get lines from single user
-					ret_list.Add(user.GetRange(index, user.Count - index));
+					// get rows from single user
+					ret_list.Add(user_rows.GetRange(index, user_rows.Count - index));
 
 				}
 

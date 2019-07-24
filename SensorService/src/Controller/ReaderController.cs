@@ -1,4 +1,3 @@
-using System.Net;
 using System;
 using DataCollector.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -63,7 +62,7 @@ namespace DataCollector.Controller
 					List<String> user = ret_data[i];
 					/*
 					user list{
-						value,valu	e,value,value;
+						value,value,value,value;
 						value,value,value,value;
 						value,value,value,value;
 					}

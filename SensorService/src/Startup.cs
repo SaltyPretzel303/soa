@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.ComponentModel.Design;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using DataCollector.Data;
 using System.IO;
+using SensorService.src;
 
 namespace DataCollector
 {
@@ -16,7 +18,14 @@ namespace DataCollector
 
 			services.AddMvc();
 
-			services.AddSingleton(new Reader("/data/", "user_", ".csv", 60, 3000));
+			string path = ServiceConfiguration.Instance.configRow("data_path");
+			string prefix = ServiceConfiguration.Instance.configRow("sample_prefix");
+			string extension = ServiceConfiguration.Instance.configRow("sample_extension");
+			int users_count = int.Parse(ServiceConfiguration.Instance.configRow("users_count"));
+			int read_interval = int.Parse(ServiceConfiguration.Instance.configRow("read_interval"));
+
+
+			services.AddSingleton(new Reader(path, prefix, extension, users_count, read_interval));
 
 		}
 
@@ -30,10 +39,6 @@ namespace DataCollector
 
 			app.UseMvc();
 
-			app.Run(async (context) =>
-			{
-				await context.Response.WriteAsync("Hello World!");
-			});
 		}
 	}
 }

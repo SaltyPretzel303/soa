@@ -1,0 +1,27 @@
+{
+	"env": "Development",
+	"data_path": {
+		"dev": "./data/",
+		"prod": "/data/"
+	},
+	"sample_prefix": {
+		"dev": "user_",
+		"prod": "user_"
+	},
+	"sample_extension": {
+		"dev": ".csv",
+		"prod": "csv"
+	},
+	"users_count": {
+		"dev": "60",
+		"prod": "60"
+	},
+	"read_interval": {
+		"dev": "3000",
+		"prod": "3000"
+	},
+	"port": {
+		"dev": "5000",
+		"prod": "5000"
+	}
+}
