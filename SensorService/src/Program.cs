@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using SensorService.src;
 
@@ -9,12 +8,6 @@ namespace DataCollector
 	{
 		public static void Main(string[] args)
 		{
-
-			CliArgsParser parsed_args = new CliArgsParser(args);
-			if (!parsed_args.success)
-			{
-				return;
-			}
 
 			CreateWebHostBuilder(args).Build().Run();
 		}

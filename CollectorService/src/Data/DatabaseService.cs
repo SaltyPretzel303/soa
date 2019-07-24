@@ -4,16 +4,23 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
+using SensorService.src;
 
 namespace CRUDService.Data
 {
 	public class DatabaseService : IDatabaseService
 	{
-		// externalize this somehow (appsettings.json maybe)
+
 		static private String DATABASE_NAME = "soa";
 		static private String COLLECTION_NAME = "Users";
 		static private String USER_ARRAY = "values";
 
+		public DatabaseService(MongoClient client, IMongoDatabase database)
+		{
+			this.client = client;
+			this.database = database;
+
+		}
 		public MongoClient client { get; private set; }
 		public IMongoDatabase database { get; private set; }
 		public IMongoCollection<BsonDocument> collection { get; private set; }
@@ -21,9 +28,13 @@ namespace CRUDService.Data
 		public DatabaseService()
 		{
 
+			DatabaseService.DATABASE_NAME = ServiceConfiguration.Instance.configRow("db_name");
+			DatabaseService.COLLECTION_NAME = ServiceConfiguration.Instance.configRow("collection_name");
+			DatabaseService.USER_ARRAY = ServiceConfiguration.Instance.configRow("user_array");
+
 			this.client = new MongoClient();
 			this.database = this.client.GetDatabase(DatabaseService.DATABASE_NAME);
-			this.collection = this.database.GetCollection<BsonDocument>("Users");
+			this.collection = this.database.GetCollection<BsonDocument>(DatabaseService.COLLECTION_NAME);
 
 		}
 

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using SensorService.src;
 
 namespace CRUDService
 {
@@ -17,8 +11,16 @@ namespace CRUDService
 			CreateWebHostBuilder(args).Build().Run();
 		}
 
-		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-			WebHost.CreateDefaultBuilder(args)
-				.UseStartup<Startup>().UseUrls("http://localhost:5002/");
+		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+		{
+
+			string s_port = ServiceConfiguration.Instance.configRow("port");
+
+			return WebHost.CreateDefaultBuilder(args)
+				   .UseStartup<Startup>()
+				   .UseUrls("http://+:" + s_port + "/");
+
+		}
 	}
+
 }

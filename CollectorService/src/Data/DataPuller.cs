@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using SensorService.src;
 
 namespace CRUDService.Data
 {
@@ -30,6 +31,11 @@ namespace CRUDService.Data
 
 		public DataPuller(DatabaseService databse, int read_interval)
 		{
+
+			DataPuller.DATA_READER_ADDRESS = ServiceConfiguration.Instance.configRow("sensor_address");
+			DataPuller.HEADER_URL = ServiceConfiguration.Instance.configRow("header_url");
+			DataPuller.DATA_RANGE_URL = ServiceConfiguration.Instance.configRow("data_range_url");
+
 			this.databse = databse;
 			this.read_interval = read_interval;
 
@@ -68,7 +74,7 @@ namespace CRUDService.Data
 			Console.WriteLine("USERS NUM = " + user_num);
 
 			// externalize somehow
-			String user_name_prefix = "user_";
+			String user_name_prefix = ServiceConfiguration.Instance.configRow("username_prefix");
 			String current_user_name = "";
 
 			for (int user_index = 0; user_index < user_num; user_index++)

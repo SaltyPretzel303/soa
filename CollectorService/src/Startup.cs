@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CRUDService.Data;
+﻿using CRUDService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
+using SensorService.src;
 
 namespace CRUDService
 {
@@ -25,7 +20,9 @@ namespace CRUDService
 
 			services.AddTransient<IDatabaseService, DatabaseService>();
 
-			this.data_puller = new DataPuller(new DatabaseService(), 4200);
+			int read_interval = int.Parse(ServiceConfiguration.Instance.configRow("read_interval"));
+
+			this.data_puller = new DataPuller(new DatabaseService(), read_interval);
 
 		}
 
