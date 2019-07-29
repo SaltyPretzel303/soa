@@ -1,39 +1,31 @@
 {
-	"env": "Development",
-	"port": {
-		"dev": "5001",
-		"prod": "5000"
+	"stage": "Development",
+	"Development": {
+		"port": "5001",
+		"dbAddress": "mongodb://localhost:27017",
+		"dbName": "soa",
+		"collectionName": "Users",
+		"dbUserArray": "values",
+		"sensorsList": [
+			"http://localhost:5000"
+		],
+		"headerUrl": "/data/sensor/header",
+		"dataRangeUrl": "/data/sensor/range",
+		"readInterval": "3500",
+		"samplePrefix": "user_"
 	},
-	"db_name": {
-		"dev": "soa",
-		"prod": "soa"
-	},
-	"collection_name": {
-		"dev": "Users",
-		"prod": "Users"
-	},
-	"user_array": {
-		"dev": "values",
-		"prod": "values"
-	},
-	"sensor_address": {
-		"dev": "http://localhost:5000",
-		"prod": "sensor_service:5000"
-	},
-	"header_url": {
-		"dev": "/data/reader/header",
-		"prod": "/data/reader/header"
-	},
-	"data_range_url": {
-		"dev": "/data/reader/range",
-		"prod": "/data/reader/range"
-	},
-	"read_interval": {
-		"dev": "3500",
-		"prod": "3500"
-	},
-	"username_prefix": {
-		"dev": "user_",
-		"prod": "user_"
+	"Production": {
+		"port": "5000",
+		"dbAddress": "mongodb://mongo_service:27017",
+		"dbName": "soa",
+		"collectionName": "Users",
+		"userArray": "values",
+		"sensorsList": [
+			"http://sensor_s:5000"
+		],
+		"headerUrl": "/data/sensor/header",
+		"dataRangeUrl": "/data/sensor/range",
+		"readInterval": "5000",
+		"samplePrefix": "user_"
 	}
 }

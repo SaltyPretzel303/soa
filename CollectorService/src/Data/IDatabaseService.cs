@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json.Linq;
 
-namespace CRUDService.Data
+namespace CollectorService.Data
 {
 	public interface IDatabaseService
 	{

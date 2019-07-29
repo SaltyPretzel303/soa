@@ -1,31 +1,24 @@
+using System.Runtime.Serialization.Json;
 using System;
-using DataCollector.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using SensorService.Data;
 
 namespace DataCollector.Controller
 {
 	// port: 5001
 	[Route("data/[controller]")]
 	[ApiController]
-	public class ReaderController : ControllerBase
+	public class SensorController : ControllerBase
 	{
 
 		public Reader reader;
 
-		public ReaderController(Reader reader)
+		public SensorController(Reader reader)
 		{
-			this.reader = reader;
 
-			if (this.reader != null)
-			{
-				Console.WriteLine("Reader is >>NOT<< null in controller constuctor ... ");
-			}
-			else
-			{
-				Console.WriteLine("Reader >>IS<< null in controller constructor ... ");
-			}
+			this.reader = reader;
 
 		}
 
@@ -42,24 +35,31 @@ namespace DataCollector.Controller
 		public String getRowsFrom([FromQuery]int index)
 		{
 
+			Console.WriteLine("Data range request for index: " + index);
+
 			// try to get data for given index
 			List<List<String>> ret_data = this.reader.getDataFrom(index);
-			List<String> columns = new List<String>(this.reader.getHeader());
 
 			if (ret_data != null && ret_data.Count > 0)
 			{
+
+				List<String> columns = new List<String>(this.reader.getHeader());
 
 				JObject json_result = new JObject();
 
 				// initialize response header
 				// add number of users
 				// add number of rows
-				json_result["users_count"] = ret_data.Count;
+				json_result["samples_count"] = ret_data.Count;
 				json_result["rows_count"] = ret_data[0].Count; // count of rows for first user (should be the same for every other)
+				json_result["from_sample"] = this.reader.samplesRange.From;
+				json_result["to_sample"] = this.reader.samplesRange.To;
+				json_result["sample_prefix"] = this.reader.prefix;
 
-				for (int i = 0; i < ret_data.Count; i++)
+				int sample_counter = reader.samplesRange.From;
+
+				foreach (List<string> single_sample in ret_data)
 				{
-					List<String> user = ret_data[i];
 					/*
 					user list{
 						value,value,value,value;
@@ -69,9 +69,9 @@ namespace DataCollector.Controller
 					 */
 
 					// user is just a array of rows (json_rows)
-					JArray json_user = new JArray();
+					JArray json_sample = new JArray();
 
-					foreach (String row in user)
+					foreach (String row in single_sample)
 					{
 						/*
 						row{
@@ -87,10 +87,11 @@ namespace DataCollector.Controller
 							json_row[columns[j]] = values[j];
 						}
 
-						json_user.Add(json_row);
+						json_sample.Add(json_row);
 
 					}
-					json_result["user_" + i] = json_user;
+					json_result[reader.prefix + sample_counter] = json_sample;
+					sample_counter++;
 				}
 
 				return json_result.ToString();
@@ -100,6 +101,7 @@ namespace DataCollector.Controller
 		}
 
 		// unused
+		// leave it for later optimisation
 		[HttpGet]
 		[Route("header")]
 		public String getHeader()

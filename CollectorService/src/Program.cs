@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using SensorService.src;
+using SensorService.Configuration;
 
-namespace CRUDService
+namespace CollectorService
 {
 	public class Program
 	{
@@ -14,11 +14,11 @@ namespace CRUDService
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			string s_port = ServiceConfiguration.Instance.configRow("port");
+			ServiceConfiguration config = ServiceConfiguration.read();
 
 			return WebHost.CreateDefaultBuilder(args)
 				   .UseStartup<Startup>()
-				   .UseUrls("http://+:" + s_port + "/");
+				   .UseUrls("http://+:" + config.port + "/");
 
 		}
 	}

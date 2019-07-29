@@ -1,24 +1,25 @@
 using System;
-using CRUDService.Data;
+using System.Collections.Generic;
+using CollectorService.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CRUDService.Controller
+namespace CollectorService.Controller
 {
 	// port: 50002
-	[Route("data/[controller]")]
+	[Route("data/access")]
 	[ApiController]
-	public class CrudController : ControllerBase
+	public class CollectorController : ControllerBase
 	{
 
 		public IDatabaseService database { get; private set; }
 
-		public CrudController(IDatabaseService database)
+		public CollectorController(IDatabaseService database)
 		{
 			this.database = database;
 		}
 
 		[HttpGet]
-		public String getAllData()
+		public string getAllDataAsync()
 		{
 
 			if (this.database != null)

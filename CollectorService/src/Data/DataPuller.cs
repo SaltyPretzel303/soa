@@ -1,23 +1,21 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.IO;
 using System.Net;
 using System;
-using System.Collections.Generic;
 using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
-using SensorService.src;
+using System.Collections.Generic;
+using SensorService.Configuration;
 
-namespace CRUDService.Data
+namespace CollectorService.Data
 {
 	public class DataPuller
 	{
 
-		static private String DATA_READER_ADDRESS = "http://localhost:5001";
-		static private String HEADER_URL = "/data/reader/header";
-		static private String DATA_RANGE_URL = "/data/reader/range";
-
 		// database for storing pulled data
-		public DatabaseService databse { get; private set; }
+		public DatabaseService database { get; private set; }
 		// index of next (maybe current ) row that should be read
 		public int read_index { get; private set; }
 
@@ -27,17 +25,21 @@ namespace CRUDService.Data
 
 		private HttpClient client;
 
+		private List<string> sensors_addr;
+
+		private string dataRangeUrl;
+		private string headerUrl;
+
 		// constructors
 
-		public DataPuller(DatabaseService databse, int read_interval)
+		public DataPuller(DatabaseService databse, int read_interval, List<string> sensors, string data_range_url, string header_url)
 		{
 
-			DataPuller.DATA_READER_ADDRESS = ServiceConfiguration.Instance.configRow("sensor_address");
-			DataPuller.HEADER_URL = ServiceConfiguration.Instance.configRow("header_url");
-			DataPuller.DATA_RANGE_URL = ServiceConfiguration.Instance.configRow("data_range_url");
-
-			this.databse = databse;
+			this.database = databse;
 			this.read_interval = read_interval;
+			this.sensors_addr = sensors;
+			this.dataRangeUrl = data_range_url;
+			this.headerUrl = header_url;
 
 			// start reading from the first for (index 0)
 			this.read_index = 0;
@@ -54,42 +56,57 @@ namespace CRUDService.Data
 
 		// methods
 
-		private void timerEvent(Object source, ElapsedEventArgs arg)
+		private async void timerEvent(Object source, ElapsedEventArgs arg)
 		{
-
-			Console.WriteLine("PULLING DATA >>> " + this.read_index);
-
-			String constructed_url = DataPuller.DATA_READER_ADDRESS + DataPuller.DATA_RANGE_URL + "?index=" + this.read_index;
-			Console.WriteLine(constructed_url);
-			Uri uri = new Uri(constructed_url);
-
-			String response_data = this.client.GetStringAsync(uri).Result;
-
-			Console.WriteLine("response <<< ");
-
-			JObject json_response = JObject.Parse(response_data);
-			Console.WriteLine("DataParsed ...");
-			int user_num = (int)json_response.GetValue("users_count");
-
-			Console.WriteLine("USERS NUM = " + user_num);
-
-			// externalize somehow
-			String user_name_prefix = ServiceConfiguration.Instance.configRow("username_prefix");
-			String current_user_name = "";
-
-			for (int user_index = 0; user_index < user_num; user_index++)
+			int max_row_count = -1;
+			foreach (String single_sensor in this.sensors_addr)
 			{
 
-				// user_0, user_1 ...
-				current_user_name = user_name_prefix + user_index;
+				string api_url = single_sensor + this.dataRangeUrl + "?index=" + this.read_index;
+				Uri sensor_uri = new Uri(api_url);
+				Console.WriteLine("Pulling from: " + api_url);
 
-				JArray json_user_rows = (JArray)json_response.GetValue(current_user_name);
+				string s_response = "";
+				try
+				{
+					s_response = this.client.GetStringAsync(sensor_uri).Result;
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine($"exception in gettin data: {e.ToString()}");
+					continue;
+				}
+				JObject j_response = JObject.Parse(s_response);
 
-				this.databse.pushToUser(current_user_name, json_user_rows);
+				int row_count = int.Parse(j_response.GetValue("rows_count").ToString());
+				if (row_count > max_row_count)
+				{
+					max_row_count = row_count;
+				}
+				int from_index = int.Parse(j_response.GetValue("from_sample").ToString());
+				int to_index = int.Parse(j_response.GetValue("to_sample").ToString());
+				string sample_prefix = j_response.GetValue("sample_prefix").ToString();
+
+				string temp_sample_name = "";
+
+				for (int sample_index = from_index; sample_index < to_index; sample_index++)
+				{
+
+					temp_sample_name = sample_prefix + sample_index.ToString();
+
+					JArray sample_values = (JArray)j_response.GetValue(temp_sample_name);
+
+					this.database.pushToUser(temp_sample_name, sample_values);
+
+				}
+
+				Console.WriteLine($"Got samples from: {from_index} to: {to_index}");
+
 
 			}
 
-			this.read_index += (int)json_response.GetValue("rows_count");
+			Console.WriteLine("Read index increase for: " + max_row_count);
+			this.read_index += max_row_count;
 
 		}
 
@@ -100,7 +117,10 @@ namespace CRUDService.Data
 
 			String response_data = "";
 
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(DataPuller.DATA_READER_ADDRESS + DataPuller.HEADER_URL);
+			// all sensors have same header
+			string single_sensor = this.sensors_addr[0];
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(single_sensor + this.headerUrl);
 			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
 			using (Stream stream = response.GetResponseStream())
 			using (StreamReader reader = new StreamReader(stream))

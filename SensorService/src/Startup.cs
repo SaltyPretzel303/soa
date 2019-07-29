@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.Design;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using DataCollector.Data;
-using System.IO;
-using SensorService.src;
+using SensorService.Configuration;
+using SensorService.Data;
 
-namespace DataCollector
+namespace SensorService
 {
 	public class Startup
 	{
@@ -18,14 +15,16 @@ namespace DataCollector
 
 			services.AddMvc();
 
-			string path = ServiceConfiguration.Instance.configRow("data_path");
-			string prefix = ServiceConfiguration.Instance.configRow("sample_prefix");
-			string extension = ServiceConfiguration.Instance.configRow("sample_extension");
-			int users_count = int.Parse(ServiceConfiguration.Instance.configRow("users_count"));
-			int read_interval = int.Parse(ServiceConfiguration.Instance.configRow("read_interval"));
+			ServiceConfiguration config = ServiceConfiguration.read();
+
+			string path = config.dataPath;
+			string prefix = config.samplePrefix;
+			string extension = config.sampleExtension;
+			FromTo samples_range = config.samplesRange;
+			int read_interval = config.readInterval;
 
 
-			services.AddSingleton(new Reader(path, prefix, extension, users_count, read_interval));
+			services.AddSingleton(new Reader(config.dataPath, config.samplePrefix, config.sampleExtension, config.samplesRange, config.readInterval));
 
 		}
 

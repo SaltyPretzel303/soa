@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace SensorService.src
+namespace SensorService
 {
 	public class CliArgsParser
 	{

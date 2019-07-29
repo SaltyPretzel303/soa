@@ -1,25 +1,21 @@
-FROM ubuntu:16.04
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
 RUN apt-get update && apt-get install nano
 
-WORKDIR /sensor_service
+WORKDIR /collector_service
 
-COPY ./SensorService.csproj ./SensorService.csproj
+COPY ./CollectorService.csproj ./CollectorService.csproj
 RUN dotnet restore
 
 COPY ./src ./src
 COPY ./appsettings.json ./appsettings.json
 COPY ./service_config.json ./service_config.json
 
-COPY ./data /data
-
 RUN dotnet build
 RUN dotnet publish
 
-# ENV ASPNETCORE_URLS http://+:5000
-
 WORKDIR ./bin/Debug/netcoreapp2.2/publish
 
-# ENTRYPOINT ["dotnet", "./SensorService.dll"]
-ENTRYPOINT [ "/bin/bash" ]
+# ENV ASPNETCORE_URLS http://+:5000
+
+# ENTRYPOINT ["dotnet", "./bin/Debug/netcoreapp2.2/publish/CollectorService.dll"]

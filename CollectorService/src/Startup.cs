@@ -1,10 +1,10 @@
-﻿using CRUDService.Data;
+﻿using CollectorService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using SensorService.src;
+using SensorService.Configuration;
 
-namespace CRUDService
+namespace CollectorService
 {
 	public class Startup
 	{
@@ -20,9 +20,9 @@ namespace CRUDService
 
 			services.AddTransient<IDatabaseService, DatabaseService>();
 
-			int read_interval = int.Parse(ServiceConfiguration.Instance.configRow("read_interval"));
+			ServiceConfiguration conf = ServiceConfiguration.read();
 
-			this.data_puller = new DataPuller(new DatabaseService(), read_interval);
+			// this.data_puller = new DataPuller(new DatabaseService(), conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
 
 		}
 

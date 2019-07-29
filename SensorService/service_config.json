@@ -1,27 +1,25 @@
 {
-	"env": "Development",
-	"data_path": {
-		"dev": "./data/",
-		"prod": "/data/"
+	"stage": "Production",
+	"Development": {
+		"dataPath": "./data/",
+		"samplePrefix": "user_",
+		"sampleExtension": ".csv",
+		"samplesRange": {
+			"From": 59,
+			"To": 60
+		},
+		"readInterval": 10000,
+		"port": 5000
 	},
-	"sample_prefix": {
-		"dev": "user_",
-		"prod": "user_"
-	},
-	"sample_extension": {
-		"dev": ".csv",
-		"prod": "csv"
-	},
-	"users_count": {
-		"dev": "60",
-		"prod": "60"
-	},
-	"read_interval": {
-		"dev": "3000",
-		"prod": "3000"
-	},
-	"port": {
-		"dev": "5000",
-		"prod": "5000"
+	"Production": {
+		"dataPath": "/data/",
+		"samplePrefix": "user_",
+		"sampleExtension": ".csv",
+		"samplesRange": {
+			"From": 55,
+			"To": 60
+		},
+		"readInterval": 10000,
+		"port": 5000
 	}
 }

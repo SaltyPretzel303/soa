@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using SensorService.src;
+using SensorService.Configuration;
 
-namespace DataCollector
+namespace SensorService
 {
 	public class Program
 	{
@@ -15,11 +15,12 @@ namespace DataCollector
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			string s_port = ServiceConfiguration.Instance.configRow("port");
+			ServiceConfiguration config = ServiceConfiguration.read();
+			int port_num = config.port;
 
 			return WebHost.CreateDefaultBuilder(args)
 			.UseStartup<Startup>()
-			.UseUrls("http://+:" + s_port + "/");
+			.UseUrls("http://+:" + port_num + "/");
 		}
 	}
 }

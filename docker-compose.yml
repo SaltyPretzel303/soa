@@ -1,0 +1,15 @@
+version: '3'
+services:
+ mongo_service:
+  image: mongo:latest
+  ports:
+  - "27017:27017"
+  network: soa_net
+ sensor_service:
+  build: ./SensorService
+  image: sensor_service
+  network: soa_net
+ collector_service:
+  build: ./CollectorService
+  image: collector_service
+  network: soa_net
