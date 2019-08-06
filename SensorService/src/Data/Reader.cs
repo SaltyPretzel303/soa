@@ -14,9 +14,9 @@ namespace SensorService.Data
 		private Timer timer;
 
 		public FromTo samplesRange { get; private set; }
-		public String path { get; private set; }
-		public String prefix { get; private set; }
-		public String extension { get; private set; }
+		public string path { get; private set; }
+		public string dataPrefix { get; private set; }
+		public string extension { get; private set; }
 		public int lineCounter { get; private set; }
 
 		public int readInterval { get; private set; }
@@ -35,19 +35,19 @@ namespace SensorService.Data
 		{
 
 			this.path = path;
-			this.prefix = prefix;
+			this.dataPrefix = prefix;
 			this.extension = extension;
 			this.samplesRange = samples_range;
 			this.readInterval = read_interval;
 
 			// read first row (identify comlumns)
-			this.columns = new List<String>(File.ReadLines(this.path + this.prefix + this.samplesRange.From + this.extension).Take(1).First().Split(","));
+			this.columns = new List<String>(File.ReadLines(this.path + this.dataPrefix + this.samplesRange.From + this.extension).Take(1).First().Split(","));
 
 			// initialize the number of available lines for every user
 			this.rows_count = new List<int>();
 			for (int sample_num = this.samplesRange.From; sample_num < this.samplesRange.To; sample_num++)
 			{
-				this.rows_count.Add(File.ReadLines(this.path + this.prefix + sample_num + this.extension).Count());
+				this.rows_count.Add(File.ReadLines(this.path + this.dataPrefix + sample_num + this.extension).Count());
 			}
 
 			// initialize list for every user
@@ -88,7 +88,7 @@ namespace SensorService.Data
 
 					// read line
 					// skip previous read lines (this.line_counter)
-					this.data[logical_index].Add(File.ReadLines(this.path + this.prefix + real_index + this.extension).Skip(this.lineCounter).Take(1).First());
+					this.data[logical_index].Add(File.ReadLines(this.path + this.dataPrefix + real_index + this.extension).Skip(this.lineCounter).Take(1).First());
 
 				}
 

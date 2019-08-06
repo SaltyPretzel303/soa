@@ -1,5 +1,4 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Net.Sockets;
 using System.IO;
 using System.Net;
 using System;
@@ -7,7 +6,6 @@ using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
-using SensorService.Configuration;
 
 namespace CollectorService.Data
 {
@@ -19,11 +17,10 @@ namespace CollectorService.Data
 		// index of next (maybe current ) row that should be read
 		public int read_index { get; private set; }
 
-		// run specific code every read_interval miliseconds
 		private Timer timer;
 		public int read_interval { get; private set; }
 
-		private HttpClient client;
+		private HttpClient httpClient;
 
 		private List<string> sensors_addr;
 
@@ -50,13 +47,13 @@ namespace CollectorService.Data
 			this.timer.Interval = this.read_interval;
 			this.timer.Enabled = true;
 
-			this.client = new HttpClient();
+			this.httpClient = new HttpClient();
 
 		}
 
 		// methods
 
-		private async void timerEvent(Object source, ElapsedEventArgs arg)
+		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 			int max_row_count = -1;
 			foreach (String single_sensor in this.sensors_addr)
@@ -69,11 +66,26 @@ namespace CollectorService.Data
 				string s_response = "";
 				try
 				{
-					s_response = this.client.GetStringAsync(sensor_uri).Result;
+					s_response = this.httpClient.GetStringAsync(sensor_uri).Result;
+				}
+				catch (AggregateException e)
+				{
+					Console.WriteLine("Aggregate exception: ");
+
+					if (e.InnerException is HttpRequestException)
+					{
+
+						string message = ((HttpRequestException)e.InnerException).Message;
+
+						Console.WriteLine($"Http req. exception, message: {message} ... sensor may be down.\nSensor addr. : {sensor_uri.ToString()}\n");
+
+					}
+
+
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine($"exception in gettin data: {e.ToString()}");
+					Console.WriteLine($"UNKNOWN EXCEPTION in gettin data: {e.ToString()}");
 					continue;
 				}
 				JObject j_response = JObject.Parse(s_response);
@@ -85,18 +97,18 @@ namespace CollectorService.Data
 				}
 				int from_index = int.Parse(j_response.GetValue("from_sample").ToString());
 				int to_index = int.Parse(j_response.GetValue("to_sample").ToString());
-				string sample_prefix = j_response.GetValue("sample_prefix").ToString();
+				string sensor_prefix = j_response.GetValue("sensor_name_prefix").ToString();
 
 				string temp_sample_name = "";
 
 				for (int sample_index = from_index; sample_index < to_index; sample_index++)
 				{
 
-					temp_sample_name = sample_prefix + sample_index.ToString();
+					temp_sample_name = sensor_prefix + sample_index.ToString();
 
 					JArray sample_values = (JArray)j_response.GetValue(temp_sample_name);
 
-					this.database.pushToUser(temp_sample_name, sample_values);
+					this.database.pushToSensor(temp_sample_name, sample_values);
 
 				}
 
@@ -106,8 +118,9 @@ namespace CollectorService.Data
 			}
 
 			Console.WriteLine("Read index increase for: " + max_row_count);
-			this.read_index += max_row_count;
-
+			if (max_row_count > 0)
+				this.read_index += max_row_count;
+			Console.WriteLine("New read index: " + this.read_index);
 		}
 
 		// not used ...

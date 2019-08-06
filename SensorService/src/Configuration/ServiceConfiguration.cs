@@ -18,12 +18,15 @@ namespace SensorService.Configuration
 
 		public string stage { get; private set; }
 
-		public string dataPath { get;  set; }
-		public string samplePrefix { get;  set; }
-		public string sampleExtension { get;  set; }
-		public FromTo samplesRange { get;  set; }
-		public int readInterval { get;  set; }
-		public int port { get;  set; }
+		public string dataPath { get; set; }
+		public string responseTypeField { get; set; }
+		public string validResponse { get; set; }
+		public string dataPrefix { get; set; }
+		public string sampleExtension { get; set; }
+		public FromTo samplesRange { get; set; }
+		public int readInterval { get; set; }
+		public int port { get; set; }
+		public string sensorNamePrefix { get; set; }
 
 		// methods
 

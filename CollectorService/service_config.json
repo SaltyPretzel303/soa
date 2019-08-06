@@ -4,8 +4,9 @@
 		"port": "5001",
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa",
-		"collectionName": "Users",
-		"dbUserArray": "values",
+		"sensorsCollection": "Sensors",
+		"recordsCollection": "Records",
+		"fieldWithRecords": "records",
 		"sensorsList": [
 			"http://localhost:5000"
 		],
@@ -18,8 +19,9 @@
 		"port": "5000",
 		"dbAddress": "mongodb://mongo_service:27017",
 		"dbName": "soa",
-		"collectionName": "Users",
-		"userArray": "values",
+		"sensorsCollection": "Sensors",
+		"recordsCollection": "Records",
+		"fieldWithRecords": "records",
 		"sensorsList": [
 			"http://sensor_s:5000"
 		],

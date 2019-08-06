@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CollectorService.Data;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Controller
 {
@@ -18,44 +19,45 @@ namespace CollectorService.Controller
 			this.database = database;
 		}
 
+		/* response format:
+				[
+				{sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[
+				{},{},{} ... },
+				    .
+				    .
+				    .
+				]
+		 */
+		[Route("all")]
 		[HttpGet]
-		public string getAllDataAsync()
+		public IActionResult getAllData()
 		{
 
 			if (this.database != null)
 			{
-				return this.database.getAllRecords();
+				return Ok(this.database.getAllSamples());
 			}
 
-			return "Database is null ... :( ... ";
-		}
-
-		[HttpGet("{user_id}", Name = "single")]
-		public String getUser([FromQuery]String user_id)
-		{
-
-			// database get by id
-
-			return "";
-		}
-
-		[HttpPost]
-		public String addUser([FromBody]String user_data)
-		{
-
-			// database.store user_data
-
-			return "";
+			return StatusCode(500);
 		}
 
 
-		[HttpDelete("{id}", Name = "delete")]
-		public String removeUser([FromQuery] String user_id)
+		[Route("sensorRecords")]
+		[HttpGet]
+		public IActionResult getSingleRecord([FromQuery]string sensorName, [FromQuery]int fromTimestamp = 0, [FromQuery] int toTimestamp = -1)
 		{
 
-			// database.delete with id
+			Console.WriteLine($"Received args: \n SensorName: {sensorName}\n From timestamp: {fromTimestamp} \n To timestamp: {toTimestamp}\n");
 
-			return "";
+			List<JObject> ret_array = this.database.getRecordsFromSensor(sensorName, fromTimestamp, toTimestamp);
+
+			if (ret_array != null)
+			{
+				return Ok(ret_array);
+
+			}
+
+			return StatusCode(500);
 		}
 
 	}

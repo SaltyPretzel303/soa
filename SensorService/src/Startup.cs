@@ -18,13 +18,13 @@ namespace SensorService
 			ServiceConfiguration config = ServiceConfiguration.read();
 
 			string path = config.dataPath;
-			string prefix = config.samplePrefix;
+			string prefix = config.dataPrefix;
 			string extension = config.sampleExtension;
 			FromTo samples_range = config.samplesRange;
 			int read_interval = config.readInterval;
 
 
-			services.AddSingleton(new Reader(config.dataPath, config.samplePrefix, config.sampleExtension, config.samplesRange, config.readInterval));
+			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval));
 
 		}
 

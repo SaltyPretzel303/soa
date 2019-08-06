@@ -1,9 +1,11 @@
-using System.Runtime.Serialization.Json;
+using System.Threading.Tasks.Dataflow;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using SensorService.Data;
+using Newtonsoft.Json;
+using SensorService.Configuration;
 
 namespace DataCollector.Controller
 {
@@ -32,8 +34,10 @@ namespace DataCollector.Controller
 
 		[HttpGet("{index}")]
 		[Route("range")]
-		public String getRowsFrom([FromQuery]int index)
+		public JObject getRowsFrom([FromQuery]int index)
 		{
+
+			ServiceConfiguration conf = ServiceConfiguration.read();
 
 			Console.WriteLine("Data range request for index: " + index);
 
@@ -48,20 +52,20 @@ namespace DataCollector.Controller
 				JObject json_result = new JObject();
 
 				// initialize response header
-				// add number of users
-				// add number of rows
+				json_result[conf.responseTypeField] = conf.validResponse;
 				json_result["samples_count"] = ret_data.Count;
 				json_result["rows_count"] = ret_data[0].Count; // count of rows for first user (should be the same for every other)
-				json_result["from_sample"] = this.reader.samplesRange.From;
-				json_result["to_sample"] = this.reader.samplesRange.To;
-				json_result["sample_prefix"] = this.reader.prefix;
+				json_result["from_sample"] = conf.samplesRange.From;
+				json_result["to_sample"] = conf.samplesRange.To;
+
+				json_result["sensor_name_prefix"] = conf.sensorNamePrefix;
 
 				int sample_counter = reader.samplesRange.From;
 
 				foreach (List<string> single_sample in ret_data)
 				{
 					/*
-					user list{
+					records list{
 						value,value,value,value;
 						value,value,value,value;
 						value,value,value,value;
@@ -90,21 +94,21 @@ namespace DataCollector.Controller
 						json_sample.Add(json_row);
 
 					}
-					json_result[reader.prefix + sample_counter] = json_sample;
+					json_result[conf.sensorNamePrefix + sample_counter] = json_sample;
 					sample_counter++;
 				}
 
-				return json_result.ToString();
+				return json_result;
 			}
 
-			return "Invalid index ... ";
+			return JsonConvert.DeserializeObject<JObject>("{sensor_response: 'Sensor can't  return value for: index=" + index + " }");
 		}
 
 		// unused
 		// leave it for later optimisation
 		[HttpGet]
 		[Route("header")]
-		public String getHeader()
+		public string getHeader()
 		{
 
 			JArray array = new JArray();

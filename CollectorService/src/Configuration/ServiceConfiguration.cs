@@ -21,8 +21,9 @@ namespace SensorService.Configuration
 		public int port { get; set; }
 		public string dbAddress { get; set; }
 		public string dbName { get; set; }
-		public string collectionName { get; set; }
-		public string dbUserArray { get; set; }
+		public string sensorsCollection { get; set; }
+		public string recordsCollection { get; set; }
+		public string fieldWithRecords { get; set; }
 		public List<string> sensorsList { get; set; }
 
 		public string headerUrl { get; set; }

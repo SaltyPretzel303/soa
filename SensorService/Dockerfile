@@ -19,7 +19,7 @@ RUN dotnet publish
 
 # ENV ASPNETCORE_URLS http://+:5000
 
-WORKDIR ./bin/Debug/netcoreapp2.2/publish
+WORKDIR /sensor_service/bin/Debug/netcoreapp2.2/publish
 
 # ENTRYPOINT ["dotnet", "./SensorService.dll"]
 ENTRYPOINT [ "/bin/bash" ]
