@@ -6,21 +6,23 @@ using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
+using CollectorService.Broker;
 
 namespace CollectorService.Data
 {
 	public class DataPuller
 	{
 
-		// database for storing pulled data
-		public DatabaseService database { get; private set; }
-		// index of next (maybe current ) row that should be read
+		public IDatabaseService database { get; private set; }
+		// index of the next row that should be read
 		public int read_index { get; private set; }
 
 		private Timer timer;
 		public int read_interval { get; private set; }
 
 		private HttpClient httpClient;
+
+		private MessageBroker broker;
 
 		private List<string> sensors_addr;
 
@@ -29,10 +31,12 @@ namespace CollectorService.Data
 
 		// constructors
 
-		public DataPuller(DatabaseService databse, int read_interval, List<string> sensors, string data_range_url, string header_url)
+		public DataPuller(IDatabaseService databse, MessageBroker broker, int read_interval, List<string> sensors, string data_range_url, string header_url)
 		{
 
 			this.database = databse;
+			this.broker = broker;
+
 			this.read_interval = read_interval;
 			this.sensors_addr = sensors;
 			this.dataRangeUrl = data_range_url;

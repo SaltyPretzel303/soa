@@ -8,19 +8,21 @@
 #cond: {$gte: ["$$record.timestamp",1439324357]} }  }} }]).forEach(printjson)'
 
 mongo soa --eval 'db.Sensors.aggregate([
-			{$match: {sensor_name: "sensor_55"} },
+			{$match: {sensor_name: {$regex:"sensor_55"}}},
 			{$project: {records: { 
 									$filter: {
 										input: "$records",
 										as: "record",
 										cond: {$and: [
 													
-														{$gte: ["$$record.timestamp","1439324117"]},
-														{$lte: ["$$record.timestamp","1439324357"]}
+														{$gte: [{$convert : {input: "$$record.timestamp", to: "double"}},NumberLong(22)]},
+														{$lte: [{$convert : {input: "$$record.timestamp", to: "double"}},NumberLong(144362986500)]}
 														
 														
 													]}
 									}
-									 }}}
+								},sensor_name:1
+						}
+			}
 			
 			]).forEach(printjson)'

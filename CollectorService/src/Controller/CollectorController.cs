@@ -44,21 +44,42 @@ namespace CollectorService.Controller
 
 		[Route("sensorRecords")]
 		[HttpGet]
-		public IActionResult getSingleRecord([FromQuery]string sensorName, [FromQuery]int fromTimestamp = 0, [FromQuery] int toTimestamp = -1)
+		public IActionResult getSingleRecord([FromQuery]string sensorName, [FromQuery]long fromTimestamp, [FromQuery] long toTimestamp)
 		{
 
-			Console.WriteLine($"Received args: \n SensorName: {sensorName}\n From timestamp: {fromTimestamp} \n To timestamp: {toTimestamp}\n");
+			if (fromTimestamp >= toTimestamp)
+			{
+
+				string message = $"Invalid timestamps:\nFromTimestamp: {fromTimestamp}\nToTimestamp: {toTimestamp}";
+				Console.WriteLine("Bad request, invalid timestamps ... \n" + message);
+				return BadRequest(message);
+
+			}
 
 			List<JObject> ret_array = this.database.getRecordsFromSensor(sensorName, fromTimestamp, toTimestamp);
 
 			if (ret_array != null)
 			{
+
 				return Ok(ret_array);
 
 			}
 
 			return StatusCode(500);
 		}
+
+
+		[HttpPost]
+		public IActionResult updateConfiguration(string configUpdateRequest)
+		{
+
+			// check does this user has privileges to change config
+			// backup current config in to the database 
+			// write this configuration in to the config file on default path 
+
+			return StatusCode(404);
+		}
+
 
 	}
 }

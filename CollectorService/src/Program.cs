@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using SensorService.Configuration;
+using CollectorService.Configuration;
 
 namespace CollectorService
 {

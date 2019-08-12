@@ -1,8 +1,10 @@
-﻿using CollectorService.Data;
+﻿using CollectorService.Configuration;
+using CollectorService.Data;
+using CollectorService.Broker;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using SensorService.Configuration;
+using CollectorService.Broker.Reporter;
 
 namespace CollectorService
 {
@@ -18,11 +20,16 @@ namespace CollectorService
 
 			services.AddMvc();
 
-			services.AddTransient<IDatabaseService, DatabaseService>();
+			services.AddTransient<IDatabaseService, MongoDatabaseService>();
+			services.AddTransient<MessageBroker, RabbitMqBroker>();
 
 			ServiceConfiguration conf = ServiceConfiguration.read();
 
-			// this.data_puller = new DataPuller(new DatabaseService(), conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
+			IDatabaseService database = new MongoDatabaseService();
+			MessageBroker broker = new RabbitMqBroker();
+
+
+			this.data_puller = new DataPuller(database, broker, conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
 
 		}
 
@@ -39,6 +46,8 @@ namespace CollectorService
 			}
 
 			app.UseMvc();
+
+			app.UseMiddleware<ControllerReporter>();
 
 		}
 	}

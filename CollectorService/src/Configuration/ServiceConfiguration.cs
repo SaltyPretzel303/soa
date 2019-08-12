@@ -1,9 +1,10 @@
+using System.Runtime.CompilerServices;
 using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
-namespace SensorService.Configuration
+namespace CollectorService.Configuration
 {
 
 	public class ServiceConfiguration
@@ -13,6 +14,8 @@ namespace SensorService.Configuration
 
 		private static string CONFIGURATION_PATH = "./service_config.json";
 		private static string STAGE_VAR_NAME = "stage";
+
+		private static bool shouldBeReloaded = false;
 
 		// configuration variables
 
@@ -32,11 +35,15 @@ namespace SensorService.Configuration
 		public int readInterval { get; set; }
 		public string samplePrefix { get; set; }
 
+		public string brokerAddress { get; set; }
+		public int brokerPort { get; set; }
+
+		public string controllerReportExchange { get; set; }
 
 		public static ServiceConfiguration read()
 		{
 
-			if (ServiceConfiguration.cache != null)
+			if (ServiceConfiguration.cache != null && ServiceConfiguration.shouldBeReloaded != true)
 			{
 				Console.WriteLine("Reading configuration from cache ... ");
 				return ServiceConfiguration.cache;
@@ -54,8 +61,15 @@ namespace SensorService.Configuration
 			config_o.stage = stage;
 
 			ServiceConfiguration.cache = config_o;
+			// reset flag in case that reading is initiated because of it
+			ServiceConfiguration.shouldBeReloaded = false;
 
 			return config_o;
+		}
+
+		public static void markForReload()
+		{
+			ServiceConfiguration.shouldBeReloaded = true;
 		}
 
 	}

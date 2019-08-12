@@ -1,19 +1,15 @@
-using System.Numerics;
-using System.Runtime.Serialization.Json;
-using System.Globalization;
 using System.Linq;
 using System;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
-using SensorService.Configuration;
 using System.Collections.Generic;
 using MongoDB.Bson.IO;
-using MongoDB.Bson.Serialization;
+using CollectorService.Configuration;
 
 namespace CollectorService.Data
 {
-	public class DatabaseService : IDatabaseService
+	public class MongoDatabaseService : IDatabaseService
 	{
 
 		private ServiceConfiguration configuration;
@@ -25,7 +21,7 @@ namespace CollectorService.Data
 
 		// constructors
 
-		public DatabaseService()
+		public MongoDatabaseService()
 		{
 
 			// TODO inject configuration somehow
@@ -35,17 +31,6 @@ namespace CollectorService.Data
 			this.database = this.client.GetDatabase(configuration.dbName);
 			this.sensorsCollection = this.database.GetCollection<BsonDocument>(configuration.sensorsCollection);
 			this.recordsCollection = this.database.GetCollection<BsonDocument>(configuration.recordsCollection);
-
-		}
-
-		// todo not used, but should be ... 
-		public DatabaseService(MongoClient client, IMongoDatabase database)
-		{
-
-			this.configuration = ServiceConfiguration.read();
-
-			this.client = client;
-			this.database = database;
 
 		}
 
@@ -113,21 +98,25 @@ namespace CollectorService.Data
 			return ret_list;
 		}
 
-		public List<JObject> getRecordsFromSensor(string sensorName = "sensor_55", long fromTimestamp = 0, long toTimestamp = long.MaxValue)
+		public List<JObject> getRecordsFromSensor(string sensorName = ".", long fromTimestamp = 0, long toTimestamp = long.MaxValue)
 		{
 
-			string match_q = "{$match: {sensor_name: '" + sensorName.Replace("\"", "") + "'}}";
+			// TODO deal with 'sql (mongo) ijection' through sensorName, it is used as regex for mongo query
+
+			Console.WriteLine($"Received args: \n SensorName: {sensorName}\n From timestamp: {fromTimestamp} \n To timestamp: {toTimestamp}\n");
+
+			string match_q = "{$match: {sensor_name: {$regex: '" + sensorName.Replace("\"", "") + "'}}}";
 
 			string filter_array = "records";
 			string single_item = "record";
 			string comp_field = "timestamp";
 
-			string gte_q = string.Format(@"{{$gte:['$${0}.{1}','{2}']}}", single_item, comp_field, fromTimestamp);
-			string lte_q = string.Format(@"{{$lte:['$${0}.{1}','{2}']}}", single_item, comp_field, toTimestamp);
+			string gte_q = string.Format(@"{{$gte:[{{$convert: {{ input: '$${0}.{1}',to: 'double' }} }}, NumberLong({2})]}}", single_item, comp_field, fromTimestamp);
+			string lte_q = string.Format(@"{{$lte:[{{$convert: {{ input: '$${0}.{1}',to: 'double' }} }}, NumberLong({2})]}}", single_item, comp_field, toTimestamp);
 
 			string and_q = string.Format(@"{{$and: [{0},{1}]}}", gte_q, lte_q);
 
-			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }} }} }}", filter_array, single_item, and_q);
+			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }},sensor_name:1 }} }}", filter_array, single_item, and_q);
 
 			BsonDocument[] agregate_array = new BsonDocument[]{
 				BsonDocument.Parse(match_q),

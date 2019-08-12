@@ -13,7 +13,10 @@
 		"headerUrl": "/data/sensor/header",
 		"dataRangeUrl": "/data/sensor/range",
 		"readInterval": "3500",
-		"samplePrefix": "user_"
+		"samplePrefix": "user_",
+		"brokerAddress": "localhost",
+		"brokerPort": "5672",
+		"controllerReportExchange": "controller_reports"
 	},
 	"Production": {
 		"port": "5000",
@@ -28,6 +31,9 @@
 		"headerUrl": "/data/sensor/header",
 		"dataRangeUrl": "/data/sensor/range",
 		"readInterval": "5000",
-		"samplePrefix": "user_"
+		"samplePrefix": "user_",
+		"brokerAddress": "rabbit_s",
+		"brokerPort": "5672",
+		"controllerReportExchange": "controller_reports"
 	}
 }
