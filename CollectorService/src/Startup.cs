@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using CollectorService.Broker.Reporter;
+using System;
+using CollectorService.Broker.Events;
+using CollectorService.src.Broker.Reporter.Report;
+using Newtonsoft.Json.Linq;
 
 namespace CollectorService
 {
@@ -21,21 +25,25 @@ namespace CollectorService
 			services.AddMvc();
 
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
-			services.AddTransient<MessageBroker, RabbitMqBroker>();
 
-			ServiceConfiguration conf = ServiceConfiguration.read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			IDatabaseService database = new MongoDatabaseService();
-			MessageBroker broker = new RabbitMqBroker();
 
-
-			this.data_puller = new DataPuller(database, broker, conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
+			// data puller is started automatically
+			this.data_puller = new DataPuller(database, MessageBroker.Instance, conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
 
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
 		{
+
+			lifetime.ApplicationStopping.Register(this.onShutDown);
+			lifetime.ApplicationStarted.Register(this.onStartup);
+
+			MessageBroker.Instance.subscribeForConfiguration(this.handleNewConfiguration);
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -45,10 +53,43 @@ namespace CollectorService
 				app.UseHsts();
 			}
 
-			app.UseMvc();
-
 			app.UseMiddleware<ControllerReporter>();
 
+			app.UseMvc();
+
+
 		}
+
+		private void onStartup()
+		{
+
+			Console.WriteLine("Handling startup ... ");
+
+			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("startup").toJson()));
+
+		}
+
+		private void onShutDown()
+		{
+
+			Console.Write("Handling shutdown ... ");
+
+			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("shutdown").toJson()));
+
+			MessageBroker.Instance.shutDown();
+
+		}
+
+		private void handleNewConfiguration(JObject newConfig
+		)
+		{
+
+			Console.WriteLine("Handling new configuration ... \n\n");
+
+			// TODO database is coupled with the single implementation 
+			ServiceConfiguration.reload(newConfig, new MongoDatabaseService());
+
+		}
+
 	}
 }

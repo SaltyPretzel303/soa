@@ -11,6 +11,9 @@ namespace CollectorService.Broker.Events
 
 	public class CollectorEvent
 	{
+
+		public const string eventType = "collector_event";
+
 		// attention
 		// currently implemented as mac-address 
 		// initialized from default constructor
@@ -27,6 +30,8 @@ namespace CollectorService.Broker.Events
 
 			this.time = DateTime.Now;
 
+			this.jsonContent = new JObject();
+
 		}
 
 		public CollectorEvent(JObject jsonContent) : this()
@@ -36,7 +41,7 @@ namespace CollectorService.Broker.Events
 
 		public JObject toJson()
 		{
-			return null;
+			return JObject.FromObject(this);
 		}
 
 

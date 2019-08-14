@@ -7,10 +7,11 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
 using CollectorService.Broker;
+using CollectorService.Configuration;
 
 namespace CollectorService.Data
 {
-	public class DataPuller
+	public class DataPuller : IReloadable
 	{
 
 		public IDatabaseService database { get; private set; }
@@ -36,6 +37,9 @@ namespace CollectorService.Data
 
 			this.database = databse;
 			this.broker = broker;
+
+			ServiceConfiguration.subscribeForReload(this.database);
+			ServiceConfiguration.subscribeForReload(this.broker);
 
 			this.read_interval = read_interval;
 			this.sensors_addr = sensors;
@@ -151,5 +155,18 @@ namespace CollectorService.Data
 			return response_data;
 		}
 
+		public void shutDown()
+		{
+
+			this.timer.Stop();
+			this.database.shutDown();
+			this.broker.shutDown();
+
+		}
+
+		public void reload(ServiceConfiguration newConfiguration)
+		{
+			Console.WriteLine("Reloading data puller: " + newConfiguration.ToString());
+		}
 	}
 }

@@ -1,3 +1,5 @@
+using CollectorService.Broker.Events;
+using CollectorService.Broker.Reporter.Report;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -8,8 +10,6 @@ namespace CollectorService.Broker.Reporter
 	{
 
 		private RequestDelegate next;
-
-		private MessageBroker broker;
 
 		public ControllerReporter(RequestDelegate next)
 		{
@@ -23,14 +23,14 @@ namespace CollectorService.Broker.Reporter
 
 			// this method is called on every http request 
 
-			// AccessReport report = new AccessReport(context.Request, context.Response);
-			// CollectorEvent c_event = new CollectorEvent(report.toJson());
-
-			// this.broker.publishEvent(c_event);
-
-			Console.WriteLine("IN MIDDLEWARE \n\n");
+			DateTime requestTime = DateTime.Now;
 
 			await next.Invoke(context);
+
+			AccessReport report = new AccessReport(context.Request, context.Response, requestTime);
+			CollectorEvent c_event = new CollectorEvent(report.toJson());
+
+			MessageBroker.Instance.publishEvent(c_event);
 
 		}
 

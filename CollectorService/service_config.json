@@ -5,8 +5,8 @@
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa",
 		"sensorsCollection": "Sensors",
-		"recordsCollection": "Records",
 		"fieldWithRecords": "records",
+		"configurationBackupCollection": "Configs",
 		"sensorsList": [
 			"http://localhost:5000"
 		],
@@ -16,15 +16,17 @@
 		"samplePrefix": "user_",
 		"brokerAddress": "localhost",
 		"brokerPort": "5672",
-		"controllerReportExchange": "controller_reports"
+		"collectorReportTopic": "collector_reports",
+		"configurationTopic": "config",
+		"targetConfiguration": "collector"
 	},
 	"Production": {
 		"port": "5000",
-		"dbAddress": "mongodb://mongo_service:27017",
+		"dbAddress": "mongodb://mongo_s:27017",
 		"dbName": "soa",
 		"sensorsCollection": "Sensors",
-		"recordsCollection": "Records",
 		"fieldWithRecords": "records",
+		"configurationBackupCollection": "Configs",
 		"sensorsList": [
 			"http://sensor_s:5000"
 		],
@@ -34,6 +36,8 @@
 		"samplePrefix": "user_",
 		"brokerAddress": "rabbit_s",
 		"brokerPort": "5672",
-		"controllerReportExchange": "controller_reports"
+		"collectorReportTopic": "collector_reports",
+		"configurationTopic": "config",
+		"targetConfiguration": "collector"
 	}
 }

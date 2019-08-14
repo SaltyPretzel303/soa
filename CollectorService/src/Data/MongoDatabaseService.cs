@@ -6,31 +6,27 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using MongoDB.Bson.IO;
 using CollectorService.Configuration;
+using System.Net.NetworkInformation;
 
 namespace CollectorService.Data
 {
 	public class MongoDatabaseService : IDatabaseService
 	{
 
-		private ServiceConfiguration configuration;
-
 		public MongoClient client { get; private set; }
 		public IMongoDatabase database { get; private set; }
 		public IMongoCollection<BsonDocument> sensorsCollection { get; private set; }
-		public IMongoCollection<BsonDocument> recordsCollection { get; private set; }
 
 		// constructors
 
 		public MongoDatabaseService()
 		{
 
-			// TODO inject configuration somehow
-			this.configuration = ServiceConfiguration.read();
+			ServiceConfiguration configuration = ServiceConfiguration.Instance;
 
-			this.client = new MongoClient(this.configuration.dbAddress);
+			this.client = new MongoClient(configuration.dbAddress);
 			this.database = this.client.GetDatabase(configuration.dbName);
 			this.sensorsCollection = this.database.GetCollection<BsonDocument>(configuration.sensorsCollection);
-			this.recordsCollection = this.database.GetCollection<BsonDocument>(configuration.recordsCollection);
 
 		}
 
@@ -39,26 +35,10 @@ namespace CollectorService.Data
 		public void pushToSensor(String sensorName, JArray rows)
 		{
 
-			// IMongoCollection<BsonDocument> collection = this.database.GetCollection<BsonDocument>(configuration.collectionName);
-
-			// records from this sensor doesn't exit in current database
-			// if (this.sensorsCollection.FindSync("{sensor_name:'" + sensorName + "'}").ToList().Count == 0)
-			// {
-			// 	// add sensor name to collection of sensors
-			// 	// this could be some additional data about sensor
-
-			// 	this.sensorsCollection.InsertOne(new BsonDocument("sensor_name", sensorName));
-
-			// }
-
-			// BsonDocument newRecord = new BsonDocument();
-			// newRecord.Add("sensor_name", sensorName);
-			// newRecord.Add("values", rows.ToString());
-
-			// this.recordsCollection.InsertOne(newRecord);
+			ServiceConfiguration configuration = ServiceConfiguration.Instance;
 
 			sensorsCollection.UpdateOne("{\"sensor_name\":\"" + sensorName + "\"}",
-			"{$push: { \"" + this.configuration.fieldWithRecords + "\": { $each : " + rows.ToString() + " } }}",
+			"{$push: { \"" + configuration.fieldWithRecords + "\": { $each : " + rows.ToString() + " } }}",
 			 new UpdateOptions { IsUpsert = true });
 			// upsert true -> create document if doesn't exists
 
@@ -139,5 +119,51 @@ namespace CollectorService.Data
 			return result;
 
 		}
+
+		public void shutDown()
+		{
+
+		}
+
+		public void reload(ServiceConfiguration newConfiguration)
+		{
+
+			Console.WriteLine("Reloading mongo ... ");
+
+			this.client = new MongoClient(newConfiguration.dbAddress);
+			this.database = this.client.GetDatabase(newConfiguration.dbName);
+			this.sensorsCollection = this.database.GetCollection<BsonDocument>(newConfiguration.sensorsCollection);
+
+		}
+
+		public void backupConfiguration(JObject oldJConfig)
+		{
+
+			String serviceAddr = NetworkInterface.GetAllNetworkInterfaces().Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
+
+			ServiceConfiguration oldOConfig = ServiceConfiguration.Instance;
+
+			IMongoCollection<BsonDocument> configCollection = this.database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
+
+			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
+			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}", "old_configs", oldJConfig.ToString());
+
+			try
+			{
+
+				configCollection.UpdateOne(matchQuery, updateQuery, new UpdateOptions { IsUpsert = true });
+				// upsert true -> create document if doesn't exists
+				Console.WriteLine("Configuration backup done ... ");
+
+			}
+			catch (FormatException e)
+			{
+				Console.WriteLine(e.StackTrace);
+			}
+
+
+
+		}
+
 	}
 }

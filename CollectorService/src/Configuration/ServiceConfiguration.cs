@@ -1,8 +1,8 @@
-using System.Runtime.CompilerServices;
 using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using CollectorService.Data;
 
 namespace CollectorService.Configuration
 {
@@ -10,23 +10,17 @@ namespace CollectorService.Configuration
 	public class ServiceConfiguration
 	{
 
-		private static ServiceConfiguration cache;
-
-		private static string CONFIGURATION_PATH = "./service_config.json";
-		private static string STAGE_VAR_NAME = "stage";
-
-		private static bool shouldBeReloaded = false;
+		public JObject rawJConfig { get; private set; }
 
 		// configuration variables
-
 		public string stage { get; set; }
 
 		public int port { get; set; }
 		public string dbAddress { get; set; }
 		public string dbName { get; set; }
 		public string sensorsCollection { get; set; }
-		public string recordsCollection { get; set; }
 		public string fieldWithRecords { get; set; }
+		public string configurationBackupCollection { get; set; }
 		public List<string> sensorsList { get; set; }
 
 		public string headerUrl { get; set; }
@@ -38,38 +32,109 @@ namespace CollectorService.Configuration
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
 
-		public string controllerReportExchange { get; set; }
+		public string collectorReportTopic { get; set; }
+		public string configurationTopic { get; set; }
+		public string targetConfiguration { get; set; }
 
-		public static ServiceConfiguration read()
+		// ent of the configuration variables
+
+		private static string CONFIGURATION_PATH = "./service_config.json";
+		private static string STAGE_VAR_NAME = "stage";
+		private static string rawConfig;
+
+
+		// singleton specific
+		private static ServiceConfiguration instance;
+		public static ServiceConfiguration Instance
 		{
-
-			if (ServiceConfiguration.cache != null && ServiceConfiguration.shouldBeReloaded != true)
+			get
 			{
-				Console.WriteLine("Reading configuration from cache ... ");
-				return ServiceConfiguration.cache;
+
+				if (ServiceConfiguration.instance == null)
+				{
+					ServiceConfiguration.instance = ServiceConfiguration.readFromFile();
+				}
+				else
+				{
+					Console.WriteLine("Reading cached configuration ... ");
+				}
+
+				return ServiceConfiguration.instance;
 			}
+			private set { ServiceConfiguration.instance = value; }
+		}
+
+		private static ServiceConfiguration readFromFile()
+		{
 
 			Console.WriteLine("Reading configuration file ... ");
 
-			string raw_config = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
-			JObject json_config = JObject.Parse(raw_config);
-			string stage = json_config.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
+			string rawConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
+			JObject json_config = JObject.Parse(rawConfig);
 
-			JObject conf_stage = (JObject)json_config.GetValue(stage);
+			return ServiceConfiguration.extractFromJson(json_config);
+		}
+
+		private static ServiceConfiguration extractFromJson(JObject jConfig)
+		{
+
+			string stage = jConfig.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
+			JObject conf_stage = (JObject)jConfig.GetValue(stage);
 
 			ServiceConfiguration config_o = conf_stage.ToObject<ServiceConfiguration>();
 			config_o.stage = stage;
-
-			ServiceConfiguration.cache = config_o;
-			// reset flag in case that reading is initiated because of it
-			ServiceConfiguration.shouldBeReloaded = false;
+			config_o.rawJConfig = jConfig;
 
 			return config_o;
+
 		}
 
-		public static void markForReload()
+		private void writeToFile()
 		{
-			ServiceConfiguration.shouldBeReloaded = true;
+
+			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
+
+		}
+
+		// reload specific methods
+
+		private static List<IReloadable> reloadableTargets;
+
+		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
+		{
+
+			// backup old configuration
+			if (backupDatabase != null)
+			{
+				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
+			}
+
+			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
+
+			ServiceConfiguration.Instance.writeToFile();
+
+			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
+			{
+				target.reload(ServiceConfiguration.Instance);
+			}
+
+		}
+
+		public static void subscribeForReload(IReloadable reloadableTarget)
+		{
+
+			if (ServiceConfiguration.reloadableTargets == null)
+			{
+				ServiceConfiguration.reloadableTargets = new List<IReloadable>();
+			}
+
+			ServiceConfiguration.reloadableTargets.Add(reloadableTarget);
+
+		}
+
+		public override string ToString()
+		{
+			return JObject.FromObject(this).ToString();
 		}
 
 	}
