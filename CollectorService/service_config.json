@@ -1,9 +1,9 @@
 {
 	"stage": "Development",
 	"Development": {
-		"port": "5001",
+		"port": "5002",
 		"dbAddress": "mongodb://localhost:27017",
-		"dbName": "soa",
+		"dbName": "soa_collector",
 		"sensorsCollection": "Sensors",
 		"fieldWithRecords": "records",
 		"configurationBackupCollection": "Configs",
@@ -16,28 +16,40 @@
 		"samplePrefix": "user_",
 		"brokerAddress": "localhost",
 		"brokerPort": "5672",
-		"collectorReportTopic": "collector_reports",
+		"serviceReportTopic": "service_reports",
+		"collectorReportFilter": "collector",
 		"configurationTopic": "config",
-		"targetConfiguration": "collector"
+		"targetConfiguration": "collector",
+		"sensorRegistryAddr": "localhost/sensor/registry",
+		"sensorRegistryPort": 5005,
+		"singleSensorAddrReqPath": "getAddress",
+		"sensorNameField": "sensorName",
+		"sensorListReqPath": "getSensors"
 	},
 	"Production": {
 		"port": "5000",
 		"dbAddress": "mongodb://mongo_s:27017",
-		"dbName": "soa",
+		"dbName": "soa_collector",
 		"sensorsCollection": "Sensors",
 		"fieldWithRecords": "records",
 		"configurationBackupCollection": "Configs",
 		"sensorsList": [
 			"http://sensor_s:5000"
 		],
-		"headerUrl": "/data/sensor/header",
-		"dataRangeUrl": "/data/sensor/range",
+		"headerUrl": "/sensor/data/header",
+		"dataRangeUrl": "sensor/data/range",
 		"readInterval": "5000",
 		"samplePrefix": "user_",
 		"brokerAddress": "rabbit_s",
 		"brokerPort": "5672",
-		"collectorReportTopic": "collector_reports",
+		"serviceReportTopic": "service_reports",
+		"collectorReportFilter": "collector_service",
 		"configurationTopic": "config",
-		"targetConfiguration": "collector"
+		"targetConfiguration": "collector",
+		"sensorRegistryAddr": "sensorRegistry/sensor/registry",
+		"sensorRegistryPort": 5005,
+		"singleSensorNameReqPath": "getAddress",
+		"sensorNameField": "sensorName",
+		"sensorListReqPath": "getSensors"
 	}
 }

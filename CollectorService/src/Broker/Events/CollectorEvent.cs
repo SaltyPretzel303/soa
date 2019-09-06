@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using CollectorService.Broker.Reporter.Reports;
 using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Broker.Events
@@ -12,7 +13,7 @@ namespace CollectorService.Broker.Events
 	public class CollectorEvent
 	{
 
-		public const string eventType = "collector_event";
+		public const string eventSourceType = "collector";
 
 		// attention
 		// currently implemented as mac-address 
@@ -21,7 +22,7 @@ namespace CollectorService.Broker.Events
 
 		public DateTime time { get; private set; }
 
-		public JObject jsonContent { get; set; }
+		public Report report { get; set; }
 
 		public CollectorEvent()
 		{
@@ -30,18 +31,26 @@ namespace CollectorService.Broker.Events
 
 			this.time = DateTime.Now;
 
-			this.jsonContent = new JObject();
-
 		}
 
-		public CollectorEvent(JObject jsonContent) : this()
+		public CollectorEvent(Report report) : this()
 		{
-			this.jsonContent = jsonContent;
+			this.report = report;
 		}
 
 		public JObject toJson()
 		{
-			return JObject.FromObject(this);
+
+			JObject retObj = new JObject();
+
+			retObj["eventSourceType"] = CollectorEvent.eventSourceType;
+			retObj["source"] = this.source;
+			retObj["time"] = this.time;
+
+			retObj["reportType"] = this.report.getReportType();
+			retObj["report"] = this.report.toJson();
+
+			return retObj;
 		}
 
 

@@ -29,6 +29,7 @@ namespace CollectorService.Broker
 					// attention this is the place for changing Broker implementation
 
 					MessageBroker.instance = new RabbitMqBroker();
+
 				}
 
 				return MessageBroker.instance;
@@ -41,8 +42,6 @@ namespace CollectorService.Broker
 
 		}
 
-		public abstract IModel getChannel();
-
 		public abstract void publishEvent(CollectorEvent eventToPublish);
 
 		public abstract void shutDown();
@@ -50,5 +49,6 @@ namespace CollectorService.Broker
 		public abstract void subscribeForConfiguration(DConfigurationHandler configHandler);
 
 		public abstract void reload(ServiceConfiguration newConfiguration);
+
 	}
 }

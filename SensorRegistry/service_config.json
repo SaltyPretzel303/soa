@@ -1,0 +1,21 @@
+{
+	"stage": "Production",
+	"Development": {
+		"brokerAddress": "localhost",
+		"brokerPort": 5672,
+		"serviceReportTopic": "service_reports",
+		"registryReportFilter": "registry_service",
+		"configurationTopic": "config",
+		"targetConfiguration": "sensor_registry",
+		"listeningPort": 5005
+	},
+	"Production": {
+		"brokerAddress": "rabbit_s",
+		"brokerPort": 5672,
+		"serviceReportTopic": "service_reports",
+		"registryReportFilter": "registry_service",
+		"configurationTopic": "config",
+		"targetConfiguration": "sensor_registry",
+		"listeningPort": 5000
+	}
+}

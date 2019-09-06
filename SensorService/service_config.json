@@ -11,8 +11,16 @@
 			"To": 60
 		},
 		"readInterval": 10000,
-		"port": 5000,
-		"sensorNamePrefix": "sensor_"
+		"listeningPort": 5000,
+		"sensorNamePrefix": "sensor_",
+		"registryAddress": "localhost/sensor/registry",
+		"registerSensorPath": "registerSensor",
+		"updateSensorPath": "updateSensor",
+		"sensorNameField": "sensorName",
+		"sensorAddrField": "sensorAddr",
+		"portNumField": "portNum",
+		"registryPort": 5005,
+		"sensorName": "sensor_-1"
 	},
 	"Production": {
 		"responseTypeField": "sensor_response",
@@ -25,7 +33,15 @@
 			"To": 60
 		},
 		"readInterval": 10000,
-		"port": 5000,
-		"sensorNamePrefix": "sensor_"
+		"listeningPort": 5000,
+		"sensorNamePrefix": "sensor_",
+		"registryAddress": "sensorRegistry/sensor/registry",
+		"registerSensorPath": "registerSensor",
+		"updateSensorPath": "updateSensor",
+		"sensorNameField": "sensorName",
+		"sensorAddrField": "sensorAddr",
+		"portNumField": "portNum",
+		"registryPort": 5000,
+		"sensorName": "sensor_-1"
 	}
 }

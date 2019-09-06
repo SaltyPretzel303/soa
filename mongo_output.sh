@@ -2,11 +2,6 @@
 
 #b.Sensors.aggregate([{$match:{sensor_name:"sensor_55"}},{ $project: {records: 1}}]).pretty()
 
-#!/bin/bash
-
-#mongo soa --eval 'db.Sensors.aggregate([{ $match: {sensor_name: "sensor_55"} }, { $project : { records : { $filter : { input: "$records",as: "record", 
-#cond: {$gte: ["$$record.timestamp",1439324357]} }  }} }]).forEach(printjson)'
-
 mongo soa --eval 'db.Configs.update({service_name:12321},{$push: {old_configs: {
 	"stage": "Development",
 	"port": 5001,

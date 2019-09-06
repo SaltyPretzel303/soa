@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Net.Http;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SensorService.Configuration;
@@ -23,8 +25,9 @@ namespace SensorService
 			FromTo samples_range = config.samplesRange;
 			int read_interval = config.readInterval;
 
-
 			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval));
+
+			this.registerSensor();
 
 		}
 
@@ -39,5 +42,29 @@ namespace SensorService
 			app.UseMvc();
 
 		}
+
+		private void registerSensor()
+		{
+
+			ServiceConfiguration conf = ServiceConfiguration.read();
+
+			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050
+			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={conf.sensorName}&{conf.portNumField}={conf.listeningPort}";
+
+			HttpClient httpClient = new HttpClient();
+			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result;
+
+			if (responseMessage.IsSuccessStatusCode)
+			{
+				Console.WriteLine("Sensor successful registered ... ");
+			}
+			else
+			{
+				Console.WriteLine("Error in sensor registration ... ");
+				Console.WriteLine(responseMessage.Content.ToString());
+			}
+
+		}
+
 	}
 }

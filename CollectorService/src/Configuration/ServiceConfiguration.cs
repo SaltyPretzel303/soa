@@ -32,9 +32,16 @@ namespace CollectorService.Configuration
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
 
-		public string collectorReportTopic { get; set; }
+		public string serviceReportTopic { get; set; }
+		public string collectorReportFilter { get; set; }
 		public string configurationTopic { get; set; }
 		public string targetConfiguration { get; set; }
+
+		public string sensorRegistryAddr { get; set; }
+		public string sensorRegistryPort { get; set; }
+		public string singleSensorNameReqPath { get; set; }
+		public string sensorNameField { get; set; }
+		public string sensorListReqPath { get; set; }
 
 		// ent of the configuration variables
 

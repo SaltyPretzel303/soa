@@ -25,9 +25,16 @@ namespace SensorService.Configuration
 		public string sampleExtension { get; set; }
 		public FromTo samplesRange { get; set; }
 		public int readInterval { get; set; }
-		public int port { get; set; }
+		public int listeningPort { get; set; }
 		public string sensorNamePrefix { get; set; }
-
+		public string registryAddress { get; set; }
+		public string registryPort { get; set; }
+		public string sensorName { get; set; }
+		public string registerSensorPath { get; set; }
+		public string updateSensorPath { get; set; }
+		public string sensorNameField { get; set; }
+		public string sensorAddrField { get; set; }
+		public string portNumField { get; set; }
 		// methods
 
 		public static ServiceConfiguration read()

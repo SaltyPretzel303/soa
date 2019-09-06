@@ -16,7 +16,7 @@ namespace SensorService
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.read();
-			int port_num = config.port;
+			int port_num = config.listeningPort;
 
 			return WebHost.CreateDefaultBuilder(args)
 			.UseStartup<Startup>()

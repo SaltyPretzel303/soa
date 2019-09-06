@@ -10,7 +10,7 @@ using SensorService.Configuration;
 namespace DataCollector.Controller
 {
 	// port: 5001
-	[Route("data/[controller]")]
+	[Route("sensor/data")]
 	[ApiController]
 	public class SensorController : ControllerBase
 	{

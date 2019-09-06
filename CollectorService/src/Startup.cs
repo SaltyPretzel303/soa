@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CollectorService.Broker.Reporter;
 using System;
 using CollectorService.Broker.Events;
-using CollectorService.src.Broker.Reporter.Report;
 using Newtonsoft.Json.Linq;
+using CollectorService.Broker.Reporter.Reports;
 
 namespace CollectorService
 {
@@ -65,7 +65,7 @@ namespace CollectorService
 
 			Console.WriteLine("Handling startup ... ");
 
-			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("startup").toJson()));
+			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("startup")));
 
 		}
 
@@ -74,19 +74,20 @@ namespace CollectorService
 
 			Console.Write("Handling shutdown ... ");
 
-			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("shutdown").toJson()));
+			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("shutdown")));
 
 			MessageBroker.Instance.shutDown();
 
 		}
 
-		private void handleNewConfiguration(JObject newConfig
-		)
+		private void handleNewConfiguration(JObject newConfig)
 		{
 
 			Console.WriteLine("Handling new configuration ... \n\n");
 
-			// TODO database is coupled with the single implementation 
+			// TODO database is coupled with the single implementation
+			// extract database from service provider
+			// or create database abstarct factory 
 			ServiceConfiguration.reload(newConfig, new MongoDatabaseService());
 
 		}

@@ -8,6 +8,9 @@ using System.Net.Http;
 using System.Collections.Generic;
 using CollectorService.Broker;
 using CollectorService.Configuration;
+using CollectorService.Broker.Events;
+using CollectorService.Broker.Reporter.Reports;
+using CollectorService.Data.Registry;
 
 namespace CollectorService.Data
 {
@@ -63,11 +66,17 @@ namespace CollectorService.Data
 
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
+
+			Console.WriteLine("Requesting sensors list ... ");
+			List<SensorRecord> sensors = this.readSensorRegistry();
+
 			int max_row_count = -1;
-			foreach (String single_sensor in this.sensors_addr)
+			foreach (SensorRecord single_sensor in sensors)
 			{
 
-				string api_url = single_sensor + this.dataRangeUrl + "?index=" + this.read_index;
+				string sensorAddr = $"http://{single_sensor.address}:{single_sensor.port}";
+				string api_url = $"{sensorAddr}/{this.dataRangeUrl}?index={this.read_index}";
+
 				Uri sensor_uri = new Uri(api_url);
 				Console.WriteLine("Pulling from: " + api_url);
 
@@ -78,7 +87,6 @@ namespace CollectorService.Data
 				}
 				catch (AggregateException e)
 				{
-					Console.WriteLine("Aggregate exception: ");
 
 					if (e.InnerException is HttpRequestException)
 					{
@@ -86,6 +94,11 @@ namespace CollectorService.Data
 						string message = ((HttpRequestException)e.InnerException).Message;
 
 						Console.WriteLine($"Http req. exception, message: {message} ... sensor may be down.\nSensor addr. : {sensor_uri.ToString()}\n");
+
+
+						Report report = new SensorPullReport(sensor_uri.ToString(), message);
+						CollectorEvent sensorEvent = new CollectorEvent(report);
+						MessageBroker.Instance.publishEvent(sensorEvent);
 
 					}
 
@@ -153,6 +166,27 @@ namespace CollectorService.Data
 			Console.WriteLine(response_data);
 
 			return response_data;
+		}
+
+		public List<SensorRecord> readSensorRegistry()
+		{
+
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
+
+			string addr = $"http://{conf.sensorRegistryAddr}:{conf.sensorRegistryPort}/{conf.sensorListReqPath}";
+
+			HttpResponseMessage responseMessage = this.httpClient.GetAsync(addr).Result;
+
+			if (responseMessage.IsSuccessStatusCode)
+			{
+
+				RegistryResponse response = responseMessage.Content.ReadAsAsync<RegistryResponse>().Result;
+
+				return response.listData;
+
+			}
+
+			return null;
 		}
 
 		public void shutDown()

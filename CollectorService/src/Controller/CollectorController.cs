@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CollectorService.Configuration;
 using CollectorService.Data;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -77,7 +78,12 @@ namespace CollectorService.Controller
 			// backup current config in to the database 
 			// write this configuration in to the config file on default path 
 
-			return StatusCode(404);
+			// TODO follow above steps
+
+			ServiceConfiguration.reload(JObject.Parse(configUpdateRequest), this.database);
+
+			return StatusCode(200);
+
 		}
 
 

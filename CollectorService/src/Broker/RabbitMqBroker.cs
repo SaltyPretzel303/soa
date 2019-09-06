@@ -45,6 +45,7 @@ namespace CollectorService.Broker
 		{
 			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = this.brokerHostName, Port = this.port };
 
+			// if create connections is called from reload previous connections is still alive
 			if (this.connection != null && this.connection.IsOpen)
 			{
 				this.connection.Close();
@@ -69,13 +70,8 @@ namespace CollectorService.Broker
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			// declare exchange for publishing collector events (reports)
-			channel.ExchangeDeclare(config.collectorReportTopic, "topic", true, true, null);
+			channel.ExchangeDeclare(config.serviceReportTopic, "topic", true, true, null);
 
-		}
-
-		override public IModel getChannel()
-		{
-			return this.connection.CreateModel();
 		}
 
 		override public void publishEvent(CollectorEvent eventToPublish)
@@ -87,7 +83,7 @@ namespace CollectorService.Broker
 
 			byte[] content = Encoding.UTF8.GetBytes(eventToPublish.toJson().ToString());
 
-			channel.BasicPublish(conf.collectorReportTopic, "", false, null, content);
+			channel.BasicPublish(conf.serviceReportTopic, conf.collectorReportFilter, false, null, content);
 
 			Console.WriteLine("Publishing: " + eventToPublish.toJson().ToString());
 
@@ -163,6 +159,7 @@ namespace CollectorService.Broker
 				this.subscribeForConfiguration(this.configurationHandler);
 			}
 
+			this.ready = true;
 
 		}
 	}

@@ -1,0 +1,38 @@
+{
+	"stage": "Development",
+	"Development": {
+		"port": "5003",
+		"dbAddress": "mongodb://localhost:27017",
+		"dbName": "soa_service_observer",
+		"serviceEventsCollection": "Services",
+		"fieldWithRecords": "events",
+		"configurationBackupCollection": "Configs",
+		"brokerAddress": "localhost",
+		"brokerPort": "5672",
+		"serviceReportTopic": "service_reports",
+		"serviceReportFilter": "#",
+		"configurationTopic": "config",
+		"serviceQosTopic": "service_qos_events",
+		"targetConfiguration": "service_observer",
+		"patterns": [
+			{},
+			{}
+		]
+	},
+	"Production": {
+		"port": "5000",
+		"dbAddress": "mongodb://mongo_s:27017",
+		"dbName": "soa_service_observer",
+		"serviceEventsCollection": "Services",
+		"fieldWithRecords": "events",
+		"configurationBackupCollection": "Configs",
+		"brokerAddress": "rabbit_s",
+		"brokerPort": "5672",
+		"report_topics": [
+			"collector_reports"
+		],
+		"collectorReportTopic": "collector_reports",
+		"configurationTopic": "config",
+		"targetConfiguration": "collector"
+	}
+}
