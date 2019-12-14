@@ -19,11 +19,14 @@ namespace CollectorService.Data.Registry
 		public string address;
 		public int port;
 
-		public SensorRecord(string name, string address, int port)
+		public int lastReadIndex = 0;
+
+		public SensorRecord(string name, string address, int port, int lastReadIndex)
 		{
 			this.name = name;
 			this.address = address;
 			this.port = port;
+			this.lastReadIndex = lastReadIndex;
 		}
 	}
 

@@ -1,19 +1,14 @@
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
-using CollectorService.Broker.Reporter.Reports.Collector;
+using CollectorService.src.Broker.Reporter.Reports.Registry;
 using Newtonsoft.Json.Linq;
 
-namespace CollectorService.Broker.Events
+namespace CollectorService.src.Broker.Events
 {
-
-	// http requests report
-	// sensor unavailable
-
-	public class CollectorEvent
+	public class RegistryEvent
 	{
-
-		public const string eventSourceType = "collector";
+		public const string eventSourceType = "registry";
 
 		// attention
 		// currently implemented as mac-address 
@@ -24,7 +19,7 @@ namespace CollectorService.Broker.Events
 
 		public Report report { get; set; }
 
-		public CollectorEvent()
+		public RegistryEvent()
 		{
 			// read mac-address
 			this.source = NetworkInterface.GetAllNetworkInterfaces().Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
@@ -33,26 +28,16 @@ namespace CollectorService.Broker.Events
 
 		}
 
-		public CollectorEvent(Report report) : this()
+		public RegistryEvent(Report report) : this()
 		{
 			this.report = report;
+			Console.WriteLine("Report assigned: " + this.report.toJson().ToString());
 		}
 
 		public JObject toJson()
 		{
-
-			JObject retObj = new JObject();
-
-			retObj["eventSourceType"] = CollectorEvent.eventSourceType;
-			retObj["source"] = this.source;
-			retObj["time"] = this.time;
-
-			retObj["reportType"] = this.report.getReportType();
-			retObj["report"] = this.report.toJson();
-
-			return retObj;
+			return JObject.FromObject(this);
 		}
-
 
 	}
 }

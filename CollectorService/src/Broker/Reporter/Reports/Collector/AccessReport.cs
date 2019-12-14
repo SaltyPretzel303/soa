@@ -3,7 +3,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 
-namespace CollectorService.Broker.Reporter.Reports
+namespace CollectorService.Broker.Reporter.Reports.Collector
 {
 	public class AccessReport : Report
 	{

@@ -73,8 +73,9 @@ namespace SensorService.Data
 		{
 
 			// read one more line for evey user
-			// read this.line_counter row
-			Console.WriteLine("Read event ...");
+			// read this.line_counte. row
+			Console.WriteLine($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
+
 			int logical_index = 0;
 			for (int real_index = this.samplesRange.From; real_index < this.samplesRange.To; real_index++)
 			{

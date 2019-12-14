@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace CollectorService.Broker.Reporter.Reports
+namespace CollectorService.Broker.Reporter.Reports.Collector
 {
 	public class LifeCycleReport : Report
 	{

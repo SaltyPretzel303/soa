@@ -14,7 +14,7 @@ COPY ./service_config.json ./service_config.json
 RUN dotnet build
 RUN dotnet publish
 
-WORKDIR ./bin/Debug/netcoreapp2.2/publish
+WORKDIR /collector_service/bin/Debug/netcoreapp2.2/publish
 
 # ENV ASPNETCORE_URLS http://+:5000
 

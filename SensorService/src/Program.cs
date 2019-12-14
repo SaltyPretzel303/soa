@@ -21,6 +21,7 @@ namespace SensorService
 			return WebHost.CreateDefaultBuilder(args)
 			.UseStartup<Startup>()
 			.UseUrls("http://+:" + port_num + "/");
+
 		}
 	}
 }

@@ -4,16 +4,22 @@
 		"brokerAddress": "localhost",
 		"brokerPort": 5672,
 		"serviceReportTopic": "service_reports",
-		"registryReportFilter": "registry_service",
+		"registryReportFilter": "registry",
+		"sensorRegistryTopic": "sensor_registry",
+		"newSensorFilter": "new_sensor",
+		"sensorRemovedFilter": "sensor_removed",
 		"configurationTopic": "config",
 		"targetConfiguration": "sensor_registry",
-		"listeningPort": 5005
+		"listeningPort": 5002
 	},
 	"Production": {
 		"brokerAddress": "rabbit_s",
 		"brokerPort": 5672,
 		"serviceReportTopic": "service_reports",
-		"registryReportFilter": "registry_service",
+		"registryReportFilter": "registry",
+		"sensorRegistryTopic": "sensor_registry",
+		"newSensorFilter": "new_sensor",
+		"sensorRemovedFilter": "sensor_removed",
 		"configurationTopic": "config",
 		"targetConfiguration": "sensor_registry",
 		"listeningPort": 5000

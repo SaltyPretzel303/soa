@@ -1,7 +1,7 @@
+using CollectorService.Data.Registry;
 using Newtonsoft.Json.Linq;
-using SensorRegistry.Registry;
 
-namespace SensorRegistry.Broker.Event.Reports
+namespace CollectorService.src.Broker.Reporter.Reports.Registry
 {
 
 	public enum RegistryReportType
@@ -10,14 +10,14 @@ namespace SensorRegistry.Broker.Event.Reports
 		SensorUnregitration
 	}
 
-	public class RegistryReport
+	public class Report
 	{
 
 		public RegistryReportType type;
 
 		public SensorRecord record;
 
-		public RegistryReport(RegistryReportType type, SensorRecord record)
+		public Report(RegistryReportType type, SensorRecord record)
 		{
 			this.type = type;
 			this.record = record;
@@ -29,5 +29,4 @@ namespace SensorRegistry.Broker.Event.Reports
 		}
 
 	}
-
 }

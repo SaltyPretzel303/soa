@@ -27,6 +27,8 @@ namespace CollectorService.Configuration
 		public string dataRangeUrl { get; set; }
 
 		public int readInterval { get; set; }
+		public string sensorResponseTypeField { get; set; }
+		public string sensorOkResponse { get; set; }
 		public string samplePrefix { get; set; }
 
 		public string brokerAddress { get; set; }
@@ -42,6 +44,10 @@ namespace CollectorService.Configuration
 		public string singleSensorNameReqPath { get; set; }
 		public string sensorNameField { get; set; }
 		public string sensorListReqPath { get; set; }
+
+		public string sensorRegistryTopic { get; set; }
+		public string newSensorFilter { get; set; }
+		public string sensorRemovedFilter { get; set; }
 
 		// ent of the configuration variables
 
@@ -60,10 +66,6 @@ namespace CollectorService.Configuration
 				if (ServiceConfiguration.instance == null)
 				{
 					ServiceConfiguration.instance = ServiceConfiguration.readFromFile();
-				}
-				else
-				{
-					Console.WriteLine("Reading cached configuration ... ");
 				}
 
 				return ServiceConfiguration.instance;

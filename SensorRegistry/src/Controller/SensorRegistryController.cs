@@ -1,3 +1,4 @@
+using System.ComponentModel.Design;
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -5,6 +6,7 @@ using SensorRegistry.Broker;
 using SensorRegistry.Broker.Event;
 using SensorRegistry.Broker.Event.Reports;
 using SensorRegistry.Registry;
+using SensorRegistry.Configuration;
 
 namespace SensorRegistry.Controller
 {
@@ -27,11 +29,14 @@ namespace SensorRegistry.Controller
 
 		}
 
+		// TODO should be post
+		// problem, extract 2 arguments (1 is ok ... ) 
 		[HttpGet]
 		[Route("registerSensor")]
 		public IActionResult registerSensor([FromQuery] string sensorName, [FromQuery] int portNum)
 		{
 
+			// sensor ip is extracted from request
 			string sensorIp = this.httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
 			Console.WriteLine($"Request to register sensor: {sensorName}, with: {sensorIp}:{portNum}");
@@ -41,15 +46,20 @@ namespace SensorRegistry.Controller
 			if (response.status == RegistryStatus.ok)
 			{
 
-				Report report = new RegistrationReport(sensorName, sensorIp, portNum);
+				RegistryReport report = new RegistryReport(RegistryReportType.SensorRegistration, response.singleData);
 
-				this.broker.publishEvent(new RegistryEvent(report));
+				ServiceConfiguration conf = ServiceConfiguration.read();
+
+				this.broker.publishEvent(new RegistryEvent(report), conf.newSensorFilter);
+
 				return new OkObjectResult(response.singleData);
 			}
 
 			return new BadRequestObjectResult("Registry response: " + response.status.ToString());
 		}
 
+		// TODO should be post
+		// problem, same as with registerSenosor
 		[HttpGet]
 		[Route("updateSensor")]
 		public IActionResult updateSensor([FromQuery]string sensorName, [FromQuery] string sensorAddr, [FromQuery] int portNum)
@@ -73,13 +83,18 @@ namespace SensorRegistry.Controller
 		public IActionResult unregisterSensor([FromQuery] string sensorName)
 		{
 
+			string sensorIp = this.httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
+			Console.WriteLine($"Request to unregister sensor: {sensorName}, with {sensorIp}");
 			RegistryResponse response = this.sensorRegistry.removeSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{
 
-				Report report = new UnregistrationReport(sensorName, response.singleData.address, response.singleData.port);
+				RegistryReport report = new RegistryReport(RegistryReportType.SensorUnregitration, response.singleData);
 
-				this.broker.publishEvent(new RegistryEvent(report));
+				ServiceConfiguration conf = ServiceConfiguration.read();
+
+				this.broker.publishEvent(new RegistryEvent(report), conf.sensorRemovedFilter);
 
 				return new OkObjectResult(response.singleData);
 			}
@@ -113,6 +128,7 @@ namespace SensorRegistry.Controller
 			if (response.status == RegistryStatus.ok)
 			{
 
+				// returns list of sensorRecords
 				return new OkObjectResult(response.listData);
 			}
 

@@ -26,6 +26,9 @@ namespace SensorRegistry.Configuration
 		public string configurationTopic { get; set; }
 		public string targetConfiguration { get; set; }
 
+		public string sensorRegistryTopic { get; set; }
+		public string newSensorFilter { get; set; }
+		public string sensorRemovedFilter { get; set; }
 
 		// methods
 
@@ -34,7 +37,6 @@ namespace SensorRegistry.Configuration
 
 			if (ServiceConfiguration.cache != null)
 			{
-				Console.WriteLine("Reading configuration from cache ... ");
 				return ServiceConfiguration.cache;
 			}
 

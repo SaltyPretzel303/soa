@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Controller
 {
-	// port: 50002
+	// dev: 5003 prod: 5000
 	[Route("data/access")]
 	[ApiController]
 	public class CollectorController : ControllerBase
@@ -19,6 +19,16 @@ namespace CollectorService.Controller
 		{
 			this.database = database;
 		}
+
+		// CRUD
+
+		// create
+
+		// read
+
+		// update
+
+		// delete
 
 		/* response format:
 				[

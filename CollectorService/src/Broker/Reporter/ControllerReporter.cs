@@ -1,5 +1,5 @@
 using CollectorService.Broker.Events;
-using CollectorService.Broker.Reporter.Reports;
+using CollectorService.Broker.Reporter.Reports.Collector;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;

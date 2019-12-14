@@ -1,16 +1,14 @@
-using System.Net.Sockets;
 using System.IO;
 using System.Net;
 using System;
 using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
-using System.Collections.Generic;
 using CollectorService.Broker;
 using CollectorService.Configuration;
 using CollectorService.Broker.Events;
-using CollectorService.Broker.Reporter.Reports;
 using CollectorService.Data.Registry;
+using CollectorService.Broker.Reporter.Reports.Collector;
 
 namespace CollectorService.Data
 {
@@ -28,14 +26,12 @@ namespace CollectorService.Data
 
 		private MessageBroker broker;
 
-		private List<string> sensors_addr;
-
 		private string dataRangeUrl;
 		private string headerUrl;
 
 		// constructors
 
-		public DataPuller(IDatabaseService databse, MessageBroker broker, int read_interval, List<string> sensors, string data_range_url, string header_url)
+		public DataPuller(IDatabaseService databse, MessageBroker broker, int read_interval, string data_range_url, string header_url)
 		{
 
 			this.database = databse;
@@ -45,7 +41,6 @@ namespace CollectorService.Data
 			ServiceConfiguration.subscribeForReload(this.broker);
 
 			this.read_interval = read_interval;
-			this.sensors_addr = sensors;
 			this.dataRangeUrl = data_range_url;
 			this.headerUrl = header_url;
 
@@ -67,15 +62,15 @@ namespace CollectorService.Data
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
-			Console.WriteLine("Requesting sensors list ... ");
-			List<SensorRecord> sensors = this.readSensorRegistry();
-
 			int max_row_count = -1;
-			foreach (SensorRecord single_sensor in sensors)
+			Console.WriteLine($"Ready to pull from: {LocalRegistry.Instance.getRecords().Count} sensors ... ");
+			foreach (SensorRecord single_sensor in LocalRegistry.Instance.getRecords())
 			{
 
+				int sensorLastReadIndex = LocalRegistry.Instance.getSensor(single_sensor.name).lastReadIndex;
+
 				string sensorAddr = $"http://{single_sensor.address}:{single_sensor.port}";
-				string api_url = $"{sensorAddr}/{this.dataRangeUrl}?index={this.read_index}";
+				string api_url = $"{sensorAddr}/{this.dataRangeUrl}?index={sensorLastReadIndex}";
 
 				Uri sensor_uri = new Uri(api_url);
 				Console.WriteLine("Pulling from: " + api_url);
@@ -100,6 +95,8 @@ namespace CollectorService.Data
 						CollectorEvent sensorEvent = new CollectorEvent(report);
 						MessageBroker.Instance.publishEvent(sensorEvent);
 
+						continue; // pull from next sensor
+
 					}
 
 
@@ -107,41 +104,59 @@ namespace CollectorService.Data
 				catch (Exception e)
 				{
 					Console.WriteLine($"UNKNOWN EXCEPTION in gettin data: {e.ToString()}");
-					continue;
+
+					continue; // pull from next sensor
 				}
+
 				JObject j_response = JObject.Parse(s_response);
+				ServiceConfiguration conf = ServiceConfiguration.Instance;
+				if (j_response.GetValue(conf.sensorResponseTypeField).ToString() != conf.sensorOkResponse)
+				{
+
+					Console.WriteLine("Bad response from sensor: " + single_sensor.name);
+					Console.WriteLine(j_response.GetValue(conf.sensorResponseTypeField).ToString());
+
+					continue; // pull from next sensor
+
+				}
 
 				int row_count = int.Parse(j_response.GetValue("rows_count").ToString());
+
+				// ATTENTION this line is useless 
+				// TODO remove this
 				if (row_count > max_row_count)
 				{
 					max_row_count = row_count;
 				}
+
 				int from_index = int.Parse(j_response.GetValue("from_sample").ToString());
 				int to_index = int.Parse(j_response.GetValue("to_sample").ToString());
 				string sensor_prefix = j_response.GetValue("sensor_name_prefix").ToString();
 
-				string temp_sample_name = "";
+				string temp_sensor_name = "";
 
-				for (int sample_index = from_index; sample_index < to_index; sample_index++)
+				for (int sensor_index = from_index; sensor_index < to_index; sensor_index++)
 				{
 
-					temp_sample_name = sensor_prefix + sample_index.ToString();
+					temp_sensor_name = sensor_prefix + sensor_index.ToString();
 
-					JArray sample_values = (JArray)j_response.GetValue(temp_sample_name);
+					JArray sample_values = (JArray)j_response.GetValue(temp_sensor_name);
 
-					this.database.pushToSensor(temp_sample_name, sample_values);
+					this.database.pushToSensor(temp_sensor_name, sample_values);
+
+					// update read index for every sensor
+					LocalRegistry.Instance.getSensor(temp_sensor_name).lastReadIndex += row_count;
 
 				}
 
-				Console.WriteLine($"Got samples from: {from_index} to: {to_index}");
-
+				Console.WriteLine($"Sensor {single_sensor.name} returned {row_count} rows ... ");
 
 			}
 
-			Console.WriteLine("Read index increase for: " + max_row_count);
+			// Console.WriteLine("Read index increase for: " + max_row_count);
 			if (max_row_count > 0)
 				this.read_index += max_row_count;
-			Console.WriteLine("New read index: " + this.read_index);
+			// Console.WriteLine("New read index: " + this.read_index);
 		}
 
 		// not used ...
@@ -152,7 +167,7 @@ namespace CollectorService.Data
 			String response_data = "";
 
 			// all sensors have same header
-			string single_sensor = this.sensors_addr[0];
+			string single_sensor = LocalRegistry.Instance.getRecords()[0].address;
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(single_sensor + this.headerUrl);
 			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -166,27 +181,6 @@ namespace CollectorService.Data
 			Console.WriteLine(response_data);
 
 			return response_data;
-		}
-
-		public List<SensorRecord> readSensorRegistry()
-		{
-
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
-			string addr = $"http://{conf.sensorRegistryAddr}:{conf.sensorRegistryPort}/{conf.sensorListReqPath}";
-
-			HttpResponseMessage responseMessage = this.httpClient.GetAsync(addr).Result;
-
-			if (responseMessage.IsSuccessStatusCode)
-			{
-
-				RegistryResponse response = responseMessage.Content.ReadAsAsync<RegistryResponse>().Result;
-
-				return response.listData;
-
-			}
-
-			return null;
 		}
 
 		public void shutDown()

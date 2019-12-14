@@ -1,11 +1,11 @@
 #!/bin/bash
 
-#b.Sensors.aggregate([{$match:{sensor_name:"sensor_55"}},{ $project: {records: 1}}]).pretty()
+#db.Sensors.aggregate([{$match:{sensor_name:"sensor_55"}},{ $project: {records: 1}}]).pretty()
 
-mongo soa --eval 'db.Configs.update({service_name:12321},{$push: {old_configs: {
-	"stage": "Development",
-	"port": 5001,
-	"dbAddress": "mongodb://localhost:27017",
+#mongo soa --eval 'db.Configs.update({service_name:12321},{$push: {old_configs: {
+	#"stage": "Development",
+	#"port": 5001,
+	#"dbAddress": "mongodb://localhost:27017",
 	"dbName": "soa",
 	"sensorsCollection": "Sensors",
 	"recordsCollection": "Records",
@@ -25,9 +25,9 @@ mongo soa --eval 'db.Configs.update({service_name:12321},{$push: {old_configs: {
 	"targetConfiguration": "collector"
   }}},{IsUpsert:true})'
 
-mongo soa --eval 'db.Configs.find().forEach(printjson)'
+# mongo soa --eval 'db.Configs.find().forEach(printjson)'
 
-mongo soa --eval 'db.Sensors.aggregate([
+# mongo soa --eval 'db.Sensors.aggregate([
 			{$match: {sensor_name: {$regex:"sensor_55"}}},
 			{$project: {records: { 
 									$filter: {

@@ -5,6 +5,7 @@ using SensorRegistry.Configuration;
 using SensorRegistry.Broker.Event;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Net.Sockets;
 
 namespace SensorRegistry.Broker
 {
@@ -18,9 +19,6 @@ namespace SensorRegistry.Broker
 			get { return this.ready; }
 		}
 
-		private string brokerHostName;
-		private int port;
-
 		private IConnection connection;
 
 		private string configQueue;
@@ -32,18 +30,15 @@ namespace SensorRegistry.Broker
 
 			this.ready = false;
 
-			ServiceConfiguration configuration = ServiceConfiguration.read();
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
-
 			this.createConnection();
 
 		}
 
 		private void createConnection()
 		{
-			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = this.brokerHostName, Port = this.port };
+
+			ServiceConfiguration conf = ServiceConfiguration.read();
+			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = conf.brokerAddress, Port = conf.brokerPort };
 
 			// if create connections is called from reload previous connections is still alive
 			if (this.connection != null && this.connection.IsOpen)
@@ -51,9 +46,19 @@ namespace SensorRegistry.Broker
 				this.connection.Close();
 			}
 
-			this.connection = conn_factory.CreateConnection();
+			try
+			{
+				this.connection = conn_factory.CreateConnection();
+			}
+			// TODO handle aggregate exception for fine error handling 
+			catch (Exception e)
+			{
+				Console.WriteLine("Failed to connecto to the broker ... ");
+				Console.WriteLine(e.ToString());
 
-			if (connection.IsOpen)
+			}
+
+			if (this.connection != null && this.connection.IsOpen)
 			{
 
 				IModel channel = connection.CreateModel();
@@ -74,16 +79,29 @@ namespace SensorRegistry.Broker
 
 		}
 
-		override public void publishEvent(RegistryEvent eventToPublish)
+		public override void publishEvent(RegistryEvent eventToPublish, string topic)
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.read();
+
+			if (this.connection != null && !this.connection.IsOpen)
+			{
+				this.createConnection();
+			}
+
+			if (this.connection == null || !this.connection.IsOpen)
+			{
+				// tried to create connection but some exception occured ...  
+				return;
+			}
 
 			IModel channel = this.connection.CreateModel();
 
 			byte[] content = Encoding.UTF8.GetBytes(eventToPublish.toJson().ToString());
 
-			channel.BasicPublish(conf.serviceReportTopic, conf.registryReportFilter, false, null, content);
+			// TODO borker doesn't have to know about event type
+			// TODO handle exceptions for publish event 
+			channel.BasicPublish(conf.sensorRegistryTopic, topic, false, null, content);
 
 			Console.WriteLine("Publishing: " + eventToPublish.toJson().ToString());
 
@@ -147,9 +165,6 @@ namespace SensorRegistry.Broker
 			this.ready = false;
 
 			ServiceConfiguration configuration = ServiceConfiguration.read();
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
 
 			// "re-create" connection
 			this.createConnection();

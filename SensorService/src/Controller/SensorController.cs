@@ -24,12 +24,11 @@ namespace DataCollector.Controller
 
 		}
 
+		// ping request
 		[HttpGet]
 		public String homeGet()
 		{
-			// just for testing
-			// leave it
-			return "NOT DEFAULT hello world ... ";
+			return "NOT DEFAULT hello world ... (it works ... ) ";
 		}
 
 		[HttpGet("{index}")]
@@ -53,8 +52,8 @@ namespace DataCollector.Controller
 
 				// initialize response header
 				json_result[conf.responseTypeField] = conf.validResponse;
-				json_result["samples_count"] = ret_data.Count;
-				json_result["rows_count"] = ret_data[0].Count; // count of rows for first user (should be the same for every other)
+				json_result["samples_count"] = ret_data.Count; // TODO remove, (to_sample - from_sample) gives this value
+				json_result["rows_count"] = ret_data[0].Count; // count of rows for first sensor (should be the same for every other)
 				json_result["from_sample"] = conf.samplesRange.From;
 				json_result["to_sample"] = conf.samplesRange.To;
 
@@ -101,11 +100,11 @@ namespace DataCollector.Controller
 				return json_result;
 			}
 
-			return JsonConvert.DeserializeObject<JObject>("{sensor_response: 'Sensor can't  return value for: index=" + index + " }");
+			return JsonConvert.DeserializeObject<JObject>("{'sensor_response': 'Sensor cant return value for: index=" + index + "' }");
 		}
 
 		// unused
-		// leave it for later optimisation
+		// leave it for possible later optimisation
 		[HttpGet]
 		[Route("header")]
 		public string getHeader()

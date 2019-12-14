@@ -10,16 +10,22 @@ RUN dotnet restore
 
 COPY ./src ./src
 COPY ./appsettings.json ./appsettings.json
-COPY ./service_config.json ./service_config.json
 
-COPY ./data /data
+# data is going to be accessed from mounted volume
+# used to speed up build process
+# COPY ./data /data
 
 RUN dotnet build
 RUN dotnet publish
 
-# ENV ASPNETCORE_URLS http://+:5000
+COPY ./DistributionProgram/ /DistributionProgram
+COPY ./service_config.json /DistributionProgram/template
 
-WORKDIR /sensor_service/bin/Debug/netcoreapp2.2/publish
+RUN ln -s /sensor_service/bin/Debug/netcoreapp2.2/publish /sensor_program
 
-# ENTRYPOINT ["dotnet", "./SensorService.dll"]
+WORKDIR /DistributionProgram
+RUN /DistributionProgram/DistributionScript.sh
+# ENTRYPOINT ["sh", "/DistributionScript/DistributionScript.sh"]
 ENTRYPOINT [ "/bin/bash" ]
+
+# ENV ASPNETCORE_URLS http://+:5000

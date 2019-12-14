@@ -8,7 +8,8 @@ using CollectorService.Broker.Reporter;
 using System;
 using CollectorService.Broker.Events;
 using Newtonsoft.Json.Linq;
-using CollectorService.Broker.Reporter.Reports;
+using CollectorService.Data.Registry;
+using CollectorService.Broker.Reporter.Reports.Collector;
 
 namespace CollectorService
 {
@@ -27,11 +28,10 @@ namespace CollectorService
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
 
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
 			IDatabaseService database = new MongoDatabaseService();
-
-			// data puller is started automatically
-			this.data_puller = new DataPuller(database, MessageBroker.Instance, conf.readInterval, conf.sensorsList, conf.dataRangeUrl, conf.headerUrl);
+			// data puller is started inside constructor
+			Console.WriteLine("Read interval: " + conf.readInterval);
+			this.data_puller = new DataPuller(database, MessageBroker.Instance, conf.readInterval, conf.dataRangeUrl, conf.headerUrl);
 
 		}
 
@@ -41,8 +41,6 @@ namespace CollectorService
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 			lifetime.ApplicationStarted.Register(this.onStartup);
-
-			MessageBroker.Instance.subscribeForConfiguration(this.handleNewConfiguration);
 
 			if (env.IsDevelopment())
 			{
@@ -63,9 +61,8 @@ namespace CollectorService
 		private void onStartup()
 		{
 
-			Console.WriteLine("Handling startup ... ");
-
 			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("startup")));
+			MessageBroker.Instance.subscribeForConfiguration(this.handleNewConfiguration);
 
 		}
 
@@ -80,6 +77,9 @@ namespace CollectorService
 
 		}
 
+		// TODO refactor configuration changing
+		// new configuration is accpeted trough message broker
+		// much better option may be simple rest request
 		private void handleNewConfiguration(JObject newConfig)
 		{
 

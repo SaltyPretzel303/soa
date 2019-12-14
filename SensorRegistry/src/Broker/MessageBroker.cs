@@ -41,7 +41,7 @@ namespace SensorRegistry.Broker
 
 		}
 
-		public abstract void publishEvent(RegistryEvent eventToPublish);
+		public abstract void publishEvent(RegistryEvent eventToPublish, string topic);
 
 		public abstract void shutDown();
 

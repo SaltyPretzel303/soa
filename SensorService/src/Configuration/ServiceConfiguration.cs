@@ -31,6 +31,7 @@ namespace SensorService.Configuration
 		public string registryPort { get; set; }
 		public string sensorName { get; set; }
 		public string registerSensorPath { get; set; }
+		public string unregisterSensorPath { get; set; }
 		public string updateSensorPath { get; set; }
 		public string sensorNameField { get; set; }
 		public string sensorAddrField { get; set; }
@@ -42,7 +43,6 @@ namespace SensorService.Configuration
 
 			if (ServiceConfiguration.cache != null)
 			{
-				Console.WriteLine("Reading configuration from cache ... ");
 				return ServiceConfiguration.cache;
 			}
 

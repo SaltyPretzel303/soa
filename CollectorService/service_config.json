@@ -1,7 +1,7 @@
 {
 	"stage": "Development",
 	"Development": {
-		"port": "5002",
+		"port": 5003,
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa_collector",
 		"sensorsCollection": "Sensors",
@@ -10,24 +10,29 @@
 		"sensorsList": [
 			"http://localhost:5000"
 		],
-		"headerUrl": "/data/sensor/header",
-		"dataRangeUrl": "/data/sensor/range",
-		"readInterval": "3500",
+		"headerUrl": "sensor/data/header",
+		"dataRangeUrl": "sensor/data/range",
+		"readInterval": 1000,
+		"sensorResponseTypeField": "sensor_response",
+		"sensorOkResponse": "data",
 		"samplePrefix": "user_",
 		"brokerAddress": "localhost",
-		"brokerPort": "5672",
+		"brokerPort": 5672,
 		"serviceReportTopic": "service_reports",
 		"collectorReportFilter": "collector",
 		"configurationTopic": "config",
 		"targetConfiguration": "collector",
-		"sensorRegistryAddr": "localhost/sensor/registry",
-		"sensorRegistryPort": 5005,
-		"singleSensorAddrReqPath": "getAddress",
+		"sensorRegistryAddr": "localhost",
+		"sensorRegistryPort": 5002,
+		"singleSensorNameReqPath": "sensor/registry/getAddress",
 		"sensorNameField": "sensorName",
-		"sensorListReqPath": "getSensors"
+		"sensorListReqPath": "sensor/registry/getSensors",
+		"sensorRegistryTopic": "sensor_registry",
+		"newSensorFilter": "new_sensor",
+		"sensorRemovedFilter": "sensor_removed"
 	},
 	"Production": {
-		"port": "5000",
+		"port": 5000,
 		"dbAddress": "mongodb://mongo_s:27017",
 		"dbName": "soa_collector",
 		"sensorsCollection": "Sensors",
@@ -36,20 +41,25 @@
 		"sensorsList": [
 			"http://sensor_s:5000"
 		],
-		"headerUrl": "/sensor/data/header",
+		"headerUrl": "sensor/data/header",
 		"dataRangeUrl": "sensor/data/range",
-		"readInterval": "5000",
+		"readInterval": 5000,
+		"sensorResponseTypeField": "sensor_response",
+		"sensorOkResponse": "data",
 		"samplePrefix": "user_",
 		"brokerAddress": "rabbit_s",
-		"brokerPort": "5672",
+		"brokerPort": 5672,
 		"serviceReportTopic": "service_reports",
-		"collectorReportFilter": "collector_service",
+		"collectorReportFilter": "collector",
 		"configurationTopic": "config",
 		"targetConfiguration": "collector",
-		"sensorRegistryAddr": "sensorRegistry/sensor/registry",
-		"sensorRegistryPort": 5005,
-		"singleSensorNameReqPath": "getAddress",
+		"sensorRegistryAddr": "registry_s",
+		"sensorRegistryPort": 5000,
+		"singleSensorNameReqPath": "sensor/registry/getAddress",
 		"sensorNameField": "sensorName",
-		"sensorListReqPath": "getSensors"
+		"sensorListReqPath": "sensor/registry/getSensors",
+		"sensorRegistryTopic": "sensor_registry",
+		"newSensorFilter": "new_sensor",
+		"sensorRemovedFilter": "sensor_removed"
 	}
 }

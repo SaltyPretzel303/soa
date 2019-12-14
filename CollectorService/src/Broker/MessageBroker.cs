@@ -1,6 +1,7 @@
 
 using CollectorService.Broker.Events;
 using CollectorService.Configuration;
+using CollectorService.Data.Registry;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 
@@ -8,6 +9,7 @@ namespace CollectorService.Broker
 {
 
 	public delegate void DConfigurationHandler(JObject newConfiguration);
+	public delegate void DRegistryChangedHandler(SensorRecord sensorRecord);
 
 	// ATTENTION 
 	// this singleton is bad (maybe it is not singleton at all)
@@ -49,6 +51,8 @@ namespace CollectorService.Broker
 		public abstract void subscribeForConfiguration(DConfigurationHandler configHandler);
 
 		public abstract void reload(ServiceConfiguration newConfiguration);
+
+		public abstract void subscribeForSensorRegistry(DRegistryChangedHandler newSensorHandler, DRegistryChangedHandler sensorRemovedHandler);
 
 	}
 }

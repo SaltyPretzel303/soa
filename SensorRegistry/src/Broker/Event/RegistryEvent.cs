@@ -9,8 +9,6 @@ namespace SensorRegistry.Broker.Event
 	public class RegistryEvent
 	{
 
-		public const string eventSourceType = "registry";
-
 		// attention
 		// currently implemented as mac-address 
 		// initialized from default constructor
@@ -18,7 +16,7 @@ namespace SensorRegistry.Broker.Event
 
 		public DateTime time { get; private set; }
 
-		public Report report { get; set; }
+		public RegistryReport report { get; set; }
 
 		public RegistryEvent()
 		{
@@ -29,25 +27,14 @@ namespace SensorRegistry.Broker.Event
 
 		}
 
-		public RegistryEvent(Report report) : this()
+		public RegistryEvent(RegistryReport report) : this()
 		{
 			this.report = report;
-			Console.WriteLine("Report assigned: " + this.report.toJson().ToString());
 		}
 
 		public JObject toJson()
 		{
-
-			JObject retObj = new JObject();
-
-			retObj["eventSourceType"] = RegistryEvent.eventSourceType;
-			retObj["source"] = this.source;
-			retObj["time"] = this.time;
-
-			retObj["reportType"] = this.report.getReportType();
-			retObj["report"] = this.report.toJson();
-
-			return retObj;
+			return JObject.FromObject(this);
 		}
 
 
