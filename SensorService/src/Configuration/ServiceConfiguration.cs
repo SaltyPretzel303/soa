@@ -36,6 +36,22 @@ namespace SensorService.Configuration
 		public string sensorNameField { get; set; }
 		public string sensorAddrField { get; set; }
 		public string portNumField { get; set; }
+
+		// logging 
+		public string consoleLogLevel { get; set; }
+		public string logErrorLevel { get; set; }
+		public string logMessageLevel { get; set; }
+
+		public string logErrorDest { get; set; }
+		public string logMsgDest { get; set; }
+
+		public string logTagField { get; set; }
+		public string logErrorTag { get; set; }
+		public string logMessageTag { get; set; }
+
+		public string logTimeField { get; set; }
+		public string logContentField { get; set; }
+
 		// methods
 
 		public static ServiceConfiguration read()

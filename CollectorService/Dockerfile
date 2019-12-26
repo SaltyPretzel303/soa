@@ -18,4 +18,4 @@ WORKDIR /collector_service/bin/Debug/netcoreapp2.2/publish
 
 # ENV ASPNETCORE_URLS http://+:5000
 
-# ENTRYPOINT ["dotnet", "./bin/Debug/netcoreapp2.2/publish/CollectorService.dll"]
+ENTRYPOINT ["dotnet", "/collector_service/bin/Debug/netcoreapp2.2/publish/CollectorService.dll"]

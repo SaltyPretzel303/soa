@@ -136,7 +136,5 @@ namespace SensorRegistry.Controller
 
 		}
 
-
-
 	}
 }

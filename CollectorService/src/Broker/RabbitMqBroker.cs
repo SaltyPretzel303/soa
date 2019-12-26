@@ -50,7 +50,7 @@ namespace CollectorService.Broker
 		{
 			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = this.brokerHostName, Port = this.port };
 
-			// if create connections is called from reload previous connections is still alive
+			// if create connections is called from 'reload' method previous connections is still alive
 			if (this.connection != null && this.connection.IsOpen)
 			{
 				this.connection.Close();

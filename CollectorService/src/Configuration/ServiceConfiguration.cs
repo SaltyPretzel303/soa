@@ -21,6 +21,7 @@ namespace CollectorService.Configuration
 		public string sensorsCollection { get; set; }
 		public string fieldWithRecords { get; set; }
 		public string configurationBackupCollection { get; set; }
+		// TODO this can be removed, sensors are obtained from the sensorRegistry
 		public List<string> sensorsList { get; set; }
 
 		public string headerUrl { get; set; }

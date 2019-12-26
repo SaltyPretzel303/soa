@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Threading.Tasks.Dataflow;
 using System.Linq;
 using System;
 using MongoDB.Bson;
@@ -85,6 +87,7 @@ namespace CollectorService.Data
 
 			Console.WriteLine($"Received args: \n SensorName: {sensorName}\n From timestamp: {fromTimestamp} \n To timestamp: {toTimestamp}\n");
 
+			// TODO why is there regex ... ? 
 			string match_q = "{$match: {sensor_name: {$regex: '" + sensorName.Replace("\"", "") + "'}}}";
 
 			string filter_array = "records";
@@ -99,8 +102,8 @@ namespace CollectorService.Data
 			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }},sensor_name:1 }} }}", filter_array, single_item, and_q);
 
 			BsonDocument[] agregate_array = new BsonDocument[]{
-				BsonDocument.Parse(match_q),
-				BsonDocument.Parse(project_q)
+					BsonDocument.Parse(match_q),
+					BsonDocument.Parse(project_q)
 				};
 
 			List<BsonDocument> query_result = this.sensorsCollection.Aggregate<BsonDocument>(agregate_array).ToList();
@@ -129,6 +132,10 @@ namespace CollectorService.Data
 		{
 
 			Console.WriteLine("Reloading mongo ... ");
+
+			// dont'w know how to close connection before opening new one
+			// someone said that i don't have to, .net driver will handle that for me 
+			// sooo ... yeap 
 
 			this.client = new MongoClient(newConfiguration.dbAddress);
 			this.database = this.client.GetDatabase(newConfiguration.dbName);
@@ -165,5 +172,67 @@ namespace CollectorService.Data
 
 		}
 
+		public List<JObject> customQuery()
+		{
+
+			List<JObject> retList = new List<JObject>();
+
+			List<BsonDocument> temp_cache = this.sensorsCollection.FindSync("{}").ToList();
+
+			Console.WriteLine("\n\nGot: " + temp_cache.Count + " lines ... \n\n");
+
+			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+
+			foreach (BsonDocument bson_sample in temp_cache)
+			{
+
+				JObject jsample = JObject.Parse(bson_sample.ToJson<BsonDocument>(json_settings));
+
+				JArray array = (JArray)jsample["records"];
+
+				Console.WriteLine("\n\n\nCOUNT : " + array.Count + "\n\n\n");
+
+				retList.Add(jsample);
+
+			}
+
+			return retList;
+
+		}
+
+		public int getRecordsCount(string sensorName)
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			string countFieldString = "records_count";
+			int count = 0;
+
+			string sMatchQuery = "{$match: {sensor_name:\"" + sensorName + "\" }}";
+			string sCountQuery = "{$project: { " + countFieldString + ": {$size: \"$" + config.fieldWithRecords + "\" } }}";
+
+			BsonDocument[] aggregateArray = new BsonDocument[]{
+				BsonDocument.Parse(sMatchQuery),
+				BsonDocument.Parse(sCountQuery)
+			};
+
+			List<BsonDocument> queryResult = this.sensorsCollection.Aggregate<BsonDocument>(aggregateArray).ToList();
+
+			if (queryResult != null && queryResult.Count > 0)
+			{
+
+				JsonWriterSettings jsonSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+
+				JObject jsonResult = JObject.Parse(queryResult[0].ToJson<BsonDocument>(jsonSettings));
+
+				count = jsonResult[countFieldString].Value<int>();
+
+				Console.WriteLine("Got count: " + count);
+
+				return count;
+
+			}
+
+			return count;
+		}
 	}
 }

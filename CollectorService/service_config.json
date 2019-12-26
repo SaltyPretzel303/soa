@@ -1,5 +1,5 @@
 {
-	"stage": "Development",
+	"stage": "Production",
 	"Development": {
 		"port": 5003,
 		"dbAddress": "mongodb://localhost:27017",
@@ -12,7 +12,7 @@
 		],
 		"headerUrl": "sensor/data/header",
 		"dataRangeUrl": "sensor/data/range",
-		"readInterval": 1000,
+		"readInterval": 2000,
 		"sensorResponseTypeField": "sensor_response",
 		"sensorOkResponse": "data",
 		"samplePrefix": "user_",
@@ -53,7 +53,7 @@
 		"collectorReportFilter": "collector",
 		"configurationTopic": "config",
 		"targetConfiguration": "collector",
-		"sensorRegistryAddr": "registry_s",
+		"sensorRegistryAddr": "soa_registry_s",
 		"sensorRegistryPort": 5000,
 		"singleSensorNameReqPath": "sensor/registry/getAddress",
 		"sensorNameField": "sensorName",

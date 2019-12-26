@@ -52,6 +52,11 @@ namespace CollectorService.Controller
 			return StatusCode(500);
 		}
 
+		// custom home used for testing 
+		public IActionResult getHome()
+		{
+			return Ok(database.customQuery());
+		}
 
 		[Route("sensorRecords")]
 		[HttpGet]

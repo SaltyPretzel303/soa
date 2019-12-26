@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using SensorService.Data;
 using Newtonsoft.Json;
 using SensorService.Configuration;
+using SensorService.Logger;
 
 namespace DataCollector.Controller
 {
@@ -16,11 +17,13 @@ namespace DataCollector.Controller
 	{
 
 		public Reader reader;
+		public ILogger logger;
 
-		public SensorController(Reader reader)
+		public SensorController(Reader reader, ILogger logger)
 		{
 
 			this.reader = reader;
+			this.logger = logger;
 
 		}
 
@@ -38,7 +41,8 @@ namespace DataCollector.Controller
 
 			ServiceConfiguration conf = ServiceConfiguration.read();
 
-			Console.WriteLine("Data range request for index: " + index);
+			logger.logMessage("Data range request for index: " + index);
+			// Console.WriteLine("Data range request for index: " + index);
 
 			// try to get data for given index
 			List<List<String>> ret_data = this.reader.getDataFrom(index);

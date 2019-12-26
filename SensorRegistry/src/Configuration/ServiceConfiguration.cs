@@ -30,6 +30,13 @@ namespace SensorRegistry.Configuration
 		public string newSensorFilter { get; set; }
 		public string sensorRemovedFilter { get; set; }
 
+		public string logMsgTimestampField { get; set; }
+		public string logMsgContentField { get; set; }
+
+		public string logErrorTimestampField { get; set; }
+		public string logErrorContentField { get; set; }
+
+
 		// methods
 
 		public static ServiceConfiguration read()

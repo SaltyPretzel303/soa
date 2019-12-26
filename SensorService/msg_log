@@ -1,0 +1,111 @@
+
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 8:55:38 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 8:55:38 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:00:13 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:00:13 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:24:24 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:24:24 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:43:16 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:43:16 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:44:23 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/23/19 9:44:24 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/25/19 9:03:27 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "prod_message",
+  "timestamp": "12/25/19 9:03:27 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 9:04:54 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 9:04:54 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:46:28 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:47:10 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:49:15 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:49:41 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:49:48 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:49:48 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:50:07 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "12/25/19 11:50:07 PM",
+  "content": "Sensor is going down ... "
+}

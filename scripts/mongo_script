@@ -1,0 +1,39 @@
+#!/bin/bash
+
+mongo soa_collector --eval '
+
+	db.Sensors.aggregate(
+		[
+			{ 
+				
+				$match: {sensor_name:"sensor_2"}
+		
+			},
+			{
+				$project: {
+					sensor_name:1,
+					records:1	
+				}
+			}			
+			
+		]
+	
+	).forEach(printjson)
+
+' | egrep --color "timestamp"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

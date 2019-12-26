@@ -18,6 +18,8 @@ namespace CollectorService
 
 		private DataPuller data_puller;
 
+		private LocalRegistry localRegistry;
+
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
@@ -27,17 +29,21 @@ namespace CollectorService
 
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
 
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-			IDatabaseService database = new MongoDatabaseService();
-			// data puller is started inside constructor
-			Console.WriteLine("Read interval: " + conf.readInterval);
-			this.data_puller = new DataPuller(database, MessageBroker.Instance, conf.readInterval, conf.dataRangeUrl, conf.headerUrl);
-
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime, IDatabaseService database)
 		{
+
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
+
+			Console.WriteLine("Read interval: " + conf.readInterval + "ms");
+
+			// reading is started inside onStartup method
+			this.localRegistry = new LocalRegistry(database);
+			this.data_puller = new DataPuller(database, this.localRegistry, conf.readInterval, conf.dataRangeUrl, conf.headerUrl);
+
+
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 			lifetime.ApplicationStarted.Register(this.onStartup);
@@ -63,6 +69,8 @@ namespace CollectorService
 
 			MessageBroker.Instance.publishEvent(new CollectorEvent(new LifeCycleReport("startup")));
 			MessageBroker.Instance.subscribeForConfiguration(this.handleNewConfiguration);
+
+			this.data_puller.startReading();
 
 		}
 

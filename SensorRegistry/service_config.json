@@ -10,7 +10,11 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"configurationTopic": "config",
 		"targetConfiguration": "sensor_registry",
-		"listeningPort": 5002
+		"listeningPort": 5002,
+		"logMsgTimeField": "timestamp",
+		"logMsgContentField": "msg_content",
+		"logErrorTimeField": "timestamp",
+		"logErrorContentField": "error_content"
 	},
 	"Production": {
 		"brokerAddress": "rabbit_s",
@@ -22,6 +26,10 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"configurationTopic": "config",
 		"targetConfiguration": "sensor_registry",
-		"listeningPort": 5000
+		"listeningPort": 5000,
+		"logMsgTimeField": "timestamp",
+		"logMsgContentField": "msg_content",
+		"logErrorTimeField": "timestamp",
+		"logErrorContentField": "error_content"
 	}
 }

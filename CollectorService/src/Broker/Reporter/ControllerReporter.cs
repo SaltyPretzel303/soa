@@ -30,7 +30,7 @@ namespace CollectorService.Broker.Reporter
 			AccessReport report = new AccessReport(context.Request, context.Response, requestTime);
 			CollectorEvent c_event = new CollectorEvent(report);
 
-			MessageBroker.Instance.publishEvent(c_event);
+			// MessageBroker.Instance.publishEvent(c_event);
 
 		}
 

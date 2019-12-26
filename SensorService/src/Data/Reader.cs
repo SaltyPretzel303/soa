@@ -4,6 +4,7 @@ using System.IO;
 using System.Timers;
 using System.Collections.Generic;
 using SensorService.Configuration;
+using SensorService.Logger;
 
 namespace SensorService.Data
 {
@@ -29,9 +30,11 @@ namespace SensorService.Data
 		// single string represents one row - collections of values for every column
 		private List<List<String>> data;
 
+		private ILogger logger;
+
 		// constructors
 
-		public Reader(String path, String prefix, String extension, FromTo samples_range, int read_interval)
+		public Reader(String path, String prefix, String extension, FromTo samples_range, int read_interval, ILogger logger)
 		{
 
 			this.path = path;
@@ -39,6 +42,8 @@ namespace SensorService.Data
 			this.extension = extension;
 			this.samplesRange = samples_range;
 			this.readInterval = read_interval;
+
+			this.logger = logger;
 
 			// read first row (identify comlumns)
 			this.columns = new List<String>(File.ReadLines(this.path + this.dataPrefix + this.samplesRange.From + this.extension).Take(1).First().Split(","));
@@ -74,7 +79,8 @@ namespace SensorService.Data
 
 			// read one more line for evey user
 			// read this.line_counte. row
-			Console.WriteLine($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
+			this.logger.logMessage($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
+			// Console.WriteLine($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
 
 			int logical_index = 0;
 			for (int real_index = this.samplesRange.From; real_index < this.samplesRange.To; real_index++)
@@ -109,6 +115,8 @@ namespace SensorService.Data
 			{
 
 				List<List<String>> ret_list = new List<List<String>>();
+
+				// TODO make it thread safe 
 
 				foreach (List<String> user_rows in this.data)
 				{

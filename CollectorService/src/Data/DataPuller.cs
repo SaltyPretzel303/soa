@@ -15,43 +15,35 @@ namespace CollectorService.Data
 	public class DataPuller : IReloadable
 	{
 
-		public IDatabaseService database { get; private set; }
-		// index of the next row that should be read
-		public int read_index { get; private set; }
+		private IDatabaseService database;
+		private LocalRegistry localRegistry;
 
 		private Timer timer;
 		public int read_interval { get; private set; }
 
 		private HttpClient httpClient;
 
-		private MessageBroker broker;
-
 		private string dataRangeUrl;
 		private string headerUrl;
 
 		// constructors
 
-		public DataPuller(IDatabaseService databse, MessageBroker broker, int read_interval, string data_range_url, string header_url)
+		public DataPuller(IDatabaseService databse, LocalRegistry localRegistry, int read_interval, string data_range_url, string header_url)
 		{
 
 			this.database = databse;
-			this.broker = broker;
-
-			ServiceConfiguration.subscribeForReload(this.database);
-			ServiceConfiguration.subscribeForReload(this.broker);
+			this.localRegistry = localRegistry;
 
 			this.read_interval = read_interval;
 			this.dataRangeUrl = data_range_url;
 			this.headerUrl = header_url;
 
-			// start reading from the first for (index 0)
-			this.read_index = 0;
-
 			// initialize timer for passed interval and specific event handler
 			this.timer = new Timer();
 			this.timer.Elapsed += new ElapsedEventHandler(this.timerEvent);
 			this.timer.Interval = this.read_interval;
-			this.timer.Enabled = true;
+
+			// this.timer.Enabled = true;
 
 			this.httpClient = new HttpClient();
 
@@ -59,15 +51,29 @@ namespace CollectorService.Data
 
 		// methods
 
+		public void startReading()
+		{
+
+			this.timer.Enabled = true;
+
+		}
+
+		public void pauseReading()
+		{
+
+			this.timer.Enabled = false;
+
+		}
+
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
 			int max_row_count = -1;
-			Console.WriteLine($"Ready to pull from: {LocalRegistry.Instance.getRecords().Count} sensors ... ");
-			foreach (SensorRecord single_sensor in LocalRegistry.Instance.getRecords())
+			Console.WriteLine($"Ready to pull from: {this.localRegistry.getRecords().Count} sensors ... ");
+			foreach (SensorRecord single_sensor in this.localRegistry.getRecords())
 			{
 
-				int sensorLastReadIndex = LocalRegistry.Instance.getSensor(single_sensor.name).lastReadIndex;
+				int sensorLastReadIndex = single_sensor.lastReadIndex;
 
 				string sensorAddr = $"http://{single_sensor.address}:{single_sensor.port}";
 				string api_url = $"{sensorAddr}/{this.dataRangeUrl}?index={sensorLastReadIndex}";
@@ -145,7 +151,7 @@ namespace CollectorService.Data
 					this.database.pushToSensor(temp_sensor_name, sample_values);
 
 					// update read index for every sensor
-					LocalRegistry.Instance.getSensor(temp_sensor_name).lastReadIndex += row_count;
+					this.localRegistry.getSensor(temp_sensor_name).lastReadIndex += row_count;
 
 				}
 
@@ -153,10 +159,6 @@ namespace CollectorService.Data
 
 			}
 
-			// Console.WriteLine("Read index increase for: " + max_row_count);
-			if (max_row_count > 0)
-				this.read_index += max_row_count;
-			// Console.WriteLine("New read index: " + this.read_index);
 		}
 
 		// not used ...
@@ -167,7 +169,7 @@ namespace CollectorService.Data
 			String response_data = "";
 
 			// all sensors have same header
-			string single_sensor = LocalRegistry.Instance.getRecords()[0].address;
+			string single_sensor = this.localRegistry.getRecords()[0].address;
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(single_sensor + this.headerUrl);
 			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -187,8 +189,6 @@ namespace CollectorService.Data
 		{
 
 			this.timer.Stop();
-			this.database.shutDown();
-			this.broker.shutDown();
 
 		}
 

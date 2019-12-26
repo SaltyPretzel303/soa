@@ -11,7 +11,7 @@ then
 	sensor_program=$2
 fi
 
-for index in {0..59}
+for index in {0..5}
 do
 
 	echo "Generating (shell): $index"

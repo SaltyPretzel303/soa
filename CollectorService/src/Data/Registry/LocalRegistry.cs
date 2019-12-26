@@ -1,54 +1,31 @@
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-
 using System.Collections.Generic;
 using CollectorService.Configuration;
 using System.Net.Http;
 using CollectorService.Broker;
 using System;
-using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Data.Registry
 {
-	public class LocalRegistry
 
+	public class LocalRegistry
 	{
 
-		#region singleton_stuff
-		private static LocalRegistry instance;
-		public static LocalRegistry Instance
-		{
-			get
-			{
+		private IDatabaseService databse;
 
-				if (LocalRegistry.instance == null)
-				{
-					LocalRegistry.instance = new LocalRegistry();
-				}
-
-				return LocalRegistry.instance;
-			}
-			set
-			{
-				LocalRegistry.instance = value;
-			}
-		}
-
-		protected LocalRegistry()
+		public LocalRegistry(IDatabaseService database)
 		{
 
-			this.sensors = new List<SensorRecord>();
+			this.databse = database;
 
 			this.pullRecords();
 
 			MessageBroker.Instance.subscribeForSensorRegistry(this.handleNewSensor, this.handleSensorRemoval);
 
 		}
-		#endregion singleton_stuff
 
 		private List<SensorRecord> sensors;
 
+		// TODO handle socket exception if sensor registry is not active
 		public void pullRecords()
 		{
 
@@ -74,6 +51,14 @@ namespace CollectorService.Data.Registry
 
 				Console.WriteLine($"Registry returned {this.sensors.Count} sensor records ... ");
 
+				foreach (SensorRecord sensor in this.sensors)
+				{
+
+					sensor.lastReadIndex = this.databse.getRecordsCount(sensor.name);
+					Console.WriteLine("sensor: " + sensor.name + " last read index: " + sensor.lastReadIndex);
+
+				}
+
 			}
 
 		}
@@ -86,6 +71,7 @@ namespace CollectorService.Data.Registry
 		private void handleNewSensor(SensorRecord newRecord)
 		{
 
+			newRecord.lastReadIndex = this.databse.getRecordsCount(newRecord.name);
 			this.sensors.Add(newRecord);
 
 		}

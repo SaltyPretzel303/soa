@@ -3,7 +3,7 @@
 pid_output=$1
 echo > $pid_output
 
-for index in {0..20}
+for index in {0..5}
 do
 
 	echo "Strting sensor: $index"
@@ -13,6 +13,5 @@ do
 	dotnet SensorService.dll > output &
 	echo "Started sensor [$index] with pid: $!"
 	echo "$!" >> "$pid_output"
-
 
 done

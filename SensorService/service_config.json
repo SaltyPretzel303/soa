@@ -10,7 +10,7 @@
 			"From": 0,
 			"To": 5
 		},
-		"readInterval": 10000,
+		"readInterval": 2000,
 		"listeningPort": 5005,
 		"sensorNamePrefix": "sensor_",
 		"registryAddress": "localhost",
@@ -21,7 +21,17 @@
 		"sensorAddrField": "sensorAddr",
 		"portNumField": "portNum",
 		"registryPort": 5002,
-		"sensorName": "sensor_-1"
+		"sensorName": "sensor_-1",
+		"logErrorDest": "/error_log",
+		"logMsgDest": "/msg_log",
+		"logTagField": "tag",
+		"logErrorTag": "dev_error",
+		"logMessageTag": "dev_message",
+		"logTimeField": "timestamp",
+		"logContentField": "content",
+		"consoleLogLevel": "",
+		"logMessageLevel": "message",
+		"logErrorLevel": "error"
 	},
 	"Production": {
 		"responseTypeField": "sensor_response",
@@ -36,7 +46,7 @@
 		"readInterval": 10000,
 		"listeningPort": 5000,
 		"sensorNamePrefix": "sensor_",
-		"registryAddress": "registry_s",
+		"registryAddress": "soa_registry_s",
 		"registerSensorPath": "sensor/registry/registerSensor",
 		"updateSensorPath": "sensor/registry/updateSensor",
 		"unregisterSensorPath": "sensor/registry/unregisterSensor",
@@ -44,6 +54,16 @@
 		"sensorAddrField": "sensorAddr",
 		"portNumField": "portNum",
 		"registryPort": 5000,
-		"sensorName": "sensor_-1"
+		"sensorName": "sensor_-1",
+		"logErrorDest": "/error_log",
+		"logMsgDest": "/msg_log",
+		"logTagField": "tag",
+		"logErrorTag": "prod_error",
+		"logMessageTag": "prod_message",
+		"logTimeField": "timestamp",
+		"logContentField": "content",
+		"consoleLogLevel": "message",
+		"logMessageLevel": "message",
+		"logErrorLevel": "error"
 	}
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -8,16 +10,18 @@ namespace SensorRegistry.Registry
 	{
 
 
-		private Dictionary<string, SensorRecord> registry;
+		private ConcurrentDictionary<string, SensorRecord> registry;
 
 		// constructors
 
 		public MapRegistry()
 		{
-			this.registry = new Dictionary<string, SensorRecord>();
+			this.registry = new ConcurrentDictionary<string, SensorRecord>();
 		}
 
 		// helper methods
+
+		#region responses
 
 		private RegistryResponse okResponse(SensorRecord data)
 		{
@@ -51,26 +55,25 @@ namespace SensorRegistry.Registry
 
 		}
 
+		#endregion responses
+
 		// interface implementation
 
 		public RegistryResponse addSensorRecord(string sensorName, string sensorAddr, int sensorPort)
 		{
 
-			if (!this.registry.ContainsKey(sensorName))
+			SensorRecord newRecord = new SensorRecord(sensorName, sensorAddr, sensorPort);
+
+			if (this.registry.TryAdd(sensorName, newRecord))
 			{
-
-				SensorRecord record = new SensorRecord(sensorName, sensorAddr, sensorPort);
-
-				this.registry.Add(sensorName, record);
-
-				return this.okResponse(record);
+				return this.okResponse(newRecord);
 			}
-
 
 			return this.badResponse(RegistryStatus.sensorAlreadyExists);
 
 		}
 
+		// ATTENTION this method may not be thread safe 
 		public RegistryResponse changeSensorRecord(string sensorName, string sensorAddr, int sensorPort)
 		{
 
@@ -92,11 +95,8 @@ namespace SensorRegistry.Registry
 		{
 
 			SensorRecord record = null;
-			if (this.registry.TryGetValue(sensorName, out record))
+			if (this.registry.TryRemove(sensorName, out record))
 			{
-
-				this.registry.Remove(sensorName);
-
 				return this.okResponse(record);
 			}
 

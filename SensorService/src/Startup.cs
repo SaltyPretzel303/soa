@@ -1,7 +1,4 @@
 ﻿using System.Net.Sockets;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.ComponentModel;
 using System;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
@@ -9,21 +6,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SensorService.Configuration;
 using SensorService.Data;
+using SensorService.Logger;
 
 namespace SensorService
 {
 	public class Startup
 	{
 
-		private string interruptMessage;
-		private bool servicesConfigured;
+		private ILogger logger;
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-
-			servicesConfigured = false;
 
 			services.AddMvc();
 
@@ -35,44 +30,9 @@ namespace SensorService
 			FromTo samples_range = config.samplesRange;
 			int read_interval = config.readInterval;
 
-			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval));
+			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval, logger));
 
-
-			try
-			{
-
-				this.registerSensor();
-				servicesConfigured = true;
-				Console.WriteLine("Sensor successful registered ... ");
-
-			}
-			catch (AggregateException e)
-			{
-
-				this.servicesConfigured = false;
-
-				e.Handle((exc) =>
-				{
-
-					if (exc is SocketException || exc is HttpRequestException)
-					{
-
-						this.interruptMessage = String.Format($"Registry service not found\nException: {e.ToString()}\n");
-
-
-						return true;
-					}
-
-					return false;
-
-				});
-
-			}
-			catch (Exception e)
-			{
-				this.servicesConfigured = false;
-				Console.WriteLine("Unknown exception: " + e.ToString());
-			}
+			services.AddTransient<ILogger, BasicLogger>();
 
 		}
 
@@ -82,13 +42,39 @@ namespace SensorService
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 
-			if (!this.servicesConfigured)
+			this.logger = new BasicLogger(env);
+
+			try
 			{
 
-				Console.WriteLine(this.interruptMessage);
-				lifetime.StopApplication();
+				bool regResult = this.registerSensor();
+
+				if (regResult)
+				{
+					// TODO maybe try to register in another sensor registry (or that should be done in register method)
+					this.logger.logMessage("Sensor successfully registered ... ");
+					// Console.WriteLine("Sensor successfully registered ... ");
+
+				}
+				else
+				{
+
+					lifetime.StopApplication();
+					return;
+				}
 
 			}
+			catch (Exception e)
+			{
+
+				this.logger.logError("Exception in sensor registration: " + e.ToString());
+				// Console.WriteLine("Unknown exception: " + e.ToString());
+
+				lifetime.StopApplication();
+				return;
+
+			}
+
 
 			if (env.IsDevelopment())
 			{
@@ -99,8 +85,8 @@ namespace SensorService
 
 		}
 
-		// maybe http exception could be handled inside this method and not outside of it (current implementation) ... 
-		private void registerSensor()
+		// NOTE throws socket exception
+		private bool registerSensor()
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.read();
@@ -108,65 +94,108 @@ namespace SensorService
 			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050
 			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={conf.sensorName}&{conf.portNumField}={conf.listeningPort}";
 
-			Console.WriteLine("Going to register service on address: " + addr);
+			this.logger.logMessage("Going to register service on address: " + addr);
+			// Console.WriteLine("Going to register service on address: " + addr);
 
 			HttpClient httpClient = new HttpClient();
 			// this method could possibly throw exception 
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
 
-			if (responseMessage.IsSuccessStatusCode)
+			bool retValue = false;
+			if (responseMessage != null && responseMessage.IsSuccessStatusCode)
 			{
 
-				this.servicesConfigured = true;
+				return true;
 
 			}
 			else
 			{
 
-				this.servicesConfigured = false;
-				this.interruptMessage = responseMessage.Content.ToString();
+				retValue = false;
+
+				if (responseMessage == null)
+				{
+
+					this.logger.logError("Http request for sensor unregister failed ... ");
+
+				}
+				else
+				{
+					// status code is not success
+
+					this.logger.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
+				}
 
 			}
+
+			return retValue;
 
 		}
 
 		private void onShutDown()
 		{
 
-			Console.WriteLine("Senor is going down ... ");
+			this.logger.logMessage("Sensor is going down ... ");
+			// Console.WriteLine("Sensor is going down ... ");
 
-			this.unregisterSensor();
+			try
+			{
 
+				// result is not used
+				bool unregResult = this.unregisterSensor();
+
+			}
+			catch (Exception e)
+			{
+				this.logger.logError("Exception in sensor unregistration ... \n");
+				this.logger.logError(e.ToString());
+			}
 
 		}
 
-		private void unregisterSensor()
+		// NOTE throws socket exception
+		private bool unregisterSensor()
 		{
+
 			ServiceConfiguration conf = ServiceConfiguration.read();
 
 			// e.g. http://localhost/sensor/registry/unregisterSensor?sensorName="sensor_1"
 			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.unregisterSensorPath}?{conf.sensorNameField}={conf.sensorName}";
 
 			HttpClient httpClient = new HttpClient();
-			// this method could possibly throw exception 
+
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
 
-			// TODO 
-			// no point to handler unregistartion failure, this sensor is going down any way ... dont hold it back ... 
-
-			if (responseMessage.IsSuccessStatusCode)
+			bool retValue = false;
+			if (responseMessage != null && responseMessage.IsSuccessStatusCode)
 			{
 
-				this.servicesConfigured = true;
+				retValue = true;
 
 			}
 			else
 			{
 
-				this.servicesConfigured = false;
-				this.interruptMessage = responseMessage.Content.ToString();
+				retValue = false;
+
+				if (responseMessage == null)
+				{
+
+					this.logger.logError("Http request for sensor unregister failed ... ");
+
+				}
+				else
+				{
+					// status code is not success
+
+					this.logger.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
+				}
 
 			}
+
+			return retValue;
+
+
 		}
 
 	}

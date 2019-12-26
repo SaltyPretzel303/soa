@@ -37,6 +37,8 @@ namespace SensorRegistry.Broker
 		private void createConnection()
 		{
 
+			Console.WriteLine("Trying to create connection with rabbitMQ");
+
 			ServiceConfiguration conf = ServiceConfiguration.read();
 			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = conf.brokerAddress, Port = conf.brokerPort };
 
@@ -67,6 +69,10 @@ namespace SensorRegistry.Broker
 				this.ready = true;
 
 			}
+			else
+			{
+				Console.WriteLine("Failed to establish connection with rabbitMQ ... ");
+			}
 		}
 
 		private void initBroker(IModel channel)
@@ -76,6 +82,8 @@ namespace SensorRegistry.Broker
 
 			// declare exchange for publishing collector events (reports)
 			channel.ExchangeDeclare(config.serviceReportTopic, "topic", true, true, null);
+			channel.ExchangeDeclare(config.sensorRegistryTopic, "topic", true, true, null);
+
 
 		}
 
@@ -86,7 +94,7 @@ namespace SensorRegistry.Broker
 
 			if (this.connection != null && !this.connection.IsOpen)
 			{
-				this.createConnection();
+				this.createConnection();3
 			}
 
 			if (this.connection == null || !this.connection.IsOpen)
