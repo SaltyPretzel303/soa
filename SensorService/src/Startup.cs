@@ -15,24 +15,20 @@ namespace SensorService
 
 		private ILogger logger;
 
+		private IReader reader;
+
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
 
-			services.AddMvc();
-
 			ServiceConfiguration config = ServiceConfiguration.read();
 
-			string path = config.dataPath;
-			string prefix = config.dataPrefix;
-			string extension = config.sampleExtension;
-			FromTo samples_range = config.samplesRange;
-			int read_interval = config.readInterval;
+			services.AddMvc();
 
-			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval, logger));
+			services.AddSingleton<ILogger, BasicLogger>();
 
-			services.AddTransient<ILogger, BasicLogger>();
+			services.AddSingleton<IReader, FileReader>();
 
 		}
 
@@ -40,9 +36,15 @@ namespace SensorService
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
 		{
 
+			this.logger = app.ApplicationServices.GetService<ILogger>();
+
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 
-			this.logger = new BasicLogger(env);
+			// next line is necessary in order to start reading (create reader once)
+			// it is added to the ServiceProvider but is not created at that moment (ConfiguraServices method)
+			// another way is to just request it (IReader) as the parameter of this method, service provider will then create it (using passed factory method) and pass it as the method argument
+			app.ApplicationServices.GetService<IReader>();
+
 
 			try
 			{
@@ -123,7 +125,7 @@ namespace SensorService
 				{
 					// status code is not success
 
-					this.logger.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
+					this.logger.logError("Http response for sensorUnregister failed: " + responseMessage.ReasonPhrase);
 				}
 
 			}

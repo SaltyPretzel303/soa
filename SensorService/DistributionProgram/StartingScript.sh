@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pid_output=$1
-echo > $pid_output
+> $pid_output
 
 for index in {0..5}
 do

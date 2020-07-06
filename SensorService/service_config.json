@@ -20,7 +20,7 @@
 		"sensorNameField": "sensorName",
 		"sensorAddrField": "sensorAddr",
 		"portNumField": "portNum",
-		"registryPort": 5002,
+		"registryPort": 5000,
 		"sensorName": "sensor_-1",
 		"logErrorDest": "/error_log",
 		"logMsgDest": "/msg_log",
@@ -29,7 +29,7 @@
 		"logMessageTag": "dev_message",
 		"logTimeField": "timestamp",
 		"logContentField": "content",
-		"consoleLogLevel": "",
+		"consoleLogLevel": "message|error",
 		"logMessageLevel": "message",
 		"logErrorLevel": "error"
 	},
