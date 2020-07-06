@@ -9,7 +9,7 @@ using SensorService.Logger;
 namespace SensorService.Data
 {
 
-	public class Reader
+	public class FileReader : IReader
 	{
 
 		private Timer timer;
@@ -34,8 +34,10 @@ namespace SensorService.Data
 
 		// constructors
 
-		public Reader(String path, String prefix, String extension, FromTo samples_range, int read_interval, ILogger logger)
+		public FileReader(String path, String prefix, String extension, FromTo samples_range, int read_interval, ILogger logger)
 		{
+
+			ServiceConfiguration config = ServiceConfiguration.read();
 
 			this.path = path;
 			this.dataPrefix = prefix;
@@ -68,10 +70,59 @@ namespace SensorService.Data
 			// ignore first line (row with names of the columns)
 			this.lineCounter = 1;
 
+			this.logger.logMessage("Reading interval: " + this.readInterval);
+
 			this.timer = new Timer();
-			this.timer.Elapsed += new ElapsedEventHandler(this.ReadEvent);
+			this.timer.Elapsed += this.ReadEvent;
 			this.timer.Interval = this.readInterval;
+			this.timer.AutoReset = true;
 			this.timer.Enabled = true;
+			this.timer.Start();
+
+		}
+		public FileReader(ILogger logger)
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.read();
+
+			this.path = config.dataPath;
+			this.dataPrefix = config.dataPrefix;
+			this.extension = config.sampleExtension;
+			this.samplesRange = config.samplesRange;
+			this.readInterval = config.readInterval;
+
+			this.logger = logger;
+
+			// read first row (identify comlumns)
+			this.columns = new List<String>(File.ReadLines(this.path + this.dataPrefix + this.samplesRange.From + this.extension).Take(1).First().Split(","));
+
+			// initialize the number of available lines for every user
+			this.rows_count = new List<int>();
+			for (int sample_num = this.samplesRange.From; sample_num < this.samplesRange.To; sample_num++)
+			{
+				this.rows_count.Add(File.ReadLines(this.path + this.dataPrefix + sample_num + this.extension).Count());
+			}
+
+			// initialize list for every user
+			this.data = new List<List<String>>();
+			for (int i = samplesRange.From; i < samplesRange.To; i++)
+			{
+				this.data.Add(new List<String>());
+			}
+
+			// ignore first line (row with names of the columns)
+			this.lineCounter = 1;
+
+			this.logger.logMessage("Reading interval: " + this.readInterval);
+
+			this.timer = new Timer();
+			this.timer.Elapsed += this.ReadEvent;
+			this.timer.Interval = this.readInterval;
+			this.timer.AutoReset = true;
+			this.timer.Enabled = true;
+			this.timer.Start();
+
+			this.logger.logMessage("Reader is running ...  ");
 
 		}
 
@@ -81,9 +132,8 @@ namespace SensorService.Data
 		{
 
 			// read one more line for evey user
-			// read this.line_counte. row
+			// read this.line_counter. row
 			this.logger.logMessage($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
-			// Console.WriteLine($"Read event sensorRange({this.samplesRange.From},{this.samplesRange.To}), rowCounter: {this.lineCounter}");
 
 			int logical_index = 0;
 			for (int real_index = this.samplesRange.From; real_index < this.samplesRange.To; real_index++)
@@ -110,6 +160,8 @@ namespace SensorService.Data
 		}
 
 		// public methods
+
+		#region IReader methods
 
 		public List<List<String>> getDataFrom(int index)
 		{
@@ -142,6 +194,13 @@ namespace SensorService.Data
 		{
 			return this.columns;
 		}
+
+		public FromTo getSamplesRange()
+		{
+			return this.samplesRange;
+		}
+
+		#endregion IReader methods
 
 	}
 }

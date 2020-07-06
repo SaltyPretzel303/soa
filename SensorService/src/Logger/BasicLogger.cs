@@ -15,7 +15,10 @@ namespace SensorService.Logger
 		private string errorLogPath;
 		private string messageLogPath;
 
-		public BasicLogger(IWebHostEnvironment hostEnv)
+		private object errorLock;
+		private object msgLock;
+
+		public BasicLogger(IHostingEnvironment hostEnv)
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.read();
@@ -26,7 +29,23 @@ namespace SensorService.Logger
 			this.errorLogPath = (this.rootPath + config.logErrorDest).Replace(@"//", @"/").Replace(@"\\", @"\");
 			this.messageLogPath = (this.rootPath + config.logMsgDest).Replace(@"//", @"/").Replace(@"\\", @"\");
 
+			this.errorLock = new object();
+			this.msgLock = new object();
+
 		}
+
+		/*
+			log format 
+
+			log :  {
+
+				tag: dev_error | dev_msg | prod_error | prod_msg,
+				timestamp: 12/29/19 1:45:44 PM,
+				content: "some string describin error or message ... "
+
+			}
+
+		*/
 
 		public void logError(string error)
 		{
@@ -38,12 +57,17 @@ namespace SensorService.Logger
 			newLog[config.logTimeField] = DateTime.Now.ToString();
 			newLog[config.logContentField] = error;
 
-			if (!File.Exists(this.errorLogPath))
+			lock (this.errorLock)
 			{
-				File.Create(this.errorLogPath);
-			}
 
-			File.AppendAllText(this.errorLogPath, "\n" + newLog.ToString(), Encoding.UTF8);
+				if (!File.Exists(this.errorLogPath))
+				{
+					File.Create(this.errorLogPath);
+				}
+
+				File.AppendAllText(this.errorLogPath, "\n" + newLog.ToString(), Encoding.UTF8);
+
+			}
 
 			if (config.consoleLogLevel.Contains(config.logErrorLevel))
 			{
@@ -63,12 +87,17 @@ namespace SensorService.Logger
 			newLog[config.logTimeField] = DateTime.Now.ToString();
 			newLog[config.logContentField] = message;
 
-			if (!File.Exists(this.messageLogPath))
+			lock (this.msgLock)
 			{
-				File.Create(this.messageLogPath);
-			}
 
-			File.AppendAllText(this.messageLogPath, "\n" + newLog.ToString());
+				if (!File.Exists(this.messageLogPath))
+				{
+					File.Create(this.messageLogPath);
+				}
+
+				File.AppendAllText(this.messageLogPath, "\n" + newLog.ToString());
+
+			}
 
 			if (config.consoleLogLevel.Contains(config.logMessageLevel))
 			{

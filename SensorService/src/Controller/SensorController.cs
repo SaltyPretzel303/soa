@@ -16,10 +16,10 @@ namespace DataCollector.Controller
 	public class SensorController : ControllerBase
 	{
 
-		public Reader reader;
+		public IReader reader;
 		public ILogger logger;
 
-		public SensorController(Reader reader, ILogger logger)
+		public SensorController(IReader reader, ILogger logger)
 		{
 
 			this.reader = reader;
@@ -63,7 +63,7 @@ namespace DataCollector.Controller
 
 				json_result["sensor_name_prefix"] = conf.sensorNamePrefix;
 
-				int sample_counter = reader.samplesRange.From;
+				int sample_counter = reader.getSamplesRange().From;
 
 				foreach (List<string> single_sample in ret_data)
 				{
@@ -122,5 +122,6 @@ namespace DataCollector.Controller
 
 			return array.ToString();
 		}
+
 	}
 }

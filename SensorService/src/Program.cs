@@ -19,8 +19,8 @@ namespace SensorService
 			int port_num = config.listeningPort;
 
 			return WebHost.CreateDefaultBuilder(args)
-			.UseStartup<Startup>()
-			.UseUrls("http://+:" + port_num + "/");
+					.UseStartup<Startup>()
+					.UseUrls("http://+:" + port_num + "/");
 
 		}
 	}
