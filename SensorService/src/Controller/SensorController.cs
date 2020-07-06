@@ -36,7 +36,7 @@ namespace DataCollector.Controller
 
 		[HttpGet("{index}")]
 		[Route("range")]
-		public JObject getRowsFrom([FromQuery]int index)
+		public JObject getRowsFrom([FromQuery] int index)
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.read();

@@ -15,7 +15,6 @@ namespace SensorService.Configuration
 		private static ServiceConfiguration cache;
 
 		// configuration fileds
-
 		public string stage { get; private set; }
 
 		public string dataPath { get; set; }
@@ -51,6 +50,8 @@ namespace SensorService.Configuration
 
 		public string logTimeField { get; set; }
 		public string logContentField { get; set; }
+
+		public List<string> test_list { get; set; }
 
 		// methods
 

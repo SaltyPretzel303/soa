@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
 RUN apt-get update && apt-get install nano
 

@@ -22,10 +22,10 @@ namespace SensorRegistry.src.Logger
 
 			string timestamp = DateTime.Now.ToString();
 
-			JObject messageObject=new JObject();
+			JObject messageObject = new JObject();
 
-			messageObject["timestamp"]=timestamp;
-			messageObject[]
+			messageObject["timestamp"] = timestamp;
+			// messageObject[]
 
 
 			return timestamp;

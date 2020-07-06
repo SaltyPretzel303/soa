@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SensorService.Configuration;
 using SensorService.Data;
 using SensorService.Logger;
+using Microsoft.Extensions.Hosting;
 
 namespace SensorService
 {
@@ -24,20 +25,29 @@ namespace SensorService
 
 			ServiceConfiguration config = ServiceConfiguration.read();
 
+			if (config.test_list != null)
+			{
+				foreach (string item in config.test_list)
+				{
+					Console.WriteLine(item);
+				}
+			}
+
 			string path = config.dataPath;
 			string prefix = config.dataPrefix;
 			string extension = config.sampleExtension;
 			FromTo samples_range = config.samplesRange;
 			int read_interval = config.readInterval;
 
-			services.AddSingleton(new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval, logger));
+			Reader sensorReader = new Reader(config.dataPath, config.dataPrefix, config.sampleExtension, config.samplesRange, config.readInterval, logger);
+			services.AddSingleton(sensorReader);
 
 			services.AddTransient<ILogger, BasicLogger>();
 
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
 		{
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
@@ -58,7 +68,7 @@ namespace SensorService
 				}
 				else
 				{
-
+					// this.logger.logError("Sensor failed to register ")
 					lifetime.StopApplication();
 					return;
 				}
@@ -102,7 +112,8 @@ namespace SensorService
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
 
 			bool retValue = false;
-			if (responseMessage != null && responseMessage.IsSuccessStatusCode)
+			if (responseMessage != null &&
+				responseMessage.IsSuccessStatusCode)
 			{
 
 				return true;

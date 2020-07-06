@@ -94,7 +94,7 @@ namespace SensorRegistry.Broker
 
 			if (this.connection != null && !this.connection.IsOpen)
 			{
-				this.createConnection();3
+				this.createConnection();
 			}
 
 			if (this.connection == null || !this.connection.IsOpen)

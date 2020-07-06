@@ -31,7 +31,11 @@
 		"logContentField": "content",
 		"consoleLogLevel": "",
 		"logMessageLevel": "message",
-		"logErrorLevel": "error"
+		"logErrorLevel": "error",
+		"test_list": [
+			"string_1",
+			"string_2"
+		]
 	},
 	"Production": {
 		"responseTypeField": "sensor_response",
@@ -64,6 +68,10 @@
 		"logContentField": "content",
 		"consoleLogLevel": "message",
 		"logMessageLevel": "message",
-		"logErrorLevel": "error"
+		"logErrorLevel": "error",
+		"test_list": [
+			"string_1",
+			"string_2"
+		]
 	}
 }

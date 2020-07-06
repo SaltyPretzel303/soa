@@ -15,7 +15,7 @@ namespace SensorService.Logger
 		private string errorLogPath;
 		private string messageLogPath;
 
-		public BasicLogger(IHostingEnvironment hostEnv)
+		public BasicLogger(IWebHostEnvironment hostEnv)
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.read();

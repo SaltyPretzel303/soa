@@ -109,3 +109,33 @@
   "timestamp": "12/25/19 11:50:07 PM",
   "content": "Sensor is going down ... "
 }
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 5:29:27 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 5:29:27 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 5:55:04 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 5:55:04 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 6:35:44 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/6/2020 6:35:44 PM",
+  "content": "Sensor is going down ... "
+}

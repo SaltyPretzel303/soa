@@ -46,7 +46,10 @@ namespace SensorService.Data
 			this.logger = logger;
 
 			// read first row (identify comlumns)
-			this.columns = new List<String>(File.ReadLines(this.path + this.dataPrefix + this.samplesRange.From + this.extension).Take(1).First().Split(","));
+			this.columns = new List<String>(File.ReadLines(this.path +
+															this.dataPrefix +
+															this.samplesRange.From +
+															this.extension).Take(1).First().Split(","));
 
 			// initialize the number of available lines for every user
 			this.rows_count = new List<int>();

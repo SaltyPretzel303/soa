@@ -10,6 +10,7 @@ using CollectorService.Broker.Events;
 using Newtonsoft.Json.Linq;
 using CollectorService.Data.Registry;
 using CollectorService.Broker.Reporter.Reports.Collector;
+using Microsoft.Extensions.Hosting;
 
 namespace CollectorService
 {
@@ -25,6 +26,7 @@ namespace CollectorService
 		public void ConfigureServices(IServiceCollection services)
 		{
 
+
 			services.AddMvc();
 
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
@@ -32,7 +34,7 @@ namespace CollectorService
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime, IDatabaseService database)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime, IDatabaseService database)
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
