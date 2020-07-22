@@ -18,14 +18,12 @@ namespace CollectorService
 	{
 
 		private DataPuller data_puller;
-
 		private LocalRegistry localRegistry;
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-
 
 			services.AddMvc();
 
@@ -44,8 +42,6 @@ namespace CollectorService
 			// reading is started inside onStartup method
 			this.localRegistry = new LocalRegistry(database);
 			this.data_puller = new DataPuller(database, this.localRegistry, conf.readInterval, conf.dataRangeUrl, conf.headerUrl);
-
-
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 			lifetime.ApplicationStarted.Register(this.onStartup);
@@ -103,4 +99,5 @@ namespace CollectorService
 		}
 
 	}
+
 }

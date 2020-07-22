@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CommunicationModel;
 
 namespace SensorRegistry.Registry
 {
@@ -11,33 +12,33 @@ namespace SensorRegistry.Registry
 		noSuchRecord
 	}
 
-	public class SensorRecord
-	{
+	// public class SensorRegistryRecord
+	// {
 
-		public string name;
-		public string address;
-		public int port;
+	// 	public string name { get; set; }
+	// 	public string address { get; set; }
+	// 	public int port { get; set; }
 
-		public SensorRecord(string name, string address, int port)
-		{
-			this.name = name;
-			this.address = address;
-			this.port = port;
-		}
-	}
+	// 	public SensorRegistryRecord(string name, string address, int port)
+	// 	{
+	// 		this.name = name;
+	// 		this.address = address;
+	// 		this.port = port;
+	// 	}
+	// }
 
 	public class RegistryResponse
 	{
 
 		public RegistryStatus status;
-		public SensorRecord singleData;
-		public List<SensorRecord> listData;
+		public SensorRegistryRecord singleData;
+		public List<SensorRegistryRecord> listData;
 
 		public RegistryResponse()
 		{
 		}
 
-		public RegistryResponse(RegistryStatus status, SensorRecord singleData, List<SensorRecord> listData)
+		public RegistryResponse(RegistryStatus status, SensorRegistryRecord singleData, List<SensorRegistryRecord> listData)
 		{
 			this.status = status;
 			this.singleData = singleData;

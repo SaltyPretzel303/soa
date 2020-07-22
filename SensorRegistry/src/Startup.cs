@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SensorRegistry.Broker;
 using SensorRegistry.Registry;
 
@@ -15,7 +16,7 @@ namespace SensorRegistry
 		public void ConfigureServices(IServiceCollection services)
 		{
 
-			services.AddMvc();
+			services.AddControllers();
 
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddSingleton<ISensorRegistry>(new MapRegistry());
@@ -23,7 +24,9 @@ namespace SensorRegistry
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+		public void Configure(IApplicationBuilder app,
+							IWebHostEnvironment env,
+							IHostApplicationLifetime lifetime)
 		{
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
@@ -34,7 +37,12 @@ namespace SensorRegistry
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseMvc();
+			app.UseRouting();
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
 
 		}
 
@@ -51,8 +59,6 @@ namespace SensorRegistry
 		{
 
 			Console.WriteLine("Handling startup ... ");
-
-
 
 		}
 

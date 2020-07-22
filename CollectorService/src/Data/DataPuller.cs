@@ -88,7 +88,6 @@ namespace CollectorService.Data
 				}
 				catch (AggregateException e)
 				{
-
 					if (e.InnerException is HttpRequestException)
 					{
 
@@ -104,8 +103,6 @@ namespace CollectorService.Data
 						continue; // pull from next sensor
 
 					}
-
-
 				}
 				catch (Exception e)
 				{

@@ -39,6 +39,9 @@ namespace CollectorService.Data.Registry
 			HttpClient httpClient = new HttpClient();
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result;
 
+			responseMessage.sta
+			HttpStatusCode
+
 			if (responseMessage.IsSuccessStatusCode)
 			{
 

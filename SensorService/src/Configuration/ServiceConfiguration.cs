@@ -20,9 +20,11 @@ namespace SensorService.Configuration
 		public string dataPath { get; set; }
 		public string responseTypeField { get; set; }
 		public string validResponse { get; set; }
-		public string dataPrefix { get; set; }
+		public string recordsField { get; set; }
+		public string rowsCountField { get; set; }
+		public string samplePrefix { get; set; }
 		public string sampleExtension { get; set; }
-		public FromTo samplesRange { get; set; }
+		public FromTo sensorsRange { get; set; }
 		public int readInterval { get; set; }
 		public int listeningPort { get; set; }
 		public string sensorNamePrefix { get; set; }
@@ -51,11 +53,9 @@ namespace SensorService.Configuration
 		public string logTimeField { get; set; }
 		public string logContentField { get; set; }
 
-		public List<string> test_list { get; set; }
-
 		// methods
 
-		public static ServiceConfiguration read()
+		public static ServiceConfiguration Read()
 		{
 
 			if (ServiceConfiguration.cache != null)

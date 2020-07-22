@@ -1,0 +1,939 @@
+
+{
+  "tag": "dev_message",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Reading interval: 2000"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Reader is running ...  "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Going to register service on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_-1&portNum=5005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "Going to register sensor: sensor_0 on address: http://localhost:\r\n\t\t\t\t\t\t\t5002/\r\n\t\t\t\t\t\t\tsensor/registry/registerSensor?\r\n\t\t\t\t\t\t\tsensorName=sensor_0&\r\n\t\t\t\t\t\t\tportNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:08:44 AM",
+  "content": "Reading interval: 2000"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:08:44 AM",
+  "content": "Reader is running ...  "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "Going to register sensor: sensor_0 on address: http://localhost:\r\n\t\t\t\t\t\t\t5002/\r\n\t\t\t\t\t\t\tsensor/registry/registerSensor?\r\n\t\t\t\t\t\t\tsensorName=sensor_0&\r\n\t\t\t\t\t\t\tportNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:10:16 AM",
+  "content": "Reading interval: 2000"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:10:16 AM",
+  "content": "Reader is running ...  "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:17 AM",
+  "content": "Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Going to register sensor: sensor_2 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_2&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Going to register sensor: sensor_3 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_3&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Going to register sensor: sensor_4 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_4&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Sensor successfully registered ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Reading interval: 2000"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:18 AM",
+  "content": "Reader is running ...  "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:20 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 1"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:22 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 2"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:24 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 3"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:26 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 4"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:28 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 5"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:30 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 6"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:32 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 7"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:34 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 8"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:36 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 9"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:38 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 10"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:40 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 11"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:42 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 12"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:44 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 13"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:46 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 14"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:48 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 15"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:50 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 16"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:52 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 17"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:54 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 18"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:56 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 19"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:11:58 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 20"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:00 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 21"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:02 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 22"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:04 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 23"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:06 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 24"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:08 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 25"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:10 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 26"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:12 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 27"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:14 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 28"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:16 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 29"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:18 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 30"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:20 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 31"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:22 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 32"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:24 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 33"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:26 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 34"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:28 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 35"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:30 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 36"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:32 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 37"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:34 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 38"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:36 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 39"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:38 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 40"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:40 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 41"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:42 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 42"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:44 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 43"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:46 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 44"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:46 AM",
+  "content": "Data range request -> sensor \"sensor_0\" index: 0 "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:48 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 45"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:50 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 46"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:52 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 47"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:54 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 48"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:56 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 49"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:12:58 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 50"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:13:00 AM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 51"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 12:13:01 AM",
+  "content": "Sensor is going down ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Going to register sensor: sensor_2 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_2&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Going to register sensor: sensor_3 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_3&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Going to register sensor: sensor_4 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_4&portNum=15005"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Sensor successfully registered ... "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Reading interval: 2000"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:12 PM",
+  "content": "Reader is running ...  "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:14 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 1"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:16 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 2"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:18 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 3"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:20 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 4"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:22 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 5"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:24 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 6"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:26 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 7"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:28 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 8"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:30 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 9"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:32 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 10"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:34 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 11"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:36 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 12"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:38 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 13"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:40 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 14"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:42 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 15"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:44 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 16"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:46 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 17"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:48 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 18"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:48 PM",
+  "content": "Data range request -> sensor  index: 2 "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:50 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 19"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:52 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 20"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:54 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 21"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:56 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 22"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:45:58 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 23"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:00 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 24"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:02 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 25"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:04 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 26"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:06 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 27"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:08 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 28"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:10 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 29"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:12 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 30"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:14 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 31"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:15 PM",
+  "content": "Data range request -> sensor \"sensor_\"4 index: 2 "
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:16 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 32"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:18 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 33"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:20 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 34"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:22 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 35"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:24 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 36"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:26 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 37"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:28 PM",
+  "content": "Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t5), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 38"
+}
+{
+  "tag": "dev_message",
+  "timestamp": "7/21/2020 3:46:30 PM",
+  "content": "Sensor is going down ... "
+}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:29 PM","Content":"Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:29 PM","Content":"Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:29 PM","Content":"Sensor successfully registered ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:29 PM","Content":"Reading interval: 2000"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:29 PM","Content":"Reader is running ...  "}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:31 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 1"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:33 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 2"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:35 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 3"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:37 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 4"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:39 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 5"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:41 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 6"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:43 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 7"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:45 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 8"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:47 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 9"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:49 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 10"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:51 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 11"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:53 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 12"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:55 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 13"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:57 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 14"}
+{"Tag":"dev_message","Time":"7/21/2020 10:23:59 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 15"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:01 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 16"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:03 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 17"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:05 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 18"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:07 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 19"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:09 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 20"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:11 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 21"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:13 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 22"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:14 PM","Content":"Data range request -\u003E sensor  index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:15 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 23"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:17 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 24"}
+{"Tag":"dev_message","Time":"7/21/2020 10:24:19 PM","Content":"Sensor is going down ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:35 PM","Content":"Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:35 PM","Content":"Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:35 PM","Content":"Sensor successfully registered ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:35 PM","Content":"Reading interval: 2000"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:35 PM","Content":"Reader is running ...  "}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:37 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 1"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:39 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 2"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:41 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 3"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:43 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 4"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:45 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 5"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:47 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 6"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:49 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 7"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:51 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 8"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:53 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 9"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:55 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 10"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:57 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 11"}
+{"Tag":"dev_message","Time":"7/21/2020 10:31:59 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 12"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:01 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 13"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:03 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 14"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:05 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 15"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:07 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 16"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:09 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 17"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:11 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 18"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:13 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 19"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:15 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 20"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:17 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 21"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:19 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 22"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:21 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 23"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:22 PM","Content":"Data range request -\u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:23 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 24"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:25 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 25"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:27 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 26"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:29 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 27"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:30 PM","Content":"Data range request -\u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:31 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 28"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:33 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 29"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:35 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 30"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:37 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 31"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:39 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 32"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:41 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 33"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:41 PM","Content":"Data range request -\u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:43 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 34"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:45 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 35"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:47 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 36"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:49 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 37"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:51 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 38"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:53 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 39"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:55 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 40"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:57 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 41"}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:58 PM","Content":"Data range request -\u003E sensor sensor_1 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:32:59 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 42"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:01 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 43"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:02 PM","Content":"Data range request -\u003E sensor sensor_1 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:03 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 44"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:05 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 45"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:07 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 46"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:09 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 47"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:10 PM","Content":"Data range request -\u003E sensor sensor_11 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:11 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 48"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:13 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 49"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:15 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 50"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:17 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 51"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:19 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 52"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:21 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 53"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:23 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 54"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:25 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 55"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:27 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 56"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:29 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 57"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:31 PM","Content":"Read event sensorRange(0,\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t2), \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\trowCounter: 58"}
+{"Tag":"dev_message","Time":"7/21/2020 10:33:33 PM","Content":"Sensor is going down ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:37 PM","Content":"Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:38 PM","Content":"Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:38 PM","Content":"Sensor successfully registered ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:38 PM","Content":"Reading interval: 2000"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:38 PM","Content":"Reader is running ...  "}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:40 PM","Content":"Read event sensorRange(0, 2), rowCounter: 1"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:42 PM","Content":"Read event sensorRange(0, 2), rowCounter: 2"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:44 PM","Content":"Read event sensorRange(0, 2), rowCounter: 3"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:46 PM","Content":"Read event sensorRange(0, 2), rowCounter: 4"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:48 PM","Content":"Read event sensorRange(0, 2), rowCounter: 5"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:50 PM","Content":"Read event sensorRange(0, 2), rowCounter: 6"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:52 PM","Content":"Read event sensorRange(0, 2), rowCounter: 7"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:54 PM","Content":"Read event sensorRange(0, 2), rowCounter: 8"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:56 PM","Content":"Read event sensorRange(0, 2), rowCounter: 9"}
+{"Tag":"dev_message","Time":"7/21/2020 10:40:58 PM","Content":"Read event sensorRange(0, 2), rowCounter: 10"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:00 PM","Content":"Read event sensorRange(0, 2), rowCounter: 11"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:02 PM","Content":"Read event sensorRange(0, 2), rowCounter: 12"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:04 PM","Content":"Read event sensorRange(0, 2), rowCounter: 13"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:06 PM","Content":"Read event sensorRange(0, 2), rowCounter: 14"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:08 PM","Content":"Read event sensorRange(0, 2), rowCounter: 15"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:10 PM","Content":"Read event sensorRange(0, 2), rowCounter: 16"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:12 PM","Content":"Read event sensorRange(0, 2), rowCounter: 17"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:14 PM","Content":"Read event sensorRange(0, 2), rowCounter: 18"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:16 PM","Content":"Read event sensorRange(0, 2), rowCounter: 19"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:18 PM","Content":"Read event sensorRange(0, 2), rowCounter: 20"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:20 PM","Content":"Read event sensorRange(0, 2), rowCounter: 21"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:22 PM","Content":"Read event sensorRange(0, 2), rowCounter: 22"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:24 PM","Content":"Read event sensorRange(0, 2), rowCounter: 23"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:26 PM","Content":"Read event sensorRange(0, 2), rowCounter: 24"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:28 PM","Content":"Read event sensorRange(0, 2), rowCounter: 25"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:30 PM","Content":"Read event sensorRange(0, 2), rowCounter: 26"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:32 PM","Content":"Read event sensorRange(0, 2), rowCounter: 27"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:34 PM","Content":"Read event sensorRange(0, 2), rowCounter: 28"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:36 PM","Content":"Read event sensorRange(0, 2), rowCounter: 29"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:38 PM","Content":"Read event sensorRange(0, 2), rowCounter: 30"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:40 PM","Content":"Read event sensorRange(0, 2), rowCounter: 31"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:42 PM","Content":"Read event sensorRange(0, 2), rowCounter: 32"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:44 PM","Content":"Read event sensorRange(0, 2), rowCounter: 33"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:46 PM","Content":"Read event sensorRange(0, 2), rowCounter: 34"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:48 PM","Content":"Read event sensorRange(0, 2), rowCounter: 35"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:50 PM","Content":"Read event sensorRange(0, 2), rowCounter: 36"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:52 PM","Content":"Read event sensorRange(0, 2), rowCounter: 37"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:54 PM","Content":"Read event sensorRange(0, 2), rowCounter: 38"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:56 PM","Content":"Read event sensorRange(0, 2), rowCounter: 39"}
+{"Tag":"dev_message","Time":"7/21/2020 10:41:58 PM","Content":"Read event sensorRange(0, 2), rowCounter: 40"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:00 PM","Content":"Read event sensorRange(0, 2), rowCounter: 41"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:02 PM","Content":"Read event sensorRange(0, 2), rowCounter: 42"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:04 PM","Content":"Read event sensorRange(0, 2), rowCounter: 43"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:06 PM","Content":"Read event sensorRange(0, 2), rowCounter: 44"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:08 PM","Content":"Read event sensorRange(0, 2), rowCounter: 45"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:10 PM","Content":"Read event sensorRange(0, 2), rowCounter: 46"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:12 PM","Content":"Read event sensorRange(0, 2), rowCounter: 47"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:14 PM","Content":"Read event sensorRange(0, 2), rowCounter: 48"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:14 PM","Content":"Sensor is going down ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:21 PM","Content":"Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:21 PM","Content":"Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:21 PM","Content":"All sensors successfully registered ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:21 PM","Content":"Reading interval: 2000"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:21 PM","Content":"Reader is running ...  "}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 1"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 2"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 3"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 4"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 5"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 6"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 7"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 8"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 9"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 10"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 11"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 12"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 13"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 14"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:51 PM","Content":"Read event sensorRange(0, 2), rowCounter: 15"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:53 PM","Content":"Read event sensorRange(0, 2), rowCounter: 16"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:55 PM","Content":"Read event sensorRange(0, 2), rowCounter: 17"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:57 PM","Content":"Read event sensorRange(0, 2), rowCounter: 18"}
+{"Tag":"dev_message","Time":"7/21/2020 10:42:59 PM","Content":"Read event sensorRange(0, 2), rowCounter: 19"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:01 PM","Content":"Read event sensorRange(0, 2), rowCounter: 20"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:01 PM","Content":"Data range request \u003E sensor  index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:03 PM","Content":"Read event sensorRange(0, 2), rowCounter: 21"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:05 PM","Content":"Read event sensorRange(0, 2), rowCounter: 22"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:07 PM","Content":"Read event sensorRange(0, 2), rowCounter: 23"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:08 PM","Content":"Data range request \u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:09 PM","Content":"Read event sensorRange(0, 2), rowCounter: 24"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:11 PM","Content":"Read event sensorRange(0, 2), rowCounter: 25"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:13 PM","Content":"Read event sensorRange(0, 2), rowCounter: 26"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:15 PM","Content":"Read event sensorRange(0, 2), rowCounter: 27"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:17 PM","Content":"Read event sensorRange(0, 2), rowCounter: 28"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:19 PM","Content":"Read event sensorRange(0, 2), rowCounter: 29"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:21 PM","Content":"Read event sensorRange(0, 2), rowCounter: 30"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 31"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 32"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 33"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 34"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 35"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 36"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 37"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 38"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 39"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 40"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 41"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 42"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:47 PM","Content":"Data range request \u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 43"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 44"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:51 PM","Content":"Read event sensorRange(0, 2), rowCounter: 45"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:53 PM","Content":"Read event sensorRange(0, 2), rowCounter: 46"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:55 PM","Content":"Read event sensorRange(0, 2), rowCounter: 47"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:57 PM","Content":"Read event sensorRange(0, 2), rowCounter: 48"}
+{"Tag":"dev_message","Time":"7/21/2020 10:43:59 PM","Content":"Read event sensorRange(0, 2), rowCounter: 49"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:01 PM","Content":"Read event sensorRange(0, 2), rowCounter: 50"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:03 PM","Content":"Read event sensorRange(0, 2), rowCounter: 51"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:05 PM","Content":"Read event sensorRange(0, 2), rowCounter: 52"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:07 PM","Content":"Read event sensorRange(0, 2), rowCounter: 53"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:09 PM","Content":"Read event sensorRange(0, 2), rowCounter: 54"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:11 PM","Content":"Read event sensorRange(0, 2), rowCounter: 55"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:13 PM","Content":"Read event sensorRange(0, 2), rowCounter: 56"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:15 PM","Content":"Read event sensorRange(0, 2), rowCounter: 57"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:17 PM","Content":"Read event sensorRange(0, 2), rowCounter: 58"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:19 PM","Content":"Read event sensorRange(0, 2), rowCounter: 59"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:21 PM","Content":"Read event sensorRange(0, 2), rowCounter: 60"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 61"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 62"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 63"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:28 PM","Content":"Data range request \u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 64"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 65"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 66"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 67"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 68"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 69"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 70"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 71"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 72"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 73"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 74"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:51 PM","Content":"Read event sensorRange(0, 2), rowCounter: 75"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:53 PM","Content":"Read event sensorRange(0, 2), rowCounter: 76"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:55 PM","Content":"Read event sensorRange(0, 2), rowCounter: 77"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:57 PM","Content":"Read event sensorRange(0, 2), rowCounter: 78"}
+{"Tag":"dev_message","Time":"7/21/2020 10:44:59 PM","Content":"Read event sensorRange(0, 2), rowCounter: 79"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:01 PM","Content":"Read event sensorRange(0, 2), rowCounter: 80"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:03 PM","Content":"Read event sensorRange(0, 2), rowCounter: 81"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:05 PM","Content":"Read event sensorRange(0, 2), rowCounter: 82"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:07 PM","Content":"Read event sensorRange(0, 2), rowCounter: 83"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:09 PM","Content":"Read event sensorRange(0, 2), rowCounter: 84"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:11 PM","Content":"Read event sensorRange(0, 2), rowCounter: 85"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:13 PM","Content":"Read event sensorRange(0, 2), rowCounter: 86"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:15 PM","Content":"Read event sensorRange(0, 2), rowCounter: 87"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:17 PM","Content":"Read event sensorRange(0, 2), rowCounter: 88"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:19 PM","Content":"Read event sensorRange(0, 2), rowCounter: 89"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:21 PM","Content":"Read event sensorRange(0, 2), rowCounter: 90"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 91"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:24 PM","Content":"Data range request \u003E sensor sensor_0 index: 0 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 92"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 93"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 94"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 95"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 96"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 97"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 98"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 99"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 100"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 101"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 102"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 103"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:49 PM","Content":"Data range request \u003E sensor \u0022sensor_0\u0022 index: 2 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 104"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:51 PM","Content":"Read event sensorRange(0, 2), rowCounter: 105"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:53 PM","Content":"Read event sensorRange(0, 2), rowCounter: 106"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:55 PM","Content":"Read event sensorRange(0, 2), rowCounter: 107"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:57 PM","Content":"Read event sensorRange(0, 2), rowCounter: 108"}
+{"Tag":"dev_message","Time":"7/21/2020 10:45:59 PM","Content":"Read event sensorRange(0, 2), rowCounter: 109"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:01 PM","Content":"Read event sensorRange(0, 2), rowCounter: 110"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:03 PM","Content":"Read event sensorRange(0, 2), rowCounter: 111"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:05 PM","Content":"Read event sensorRange(0, 2), rowCounter: 112"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:07 PM","Content":"Read event sensorRange(0, 2), rowCounter: 113"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:09 PM","Content":"Read event sensorRange(0, 2), rowCounter: 114"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:11 PM","Content":"Read event sensorRange(0, 2), rowCounter: 115"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:13 PM","Content":"Read event sensorRange(0, 2), rowCounter: 116"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:15 PM","Content":"Read event sensorRange(0, 2), rowCounter: 117"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:17 PM","Content":"Read event sensorRange(0, 2), rowCounter: 118"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:17 PM","Content":"Data range request \u003E sensor sensor_0 index: 2 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:19 PM","Content":"Read event sensorRange(0, 2), rowCounter: 119"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:21 PM","Content":"Read event sensorRange(0, 2), rowCounter: 120"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 121"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 122"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 123"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 124"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 125"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 126"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 127"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 128"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 129"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 130"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 131"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 132"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 133"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 134"}
+{"Tag":"dev_message","Time":"7/21/2020 10:46:51 PM","Content":"Sensor is going down ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:17 PM","Content":"Going to register sensor: sensor_0 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_0\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:17 PM","Content":"Going to register sensor: sensor_1 on address: http://localhost:5002/sensor/registry/registerSensor?sensorName=sensor_1\u0026portNum=15005"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:17 PM","Content":"All sensors successfully registered ... "}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:17 PM","Content":"Reading interval: 2000"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:17 PM","Content":"Reader is running ...  "}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:19 PM","Content":"Read event sensorRange(0, 2), rowCounter: 1"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:21 PM","Content":"Read event sensorRange(0, 2), rowCounter: 2"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:22 PM","Content":"Data range request \u003E sensor sensor_0 index: 2 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:23 PM","Content":"Read event sensorRange(0, 2), rowCounter: 3"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:25 PM","Content":"Data range request \u003E sensor sensor_0 index: 1 "}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:25 PM","Content":"Read event sensorRange(0, 2), rowCounter: 4"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:27 PM","Content":"Read event sensorRange(0, 2), rowCounter: 5"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:29 PM","Content":"Read event sensorRange(0, 2), rowCounter: 6"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:31 PM","Content":"Read event sensorRange(0, 2), rowCounter: 7"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:33 PM","Content":"Read event sensorRange(0, 2), rowCounter: 8"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:35 PM","Content":"Read event sensorRange(0, 2), rowCounter: 9"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:37 PM","Content":"Read event sensorRange(0, 2), rowCounter: 10"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:39 PM","Content":"Read event sensorRange(0, 2), rowCounter: 11"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:41 PM","Content":"Read event sensorRange(0, 2), rowCounter: 12"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:43 PM","Content":"Read event sensorRange(0, 2), rowCounter: 13"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:45 PM","Content":"Read event sensorRange(0, 2), rowCounter: 14"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:47 PM","Content":"Read event sensorRange(0, 2), rowCounter: 15"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:49 PM","Content":"Read event sensorRange(0, 2), rowCounter: 16"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:51 PM","Content":"Read event sensorRange(0, 2), rowCounter: 17"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:53 PM","Content":"Read event sensorRange(0, 2), rowCounter: 18"}
+{"Tag":"dev_message","Time":"7/21/2020 10:47:54 PM","Content":"Sensor is going down ... "}

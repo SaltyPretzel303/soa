@@ -26,7 +26,6 @@ namespace SensorRegistry.Controller
 			this.sensorRegistry = sensorRegistry;
 
 			this.broker = MessageBroker.Instance;
-
 		}
 
 		// TODO should be post
@@ -62,7 +61,7 @@ namespace SensorRegistry.Controller
 		// problem, same as with registerSenosor
 		[HttpGet]
 		[Route("updateSensor")]
-		public IActionResult updateSensor([FromQuery]string sensorName, [FromQuery] string sensorAddr, [FromQuery] int portNum)
+		public IActionResult updateSensor([FromQuery] string sensorName, [FromQuery] string sensorAddr, [FromQuery] int portNum)
 		{
 
 			Console.WriteLine($"Request for updating sensor: {sensorName}, with: {sensorAddr}:{portNum}");
@@ -105,7 +104,7 @@ namespace SensorRegistry.Controller
 
 		[HttpGet]
 		[Route("getAddress")]
-		public IActionResult getAddress([FromQuery]string sensorName)
+		public IActionResult getAddress([FromQuery] string sensorName)
 		{
 
 			RegistryResponse response = this.sensorRegistry.getSensorAddr(sensorName);
@@ -128,6 +127,8 @@ namespace SensorRegistry.Controller
 			if (response.status == RegistryStatus.ok)
 			{
 
+				// Console.WriteLine("Items count: " + response.listData.Count);
+
 				// returns list of sensorRecords
 				return new OkObjectResult(response.listData);
 			}
@@ -137,4 +138,5 @@ namespace SensorRegistry.Controller
 		}
 
 	}
+
 }

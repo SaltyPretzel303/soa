@@ -2,8 +2,8 @@ using System.Text;
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Newtonsoft.Json.Linq;
 using SensorService.Configuration;
+using System.Text.Json;
 
 namespace SensorService.Logger
 {
@@ -18,10 +18,10 @@ namespace SensorService.Logger
 		private object errorLock;
 		private object msgLock;
 
-		public BasicLogger(IHostingEnvironment hostEnv)
+		public BasicLogger(IWebHostEnvironment hostEnv)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.read();
+			ServiceConfiguration config = ServiceConfiguration.Read();
 
 			this.rootPath = hostEnv.ContentRootPath;
 
@@ -50,28 +50,29 @@ namespace SensorService.Logger
 		public void logError(string error)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.read();
+			ServiceConfiguration config = ServiceConfiguration.Read();
 
-			JObject newLog = new JObject();
-			newLog[config.logTagField] = config.logErrorTag;
-			newLog[config.logTimeField] = DateTime.Now.ToString();
-			newLog[config.logContentField] = error;
+			ServiceLog newLog = new ServiceLog(config.logErrorTag,
+											DateTime.Now.ToString(),
+											error);
+
+			string serializedLog = JsonSerializer.Serialize(newLog);
 
 			lock (this.errorLock)
 			{
 
 				if (!File.Exists(this.errorLogPath))
 				{
-					File.Create(this.errorLogPath);
+					File.Create(this.errorLogPath).Close();
 				}
 
-				File.AppendAllText(this.errorLogPath, "\n" + newLog.ToString(), Encoding.UTF8);
+				File.AppendAllText(this.errorLogPath, "\n" + serializedLog, Encoding.UTF8);
 
 			}
 
 			if (config.consoleLogLevel.Contains(config.logErrorLevel))
 			{
-				Console.WriteLine(newLog.ToString());
+				Console.WriteLine(serializedLog);
 			}
 
 		}
@@ -80,31 +81,33 @@ namespace SensorService.Logger
 		{
 
 
-			ServiceConfiguration config = ServiceConfiguration.read();
+			ServiceConfiguration config = ServiceConfiguration.Read();
 
-			JObject newLog = new JObject();
-			newLog[config.logTagField] = config.logMessageTag;
-			newLog[config.logTimeField] = DateTime.Now.ToString();
-			newLog[config.logContentField] = message;
+			ServiceLog newLog = new ServiceLog(config.logMessageTag,
+											DateTime.Now.ToString(),
+											message);
+
+			string serializedLog = JsonSerializer.Serialize(newLog);
 
 			lock (this.msgLock)
 			{
 
 				if (!File.Exists(this.messageLogPath))
 				{
-					File.Create(this.messageLogPath);
+					File.Create(this.messageLogPath).Close();
 				}
 
-				File.AppendAllText(this.messageLogPath, "\n" + newLog.ToString());
+				File.AppendAllText(this.messageLogPath, "\n" + serializedLog);
 
 			}
 
 			if (config.consoleLogLevel.Contains(config.logMessageLevel))
 			{
-				Console.WriteLine(newLog.ToString());
+				Console.WriteLine(serializedLog);
 			}
 
 		}
 
 	}
+
 }

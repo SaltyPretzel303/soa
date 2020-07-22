@@ -3,7 +3,6 @@ using CollectorService.Broker.Events;
 using CollectorService.Configuration;
 using CollectorService.Data.Registry;
 using Newtonsoft.Json.Linq;
-using RabbitMQ.Client;
 
 namespace CollectorService.Broker
 {

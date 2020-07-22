@@ -50,4 +50,5 @@ namespace SensorRegistry.Broker
 		public abstract void reload(ServiceConfiguration newConfiguration);
 
 	}
+
 }

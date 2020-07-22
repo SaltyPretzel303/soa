@@ -6,6 +6,10 @@ namespace ConfigGenerator
 {
 	class Program
 	{
+		/*
+			args[1] = starting index
+			args[2] = config. destination
+		*/
 		static void Main(string[] args)
 		{
 
@@ -22,6 +26,8 @@ namespace ConfigGenerator
 			JObject dev_part = (JObject)root["Development"];
 			JObject prod_part = (JObject)root["Production"];
 
+			// TODO change this part to list of filenames
+
 			JObject samples_range = new JObject();
 			samples_range["From"] = index;
 			samples_range["To"] = index + 1;
@@ -29,6 +35,7 @@ namespace ConfigGenerator
 			dev_part["samplesRange"] = samples_range;
 			prod_part["samplesRange"] = samples_range;
 
+			// end of changes
 
 			dev_part["listeningPort"] = port_num + index;
 			prod_part["listeningPort"] = port_num + index;
@@ -45,5 +52,6 @@ namespace ConfigGenerator
 			File.WriteAllText(destination, output_config);
 
 		}
+	
 	}
 }

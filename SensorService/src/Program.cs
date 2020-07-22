@@ -15,7 +15,7 @@ namespace SensorService
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.read();
+			ServiceConfiguration config = ServiceConfiguration.Read();
 			int port_num = config.listeningPort;
 
 			return WebHost.CreateDefaultBuilder(args)

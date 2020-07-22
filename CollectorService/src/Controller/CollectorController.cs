@@ -60,7 +60,7 @@ namespace CollectorService.Controller
 
 		[Route("sensorRecords")]
 		[HttpGet]
-		public IActionResult getSingleRecord([FromQuery]string sensorName, [FromQuery]long fromTimestamp, [FromQuery] long toTimestamp)
+		public IActionResult getSingleRecord([FromQuery] string sensorName, [FromQuery] long fromTimestamp, [FromQuery] long toTimestamp)
 		{
 
 			if (fromTimestamp >= toTimestamp)
@@ -103,4 +103,5 @@ namespace CollectorService.Controller
 
 
 	}
+
 }

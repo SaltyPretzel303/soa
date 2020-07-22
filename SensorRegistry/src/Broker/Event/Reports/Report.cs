@@ -1,5 +1,5 @@
 using Newtonsoft.Json.Linq;
-using SensorRegistry.Registry;
+using CommunicationModel;
 
 namespace SensorRegistry.Broker.Event.Reports
 {
@@ -15,9 +15,9 @@ namespace SensorRegistry.Broker.Event.Reports
 
 		public RegistryReportType type;
 
-		public SensorRecord record;
+		public SensorRegistryRecord record;
 
-		public RegistryReport(RegistryReportType type, SensorRecord record)
+		public RegistryReport(RegistryReportType type, SensorRegistryRecord record)
 		{
 			this.type = type;
 			this.record = record;

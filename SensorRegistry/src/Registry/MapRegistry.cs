@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Collections.Generic;
+using CommunicationModel;
 
 namespace SensorRegistry.Registry
 {
@@ -10,20 +10,20 @@ namespace SensorRegistry.Registry
 	{
 
 
-		private ConcurrentDictionary<string, SensorRecord> registry;
+		private ConcurrentDictionary<string, SensorRegistryRecord> registry;
 
 		// constructors
 
 		public MapRegistry()
 		{
-			this.registry = new ConcurrentDictionary<string, SensorRecord>();
+			this.registry = new ConcurrentDictionary<string, SensorRegistryRecord>();
 		}
 
 		// helper methods
 
 		#region responses
 
-		private RegistryResponse okResponse(SensorRecord data)
+		private RegistryResponse okResponse(SensorRegistryRecord data)
 		{
 
 			RegistryResponse response = new RegistryResponse();
@@ -34,7 +34,7 @@ namespace SensorRegistry.Registry
 
 		}
 
-		private RegistryResponse okResponse(List<SensorRecord> data)
+		private RegistryResponse okResponse(List<SensorRegistryRecord> data)
 		{
 
 			RegistryResponse response = new RegistryResponse();
@@ -62,7 +62,7 @@ namespace SensorRegistry.Registry
 		public RegistryResponse addSensorRecord(string sensorName, string sensorAddr, int sensorPort)
 		{
 
-			SensorRecord newRecord = new SensorRecord(sensorName, sensorAddr, sensorPort);
+			SensorRegistryRecord newRecord = new SensorRegistryRecord(sensorName, sensorAddr, sensorPort);
 
 			if (this.registry.TryAdd(sensorName, newRecord))
 			{
@@ -77,7 +77,7 @@ namespace SensorRegistry.Registry
 		public RegistryResponse changeSensorRecord(string sensorName, string sensorAddr, int sensorPort)
 		{
 
-			SensorRecord record = null;
+			SensorRegistryRecord record = null;
 			if (this.registry.TryGetValue(sensorName, out record))
 			{
 
@@ -94,7 +94,7 @@ namespace SensorRegistry.Registry
 		public RegistryResponse removeSensorRecord(string sensorName)
 		{
 
-			SensorRecord record = null;
+			SensorRegistryRecord record = null;
 			if (this.registry.TryRemove(sensorName, out record))
 			{
 				return this.okResponse(record);
@@ -116,7 +116,7 @@ namespace SensorRegistry.Registry
 		public RegistryResponse getSensorAddr(string sensorName)
 		{
 
-			SensorRecord record = null;
+			SensorRegistryRecord record = null;
 			if (this.registry.TryGetValue(sensorName, out record))
 			{
 

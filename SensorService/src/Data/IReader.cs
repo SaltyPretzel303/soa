@@ -3,6 +3,7 @@ using SensorService.Configuration;
 
 namespace SensorService.Data
 {
+	// safe to remove 
 	public interface IReader
 	{
 

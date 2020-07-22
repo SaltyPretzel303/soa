@@ -1,5 +1,5 @@
 {
-	"stage": "Production",
+	"stage": "Development",
 	"Development": {
 		"brokerAddress": "localhost",
 		"brokerPort": 5672,
@@ -17,7 +17,7 @@
 		"logErrorContentField": "error_content"
 	},
 	"Production": {
-		"brokerAddress": "rabbit_s",
+		"brokerAddress": "soa-broker",
 		"brokerPort": 5672,
 		"serviceReportTopic": "service_reports",
 		"registryReportFilter": "registry",

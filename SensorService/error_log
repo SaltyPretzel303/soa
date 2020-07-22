@@ -1,0 +1,76 @@
+﻿
+{
+  "tag": "dev_error",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Exception in sensor registration: System.AggregateException: One or more errors occurred. (Connection refused)\n ---> System.Net.Http.HttpRequestException: Connection refused\n ---> System.Net.Sockets.SocketException (111): Connection refused\n   at System.Net.Http.ConnectHelper.ConnectAsync(String host, Int32 port, CancellationToken cancellationToken)\n   --- End of inner exception stack trace ---\n   at System.Net.Http.ConnectHelper.ConnectAsync(String host, Int32 port, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean allowHttp2, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.GetHttpConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.SendWithRetryAsync(HttpRequestMessage request, Boolean doRequestAuth, CancellationToken cancellationToken)\n   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpClient.FinishSendAsyncBuffered(Task`1 sendTask, HttpRequestMessage request, CancellationTokenSource cts, Boolean disposeCts)\n   --- End of inner exception stack trace ---\n   at System.Threading.Tasks.Task`1.GetResultCore(Boolean waitCompletionNotification)\n   at System.Threading.Tasks.Task`1.get_Result()\n   at SensorService.Startup.registerSensor() in /home/nemanja/workspace/soa/SensorService/src/Startup.cs:line 111\n   at SensorService.Startup.Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime) in /home/nemanja/workspace/soa/SensorService/src/Startup.cs:line 53"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "Exception in sensor unregistration ... \n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/17/2020 7:39:40 PM",
+  "content": "System.AggregateException: One or more errors occurred. (Connection refused)\n ---> System.Net.Http.HttpRequestException: Connection refused\n ---> System.Net.Sockets.SocketException (111): Connection refused\n   at System.Net.Http.ConnectHelper.ConnectAsync(String host, Int32 port, CancellationToken cancellationToken)\n   --- End of inner exception stack trace ---\n   at System.Net.Http.ConnectHelper.ConnectAsync(String host, Int32 port, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean allowHttp2, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.GetHttpConnectionAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpConnectionPool.SendWithRetryAsync(HttpRequestMessage request, Boolean doRequestAuth, CancellationToken cancellationToken)\n   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)\n   at System.Net.Http.HttpClient.FinishSendAsyncBuffered(Task`1 sendTask, HttpRequestMessage request, CancellationTokenSource cts, Boolean disposeCts)\n   --- End of inner exception stack trace ---\n   at System.Threading.Tasks.Task`1.GetResultCore(Boolean waitCompletionNotification)\n   at System.Threading.Tasks.Task`1.get_Result()\n   at SensorService.Startup.unregisterSensor() in /home/nemanja/workspace/soa/SensorService/src/Startup.cs:line 177\n   at SensorService.Startup.onShutDown() in /home/nemanja/workspace/soa/SensorService/src/Startup.cs:line 155"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "Exception in sensor registration: Invalid URI: Invalid port specified. "
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "EXCEPTION in sensor: sensor_0 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "EXCEPTION in sensor: sensor_1 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "EXCEPTION in sensor: sensor_2 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "EXCEPTION in sensor: sensor_3 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:08:43 AM",
+  "content": "EXCEPTION in sensor: sensor_4 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "Exception in sensor registration: Invalid URI: Invalid port specified. "
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "EXCEPTION in sensor: sensor_0 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "EXCEPTION in sensor: sensor_1 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "EXCEPTION in sensor: sensor_2 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "EXCEPTION in sensor: sensor_3 unregistration: Invalid URI: Invalid port specified.\n"
+}
+{
+  "tag": "dev_error",
+  "timestamp": "7/21/2020 12:10:15 AM",
+  "content": "EXCEPTION in sensor: sensor_4 unregistration: Invalid URI: Invalid port specified.\n"
+}

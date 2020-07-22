@@ -40,10 +40,17 @@ namespace SensorRegistry.Broker
 			Console.WriteLine("Trying to create connection with rabbitMQ");
 
 			ServiceConfiguration conf = ServiceConfiguration.read();
-			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = conf.brokerAddress, Port = conf.brokerPort };
+			ConnectionFactory conn_factory = new ConnectionFactory()
+			{
+				HostName = conf.brokerAddress,
+				Port = conf.brokerPort
+				// UserName = "guest",
+				// Password = "guest"
+			};
 
 			// if create connections is called from reload previous connections is still alive
-			if (this.connection != null && this.connection.IsOpen)
+			if (this.connection != null &&
+				this.connection.IsOpen)
 			{
 				this.connection.Close();
 			}
@@ -187,4 +194,5 @@ namespace SensorRegistry.Broker
 		}
 
 	}
+
 }

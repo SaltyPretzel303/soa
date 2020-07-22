@@ -1,0 +1,47 @@
+{
+	"stage": "Development",
+	"Development": {
+		"responseTypeField": "sensor_response",
+		"validResponse": "data",
+		"dataPath": "./data/",
+		"dataPrefix": "user_",
+		"sampleExtension": ".csv",
+		"samplesRange": {
+			"From": 59,
+			"To": 60
+		},
+		"readInterval": 10000,
+		"listeningPort": 5000,
+		"sensorNamePrefix": "sensor_",
+		"registryAddress": "localhost/sensor/registry",
+		"registerSensorPath": "registerSensor",
+		"updateSensorPath": "updateSensor",
+		"sensorNameField": "sensorName",
+		"sensorAddrField": "sensorAddr",
+		"portNumField": "portNum",
+		"registryPort": 5005,
+		"sensorName": "sensor_-1"
+	},
+	"Production": {
+		"responseTypeField": "sensor_response",
+		"validResponse": "data",
+		"dataPath": "/data/",
+		"dataPrefix": "user_",
+		"sampleExtension": ".csv",
+		"samplesRange": {
+			"From": 55,
+			"To": 60
+		},
+		"readInterval": 10000,
+		"listeningPort": 5000,
+		"sensorNamePrefix": "sensor_",
+		"registryAddress": "sensorRegistry/sensor/registry",
+		"registerSensorPath": "registerSensor",
+		"updateSensorPath": "updateSensor",
+		"sensorNameField": "sensorName",
+		"sensorAddrField": "sensorAddr",
+		"portNumField": "portNum",
+		"registryPort": 5000,
+		"sensorName": "sensor_-1"
+	}
+}
