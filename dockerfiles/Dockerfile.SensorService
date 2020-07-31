@@ -1,0 +1,40 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+
+RUN apt-get update && apt-get install python3 -y
+
+# copy and build CommunicationModel
+WORKDIR /CommunicationModel
+
+COPY CommunicationModel/CommunicationModel.csproj ./
+RUN dotnet restore
+COPY CommunicationModel/src ./src
+RUN dotnet publish
+
+# copy and build SensorService
+WORKDIR /sensor_service
+
+COPY SensorService/SensorService.csproj ./SensorService.csproj
+RUN dotnet restore
+
+COPY SensorService/src ./src
+COPY SensorService/appsettings.json ./appsettings.json
+RUN dotnet build
+RUN dotnet publish --output /sensor_program
+
+# copy distribution program used to generate
+# diferent configs for each sensor program instance
+WORKDIR /DistributionProgram
+
+COPY SensorService/DistributionProgram ./
+COPY SensorService/service_config.json ./config_template.json
+
+# data is going to be accessed from mounted volume
+# used to speed up build process
+# COPY SensorService/data /data
+
+# generate specific config for each sensor program instance
+RUN /DistributionProgram/DistributionScript.sh
+
+EXPOSE 5000
+# ENTRYPOINT ["sh", "/DistributionProgram/DistributionScript.sh"]
+ENTRYPOINT [ "/bin/bash" ]

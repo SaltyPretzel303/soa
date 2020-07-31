@@ -38,9 +38,9 @@ namespace DataCollector.Controller
 		public IActionResult getRowsFrom([FromQuery] string sensorName, [FromQuery] int index)
 		{
 
-			logger.logMessage($"Data range request > sensor {sensorName} index: {index} ");
+			logger.logMessage($"Data range request > sensor: {sensorName} index: {index} ");
 
-			ServiceConfiguration conf = ServiceConfiguration.Read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			CacheRecord sensorRecord = this.dataCache.GetSensorRecordsFrom(sensorName, index);
 			if (sensorRecord != null &&

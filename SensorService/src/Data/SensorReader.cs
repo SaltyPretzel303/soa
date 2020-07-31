@@ -8,42 +8,37 @@ using SensorService.Logger;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using System.Threading;
+using SensorService.Broker;
+using CommunicationModel.BrokerModels;
 
 namespace SensorService.Data
 {
 
 	public class SensorReader : IHostedService
 	{
+
+		private IMessageBroker broker;
+
 		private System.Timers.Timer timer;
-
 		private int lineCounter;
-
 		private List<int> rowsCount;
-
-		// every list inside this list represents rows for user with same index
-		// single string represents one row - collections of values for every column
-		// private List<List<String>> data;
 
 		// injected services
 		private ILogger logger;
-
 		private IDataCacheManager DataCache;
 
-		public SensorReader(ILogger logger, IDataCacheManager dataCache)
+		public SensorReader(ILogger logger, IDataCacheManager dataCache, IMessageBroker broker)
 		{
-
-			Console.WriteLine("SensorReader's constructor ... ");
-
 			this.logger = logger;
 			this.DataCache = dataCache;
-
+			this.broker = broker;
 		}
 
 		private void ReadEvent(Object source, ElapsedEventArgs args)
 		{
 
-			ServiceConfiguration conf = ServiceConfiguration.Read();
-			// read one more line for evey user
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
+			// read one more line for evey sensor
 			// read this.line_counter. row
 			this.logger.logMessage($"Read event sensorRange({conf.sensorsRange.From}, {conf.sensorsRange.To}), rowCounter: {this.lineCounter}");
 
@@ -79,12 +74,19 @@ namespace SensorService.Data
 										header,
 										sensorRow);
 
+
+					this.broker.PublishSensorEvent(new SensorReaderEvent(conf.sensorNamePrefix + realIndex,
+																		this.lineCounter),
+													conf.sensorReadEventFilter);
+
 				}
+
 
 
 			}
 
 			this.lineCounter++;
+
 
 		}
 
@@ -95,9 +97,7 @@ namespace SensorService.Data
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 
-			Console.WriteLine("StartAsync on sensorReader ... ");
-
-			ServiceConfiguration config = ServiceConfiguration.Read();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			// read first row (identify comlumns)
 			string samplePath = config.dataPath +
@@ -118,14 +118,7 @@ namespace SensorService.Data
 													config.sampleExtension).Count());
 			}
 
-			// initialize list for every user
-			// this.data = new List<List<String>>();
-			for (int i = config.sensorsRange.From; i < config.sensorsRange.To; i++)
-			{
-				// this.data.Add(new List<String>());
-			}
-
-			// ignore first line (row with names of the columns)
+			// ignore first line - header row
 			this.lineCounter = 1;
 
 			this.logger.logMessage("Reading interval: " + config.readInterval);
@@ -134,7 +127,6 @@ namespace SensorService.Data
 			this.timer.Elapsed += this.ReadEvent;
 			this.timer.Interval = config.readInterval;
 			this.timer.AutoReset = true;
-			this.timer.Enabled = true;
 			this.timer.Start();
 
 			this.logger.logMessage("Reader is running ...  ");
@@ -152,7 +144,6 @@ namespace SensorService.Data
 
 			return Task.CompletedTask;
 		}
-
 
 		#endregion
 

@@ -15,7 +15,7 @@ public class InMemoryCache : IDataCacheManager
 	public InMemoryCache(ILogger logger)
 	{
 		this.logger = logger;
-		this.config = ServiceConfiguration.Read();
+		this.config = ServiceConfiguration.Instance;
 
 		this.DataMap = new ConcurrentDictionary<string, CacheRecord>();
 	}
@@ -55,7 +55,7 @@ public class InMemoryCache : IDataCacheManager
 		CacheRecord reqRecords = null;
 		CacheRecord existingRecords = null;
 		if (!string.IsNullOrEmpty(sensorName) &&
-		this.DataMap.TryGetValue(sensorName, out existingRecords))
+			this.DataMap.TryGetValue(sensorName, out existingRecords))
 		{
 
 			int existingCount = existingRecords.Records.Count;
@@ -71,6 +71,17 @@ public class InMemoryCache : IDataCacheManager
 		}
 
 		return null;
+	}
+
+	public int GetLastReadIndex(string sensorName)
+	{
+		CacheRecord record = null;
+		if (this.DataMap.TryGetValue(sensorName, out record))
+		{
+			return record.Records.Count - 1;
+		}
+
+		return -1;
 	}
 
 }

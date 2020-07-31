@@ -3,10 +3,10 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SensorRegistry.Broker;
-using SensorRegistry.Broker.Event;
-using SensorRegistry.Broker.Event.Reports;
 using SensorRegistry.Registry;
 using SensorRegistry.Configuration;
+using CommunicationModel.BrokerModels;
+using CommunicationModel;
 
 namespace SensorRegistry.Controller
 {
@@ -16,23 +16,28 @@ namespace SensorRegistry.Controller
 	public class SensorRegistryController
 	{
 
+		// used to get ip and port of request source
 		private IHttpContextAccessor httpContext;
 		private ISensorRegistry sensorRegistry;
-		private MessageBroker broker;
+		private IMessageBroker broker;
 
-		public SensorRegistryController(IHttpContextAccessor httpContext, ISensorRegistry sensorRegistry)
+		public SensorRegistryController(IHttpContextAccessor httpContext,
+									ISensorRegistry sensorRegistry,
+									IMessageBroker broker)
 		{
 			this.httpContext = httpContext;
 			this.sensorRegistry = sensorRegistry;
 
-			this.broker = MessageBroker.Instance;
+			this.broker = broker;
 		}
 
 		// TODO should be post
 		// problem, extract 2 arguments (1 is ok ... ) 
 		[HttpGet]
 		[Route("registerSensor")]
-		public IActionResult registerSensor([FromQuery] string sensorName, [FromQuery] int portNum)
+		public IActionResult registerSensor([FromQuery] string sensorName,
+										[FromQuery] int portNum,
+										[FromQuery] int lastReadIndex)
 		{
 
 			// sensor ip is extracted from request
@@ -40,17 +45,12 @@ namespace SensorRegistry.Controller
 
 			Console.WriteLine($"Request to register sensor: {sensorName}, with: {sensorIp}:{portNum}");
 
-			RegistryResponse response = this.sensorRegistry.addSensorRecord(sensorName, sensorIp, portNum);
-
+			RegistryResponse response = this.sensorRegistry.addSensorRecord(sensorName,
+																		sensorIp,
+																		portNum,
+																		lastReadIndex);
 			if (response.status == RegistryStatus.ok)
 			{
-
-				RegistryReport report = new RegistryReport(RegistryReportType.SensorRegistration, response.singleData);
-
-				ServiceConfiguration conf = ServiceConfiguration.read();
-
-				this.broker.publishEvent(new RegistryEvent(report), conf.newSensorFilter);
-
 				return new OkObjectResult(response.singleData);
 			}
 
@@ -61,15 +61,20 @@ namespace SensorRegistry.Controller
 		// problem, same as with registerSenosor
 		[HttpGet]
 		[Route("updateSensor")]
-		public IActionResult updateSensor([FromQuery] string sensorName, [FromQuery] string sensorAddr, [FromQuery] int portNum)
+		public IActionResult updateSensor([FromQuery] string sensorName,
+										[FromQuery] string sensorAddr,
+										[FromQuery] int portNum,
+										[FromQuery] int lastReadIndex)
 		{
 
-			Console.WriteLine($"Request for updating sensor: {sensorName}, with: {sensorAddr}:{portNum}");
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
-			RegistryResponse response = this.sensorRegistry.changeSensorRecord(sensorName, sensorAddr, portNum);
+			RegistryResponse response = this.sensorRegistry.updateSensorRecord(sensorName,
+																			sensorAddr,
+																			portNum,
+																			lastReadIndex);
 			if (response.status == RegistryStatus.ok)
 			{
-
 				return new OkObjectResult(response.singleData);
 			}
 
@@ -88,13 +93,6 @@ namespace SensorRegistry.Controller
 			RegistryResponse response = this.sensorRegistry.removeSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{
-
-				RegistryReport report = new RegistryReport(RegistryReportType.SensorUnregitration, response.singleData);
-
-				ServiceConfiguration conf = ServiceConfiguration.read();
-
-				this.broker.publishEvent(new RegistryEvent(report), conf.sensorRemovedFilter);
-
 				return new OkObjectResult(response.singleData);
 			}
 
@@ -107,7 +105,7 @@ namespace SensorRegistry.Controller
 		public IActionResult getAddress([FromQuery] string sensorName)
 		{
 
-			RegistryResponse response = this.sensorRegistry.getSensorAddr(sensorName);
+			RegistryResponse response = this.sensorRegistry.getSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{
 
@@ -126,10 +124,6 @@ namespace SensorRegistry.Controller
 			RegistryResponse response = this.sensorRegistry.getAllSensors();
 			if (response.status == RegistryStatus.ok)
 			{
-
-				// Console.WriteLine("Items count: " + response.listData.Count);
-
-				// returns list of sensorRecords
 				return new OkObjectResult(response.listData);
 			}
 

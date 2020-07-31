@@ -11,53 +11,54 @@ namespace CollectorService.Configuration
 	{
 
 		public JObject rawJConfig { get; private set; }
-
-		// configuration variables
 		public string stage { get; set; }
 
+		#region  mapped properties
 		public int port { get; set; }
+
 		public string dbAddress { get; set; }
 		public string dbName { get; set; }
 		public string sensorsCollection { get; set; }
 		public string fieldWithRecords { get; set; }
 		public string configurationBackupCollection { get; set; }
-		// TODO this can be removed, sensors are obtained from the sensorRegistry
-		public List<string> sensorsList { get; set; }
 
 		public string headerUrl { get; set; }
 		public string dataRangeUrl { get; set; }
 
 		public int readInterval { get; set; }
-		public string sensorResponseTypeField { get; set; }
-		public string sensorOkResponse { get; set; }
-		public string samplePrefix { get; set; }
+
+		public string sensorRegistryAddr { get; set; }
+		public string sensorRegistryPort { get; set; }
+		public string sensorAddrResolutionPath { get; set; }
+		public string sensorListReqPath { get; set; }
 
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
 
-		public string serviceReportTopic { get; set; }
-		public string collectorReportFilter { get; set; }
+		public string collectorTopic { get; set; }
+
+		public string accessEventFilter { get; set; }
+		public string pullEventFilter { get; set; }
+
+		public string serviceLogTopic { get; set; }
+		public string serviceLifetimeTopic { get; set; }
+
+		public string serviceTypeFilter { get; set; }
 		public string configurationTopic { get; set; }
 		public string targetConfiguration { get; set; }
 
-		public string sensorRegistryAddr { get; set; }
-		public string sensorRegistryPort { get; set; }
-		public string singleSensorNameReqPath { get; set; }
-		public string sensorNameField { get; set; }
-		public string sensorListReqPath { get; set; }
+		public string allFilter { get; set; }
 
 		public string sensorRegistryTopic { get; set; }
 		public string newSensorFilter { get; set; }
 		public string sensorRemovedFilter { get; set; }
 
-		// ent of the configuration variables
+		#endregion
 
 		private static string CONFIGURATION_PATH = "./service_config.json";
 		private static string STAGE_VAR_NAME = "stage";
-		private static string rawConfig;
 
-
-		// singleton specific
+		#region  singleton specific
 		private static ServiceConfiguration instance;
 		public static ServiceConfiguration Instance
 		{
@@ -74,10 +75,12 @@ namespace CollectorService.Configuration
 			private set { ServiceConfiguration.instance = value; }
 		}
 
+		#endregion
+
 		private static ServiceConfiguration readFromFile()
 		{
 
-			Console.WriteLine("Reading configuration file ... ");
+			Console.WriteLine($"Reading configuration file (ServiceConfiguration.CONFIGURATION_PATH) ... ");
 
 			string rawConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
 			JObject json_config = JObject.Parse(rawConfig);
@@ -87,7 +90,6 @@ namespace CollectorService.Configuration
 
 		private static ServiceConfiguration extractFromJson(JObject jConfig)
 		{
-
 			string stage = jConfig.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
 			JObject conf_stage = (JObject)jConfig.GetValue(stage);
 
@@ -96,17 +98,14 @@ namespace CollectorService.Configuration
 			config_o.rawJConfig = jConfig;
 
 			return config_o;
-
 		}
 
 		private void writeToFile()
 		{
-
 			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
-
 		}
 
-		// reload specific methods
+		#region reload configuration specific
 
 		private static List<IReloadable> reloadableTargets;
 
@@ -130,7 +129,7 @@ namespace CollectorService.Configuration
 
 		}
 
-		public static void subscribeForReload(IReloadable reloadableTarget)
+		public static void subscribeForChange(IReloadable reloadableTarget)
 		{
 
 			if (ServiceConfiguration.reloadableTargets == null)
@@ -141,6 +140,8 @@ namespace CollectorService.Configuration
 			ServiceConfiguration.reloadableTargets.Add(reloadableTarget);
 
 		}
+
+		#endregion
 
 		public override string ToString()
 		{

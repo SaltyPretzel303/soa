@@ -1,197 +1,170 @@
-using System.IO;
-using System.Net;
 using System;
 using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using CollectorService.Broker;
 using CollectorService.Configuration;
-using CollectorService.Broker.Events;
-using CollectorService.Data.Registry;
-using CollectorService.Broker.Reporter.Reports.Collector;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using System.Threading;
+using Newtonsoft.Json;
+using CommunicationModel.BrokerModels;
+using CommunicationModel;
+using System.Collections.Generic;
 
 namespace CollectorService.Data
 {
-	public class DataPuller : IReloadable
+	public class DataPuller : IHostedService, IReloadable
 	{
 
 		private IDatabaseService database;
-		private LocalRegistry localRegistry;
+		private IRegistryCache localRegistry;
+		private IMessageBroker messageBroker;
 
-		private Timer timer;
-		public int read_interval { get; private set; }
-
+		private System.Timers.Timer timer;
 		private HttpClient httpClient;
 
-		private string dataRangeUrl;
-		private string headerUrl;
-
-		// constructors
-
-		public DataPuller(IDatabaseService databse, LocalRegistry localRegistry, int read_interval, string data_range_url, string header_url)
+		public DataPuller(IDatabaseService databse, IRegistryCache localRegistry, IMessageBroker messageBroker)
 		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			this.database = databse;
 			this.localRegistry = localRegistry;
+			this.messageBroker = messageBroker;
 
-			this.read_interval = read_interval;
-			this.dataRangeUrl = data_range_url;
-			this.headerUrl = header_url;
-
-			// initialize timer for passed interval and specific event handler
-			this.timer = new Timer();
+			this.timer = new System.Timers.Timer();
 			this.timer.Elapsed += new ElapsedEventHandler(this.timerEvent);
-			this.timer.Interval = this.read_interval;
-
-			// this.timer.Enabled = true;
+			this.timer.Interval = config.readInterval;
 
 			this.httpClient = new HttpClient();
-
 		}
 
-		// methods
+		#region IHostedService methods
+
+		public Task StartAsync(CancellationToken cancellationToken)
+		{
+			startReading();
+			return Task.CompletedTask;
+		}
+
+		public Task StopAsync(CancellationToken cancellationToken)
+		{
+			stopReading();
+			return Task.CompletedTask;
+		}
+
+		#endregion
 
 		public void startReading()
 		{
-
-			this.timer.Enabled = true;
-
+			Console.WriteLine("Started reading with interval: " + this.timer.Interval + "ms");
+			this.timer.Start();
 		}
 
-		public void pauseReading()
+		public void stopReading()
 		{
-
-			this.timer.Enabled = false;
-
+			this.timer.Stop();
 		}
 
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
-			int max_row_count = -1;
-			Console.WriteLine($"Ready to pull from: {this.localRegistry.getRecords().Count} sensors ... ");
-			foreach (SensorRecord single_sensor in this.localRegistry.getRecords())
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			List<SensorRegistryRecord> availableSensors = this.localRegistry.GetAllSensors();
+
+			Console.WriteLine($"Ready to pull from: {availableSensors.Count} sensors ... ");
+			foreach (SensorRegistryRecord singleSensor in availableSensors)
 			{
 
-				int sensorLastReadIndex = single_sensor.lastReadIndex;
+				int sensorLastReadIndex = singleSensor.LastReadIndex;
 
-				string sensorAddr = $"http://{single_sensor.address}:{single_sensor.port}";
-				string api_url = $"{sensorAddr}/{this.dataRangeUrl}?index={sensorLastReadIndex}";
+				string sensorAddr = $"http://{singleSensor.Address}:{singleSensor.Port}";
+				string api_url = $"{sensorAddr}/{config.dataRangeUrl}?sensorName={singleSensor.Name}&index={sensorLastReadIndex}";
 
-				Uri sensor_uri = new Uri(api_url);
+				Uri sensorUri = new Uri(api_url);
 				Console.WriteLine("Pulling from: " + api_url);
 
-				string s_response = "";
+				HttpResponseMessage responseMessage = null;
 				try
 				{
-					s_response = this.httpClient.GetStringAsync(sensor_uri).Result;
+					responseMessage = this.httpClient.GetAsync(sensorUri).Result;
 				}
 				catch (AggregateException e)
 				{
 					if (e.InnerException is HttpRequestException)
 					{
-
 						string message = ((HttpRequestException)e.InnerException).Message;
 
-						Console.WriteLine($"Http req. exception, message: {message} ... sensor may be down.\nSensor addr. : {sensor_uri.ToString()}\n");
+						Console.WriteLine($"Http req. exception, message: {message} ... sensor may be down.\nSensor addr. : {sensorUri.ToString()}\n");
 
+						CollectorPullEvent newEvent = new CollectorPullEvent(sensorUri.ToString(),
+																		false,
+																		e.Message);
 
-						Report report = new SensorPullReport(sensor_uri.ToString(), message);
-						CollectorEvent sensorEvent = new CollectorEvent(report);
-						MessageBroker.Instance.publishEvent(sensorEvent);
+						this.messageBroker.PublishCollectorPullEvent(newEvent);
 
 						continue; // pull from next sensor
-
 					}
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine($"UNKNOWN EXCEPTION in gettin data: {e.ToString()}");
+					continue; // pull from next sensor
+				}
+
+				if (responseMessage == null ||
+				!responseMessage.IsSuccessStatusCode)
+				{
+					Console.WriteLine($"Sensor ({sensorUri.ToString()}) returned bad response ... ");
+
+					CollectorPullEvent newEvent = new CollectorPullEvent(sensorUri.ToString(),
+																	false,
+																	"Sensor returned bad response.");
+
+					this.messageBroker.PublishCollectorPullEvent(newEvent);
+
 
 					continue; // pull from next sensor
 				}
 
-				JObject j_response = JObject.Parse(s_response);
-				ServiceConfiguration conf = ServiceConfiguration.Instance;
-				if (j_response.GetValue(conf.sensorResponseTypeField).ToString() != conf.sensorOkResponse)
+				string txtResponseContent = responseMessage.Content.ReadAsStringAsync().Result;
+				// SensorDataRecords dataRecords = System.Text.Json.JsonSerializer.Deserialize<SensorDataRecords>(txtResponseContent);
+				// newtonsoft serializes properties to camelCase so when they get pulled from sensor
+				// system.text.json can't deserialize it because class properties are actually in PascalCase 
+				// that is the reason to use newtonsoft - easier than forcing it to serialize in PascalCase
+				SensorDataRecords dataRecords = JsonConvert.DeserializeObject<SensorDataRecords>(txtResponseContent);
+
+				// deserialize all records from response
+				// ListdataRecords.Records -> list of strings each representing one row from csv
+				JArray dataArray = new JArray();
+				foreach (string txtData in dataRecords.Records)
 				{
-
-					Console.WriteLine("Bad response from sensor: " + single_sensor.name);
-					Console.WriteLine(j_response.GetValue(conf.sensorResponseTypeField).ToString());
-
-					continue; // pull from next sensor
-
+					JObject tempData = JObject.Parse(txtData);
+					dataArray.Add(tempData);
 				}
 
-				int row_count = int.Parse(j_response.GetValue("rows_count").ToString());
+				this.database.pushToSensor(singleSensor.Name, dataArray);
 
-				// ATTENTION this line is useless 
-				// TODO remove this
-				if (row_count > max_row_count)
-				{
-					max_row_count = row_count;
-				}
+				// update read index for every sensor
+				this.localRegistry.GetSingleSensor(singleSensor.Name).LastReadIndex += dataRecords.RecordsCount;
 
-				int from_index = int.Parse(j_response.GetValue("from_sample").ToString());
-				int to_index = int.Parse(j_response.GetValue("to_sample").ToString());
-				string sensor_prefix = j_response.GetValue("sensor_name_prefix").ToString();
-
-				string temp_sensor_name = "";
-
-				for (int sensor_index = from_index; sensor_index < to_index; sensor_index++)
-				{
-
-					temp_sensor_name = sensor_prefix + sensor_index.ToString();
-
-					JArray sample_values = (JArray)j_response.GetValue(temp_sensor_name);
-
-					this.database.pushToSensor(temp_sensor_name, sample_values);
-
-					// update read index for every sensor
-					this.localRegistry.getSensor(temp_sensor_name).lastReadIndex += row_count;
-
-				}
-
-				Console.WriteLine($"Sensor {single_sensor.name} returned {row_count} rows ... ");
+				Console.WriteLine($"Sensor {singleSensor.Name} returned {dataRecords.RecordsCount} rows ... ");
 
 			}
 
-		}
-
-		// not used ...
-		// TODO remove
-		private String requestHeader()
-		{
-
-			String response_data = "";
-
-			// all sensors have same header
-			string single_sensor = this.localRegistry.getRecords()[0].address;
-
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(single_sensor + this.headerUrl);
-			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-			using (Stream stream = response.GetResponseStream())
-			using (StreamReader reader = new StreamReader(stream))
-			{
-				response_data = reader.ReadToEnd();
-			}
-
-			Console.WriteLine("DEBUG: \n");
-			Console.WriteLine(response_data);
-
-			return response_data;
 		}
 
 		public void shutDown()
 		{
-
 			this.timer.Stop();
-
 		}
 
 		public void reload(ServiceConfiguration newConfiguration)
 		{
 			Console.WriteLine("Reloading data puller: " + newConfiguration.ToString());
 		}
+
 	}
+
 }

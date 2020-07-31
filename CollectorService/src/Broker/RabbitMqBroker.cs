@@ -1,282 +1,83 @@
 using System.Text;
 using System;
-using CollectorService.Broker.Events;
 using CollectorService.Configuration;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using Newtonsoft.Json.Linq;
-using CollectorService.src.Broker.Events;
-using CollectorService.src.Broker.Reporter.Reports.Registry;
-using RabbitMQ.Client.Exceptions;
+using CommunicationModel.BrokerModels;
+using Newtonsoft.Json;
 
 namespace CollectorService.Broker
 {
 
-	public class RabbitMqBroker : MessageBroker
+	public class RabbitMqBroker : IMessageBroker
 	{
-
-		private bool connectionReady;
-		public bool IsReady
-		{
-			get { return this.connectionReady; }
-		}
-
-		private string brokerHostName;
-		private int port;
-
-		private IConnection connection;
-
-		private string configQueue;
-		private DConfigurationHandler configurationHandler;
-
-		private DRegistryChangedHandler newSensorHandler;
-		private DRegistryChangedHandler sensorRemovedHandler;
+		private ServiceConfiguration config;
 
 		public RabbitMqBroker()
 		{
-
-			this.connectionReady = false;
-
-			ServiceConfiguration configuration = ServiceConfiguration.Instance;
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
-
-			this.createConnection();
-
+			this.config = ServiceConfiguration.Instance;
 		}
 
-		private void createConnection()
+		public void PublishCollectorAccessEvent(CollectorAccessEvent newEvent)
 		{
-			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = this.brokerHostName, Port = this.port };
-
-			// if create connections is called from 'reload' method previous connections is still alive
-			if (this.connection != null && this.connection.IsOpen)
-			{
-				this.connection.Close();
-			}
-
-
-			try
-			{
-				this.connection = conn_factory.CreateConnection();
-			}
-			catch (BrokerUnreachableException e)
-			{
-
-				Console.WriteLine("Broker unreachable exception on address: " + this.brokerHostName + ":" + this.port);
-
-				this.connectionReady = false;
-
-				return;
-
-			}
-
-			if (this.connection != null && connection.IsOpen)
-			{
-
-				IModel channel = connection.CreateModel();
-				this.initBroker(channel);
-
-				this.connectionReady = true;
-
-			}
-
-
+			this.PublishEvent(newEvent,
+							this.config.collectorTopic,
+							this.config.accessEventFilter);
 		}
 
-		private void initBroker(IModel channel)
+		public void PublishCollectorPullEvent(CollectorPullEvent newEvent)
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			// declare exchange for publishing collector events (reports)
-			channel.ExchangeDeclare(config.serviceReportTopic, "topic", true, true, null);
-
+			this.PublishEvent(newEvent,
+							this.config.collectorTopic,
+							this.config.pullEventFilter);
 		}
 
-		override public void publishEvent(CollectorEvent eventToPublish)
+		public void PublishLifetimeEvent(ServiceLifetimeEvent newEvent)
 		{
-
-			if (!this.connectionReady)
-			{
-
-				this.createConnection();
-
-				if (!this.connectionReady)
-				{
-
-					Console.WriteLine("Failed to publish event, connection can't be established ... ");
-					return;
-
-				}
-
-			}
-
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
-			IModel channel = this.connection.CreateModel();
-
-			byte[] content = Encoding.UTF8.GetBytes(eventToPublish.toJson().ToString());
-
-			channel.BasicPublish(conf.serviceReportTopic, conf.collectorReportFilter, false, null, content);
-
-			Console.WriteLine("Publishing: " + eventToPublish.toJson().ToString());
-
-			channel.Close();
-
+			this.PublishEvent(newEvent,
+							this.config.serviceLifetimeTopic,
+							this.config.serviceTypeFilter);
 		}
 
-		public override void shutDown()
+		public void PublishLog(ServiceLog newLog)
 		{
-
-			Console.WriteLine("Closing rabbit connection ... ");
-
-			if (this.connection != null && this.connection.IsOpen)
-			{
-				this.connection.Close();
-			}
-
-			Console.WriteLine(" Rabbit connection closed ...  ");
-
+			this.PublishEvent(newLog,
+							this.config.serviceLogTopic,
+							this.config.serviceTypeFilter);
 		}
 
-		public override void subscribeForConfiguration(DConfigurationHandler configHandler)
+		private void PublishEvent(ServiceEvent newEvent, string topic, string filter)
 		{
 
-			this.configurationHandler = configHandler;
-
-			if (this.connection == null || !this.connection.IsOpen)
+			ConnectionFactory factory = new ConnectionFactory()
 			{
-				this.createConnection();
-
-				if (this.connection == null || !this.connection.IsOpen)
-				{
-					Console.WriteLine("Connection with broker can't be created ... @ SuscribeForConfiguration ");
-					return;
-				}
-
-			}
-
-			// declare exchange for receiving configuration
-			IModel channel = this.connection.CreateModel();
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			channel.ExchangeDeclare(config.configurationTopic, "topic", true, true, null);
-
-			this.configQueue = channel.QueueDeclare().QueueName;
-
-			channel.QueueBind(this.configQueue, config.configurationTopic, config.targetConfiguration, null);
-
-			EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-			consumer.Received += (src_channel, eventArg) =>
-			{
-
-				Console.WriteLine("New configuration received ...");
-
-				// extract configuration 
-				string sConfig = System.Text.Encoding.UTF8.GetString(eventArg.Body);
-				JObject jConfig = JObject.Parse(sConfig);
-
-				// pass it to the configHandler
-				configurationHandler(jConfig);
-
+				HostName = this.config.brokerAddress,
+				Port = this.config.brokerPort
 			};
 
-			channel.BasicConsume(this.configQueue, true, consumer);
-
-		}
-
-		public override void reload(ServiceConfiguration newConfiguration)
-		{
-
-			Console.WriteLine("Reloading rabbit ... ");
-
-			this.connectionReady = false;
-
-			ServiceConfiguration configuration = ServiceConfiguration.Instance;
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
-
-			// "re-create" connection
-			this.createConnection();
-
-			if (this.configurationHandler != null)
-			{
-				this.subscribeForConfiguration(this.configurationHandler);
-			}
-
-			this.connectionReady = true;
-
-		}
-
-		public override void subscribeForSensorRegistry(DRegistryChangedHandler newSensorHandler, DRegistryChangedHandler sensorRemovedHandler)
-		{
-
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
-			this.newSensorHandler = newSensorHandler;
-			this.sensorRemovedHandler = sensorRemovedHandler;
-
-			if (this.connection == null || !this.connection.IsOpen)
+			using (IConnection connection = factory.CreateConnection())
+			using (IModel channel = connection.CreateModel())
 			{
 
-				// try to create connection
-				this.createConnection();
+				string txtEvent = JsonConvert.SerializeObject(newEvent);
+				byte[] byteContent = Encoding.UTF8.GetBytes(txtEvent);
 
-				// check is connection successfully created
-				if (this.connection == null || !this.connection.IsOpen)
-				{
+				channel.ExchangeDeclare(topic,
+										"topic",
+										true,
+										true,
+										null);
 
-					Console.WriteLine("Connection with broker can't be created ... @ SuscribeForSensorRegistry ");
-					return;
-				}
+				channel.BasicPublish(topic,
+									filter,
+									false,
+									null,
+									byteContent);
 
 			}
 
-
-			IModel channel = this.connection.CreateModel();
-			string newSensorQueue = channel.QueueDeclare().QueueName;
-			string sensorRemovedQueue = channel.QueueDeclare().QueueName;
-
-			channel.ExchangeDeclare(conf.sensorRegistryTopic, "topic", true, true, null);
-
-			channel.QueueBind(newSensorQueue, conf.sensorRegistryTopic, conf.newSensorFilter, null);
-			EventingBasicConsumer newSensorConsumer = new EventingBasicConsumer(channel);
-			newSensorConsumer.Received += (src_channel, eventArg) =>
-			{
-
-				Console.WriteLine("New sensor Registry event ... ");
-
-				string payload = System.Text.Encoding.UTF8.GetString(eventArg.Body);
-				JObject jPayload = JObject.Parse(payload);
-				RegistryEvent rEvent = jPayload.ToObject<RegistryEvent>();
-				Report report = rEvent.report;
-
-				this.newSensorHandler(report.record);
-
-			};
-			channel.BasicConsume(newSensorQueue, true, newSensorConsumer);
-
-			channel.QueueBind(sensorRemovedQueue, conf.sensorRegistryTopic, conf.sensorRemovedFilter, null);
-			EventingBasicConsumer sensorRemovedConsumer = new EventingBasicConsumer(channel);
-			sensorRemovedConsumer.Received += (srcChannel, eventArg) =>
-			{
-
-				Console.WriteLine("Sensor removed Registry event ... ");
-
-				string payload = System.Text.Encoding.UTF8.GetString(eventArg.Body);
-				JObject jPayload = JObject.Parse(payload);
-				RegistryEvent rEvent = jPayload.ToObject<RegistryEvent>();
-				Report report = rEvent.report;
-
-				this.newSensorHandler(report.record);
-
-			};
-			channel.BasicConsume(sensorRemovedQueue, true, sensorRemovedConsumer);
-
 		}
+
+
 	}
 
 }

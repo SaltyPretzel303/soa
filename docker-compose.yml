@@ -1,15 +1,51 @@
 version: '3'
 services:
- mongo_service:
-  image: mongo:latest
-  ports:
-  - "27017:27017"
-  network: soa_net
- sensor_service:
-  build: ./SensorService
-  image: sensor_service
-  network: soa_net
- collector_service:
-  build: ./CollectorService
-  image: collector_service
-  network: soa_net
+  soa-mongo:
+    container_name: soa-mongo
+    image: mongo:latest
+    ports:
+    - "0.0.0.0:27017:27017"
+
+  soa-rabbit:
+    container_name: soa-rabbit
+    image: rabbitmq:3.8-rc-management
+    ports: 
+    - "0.0.0.0:5672:5672"
+    - "0.0.0.0:15672:15672"
+
+  soa-sensor:
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.SensorService
+    image: soa/sensor-registry
+    volumes: 
+      - ./SensorService/data:/data
+    depends_on:
+      - soa-registry
+      - soa-rabbit 
+    ports:
+    - "5005:5000"
+
+  soa-registry:
+    container_name: soa-registry
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.SensorRegistry
+    image: soa/sensor-service
+    depends_on:
+      - soa-rabbit
+    ports:
+    - "5002:5000"
+
+  soa-collector:
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.CollectorService
+    image: soa/collector-service
+    depends_on:
+      - soa-rabbit
+      - soa-mongo
+      - soa-registry
+    ports:
+    - "5003:5000"
+

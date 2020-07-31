@@ -17,18 +17,31 @@ namespace CollectorService.Data
 
 		public MongoClient client { get; private set; }
 		public IMongoDatabase database { get; private set; }
-		public IMongoCollection<BsonDocument> sensorsCollection { get; private set; }
-
-		// constructors
 
 		public MongoDatabaseService()
 		{
+		}
 
-			ServiceConfiguration configuration = ServiceConfiguration.Instance;
+		private bool createConnection()
+		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			this.client = new MongoClient(configuration.dbAddress);
-			this.database = this.client.GetDatabase(configuration.dbName);
-			this.sensorsCollection = this.database.GetCollection<BsonDocument>(configuration.sensorsCollection);
+			this.client = new MongoClient(config.dbAddress);
+
+			if (this.client != null)
+			{
+
+				this.database = this.client.GetDatabase(config.dbName);
+
+				if (this.database != null)
+				{
+					return true;
+				}
+
+			}
+
+			Console.Write("Failed to establish connection with mongo ... ");
+			return false;
 
 		}
 
@@ -37,7 +50,14 @@ namespace CollectorService.Data
 		public void pushToSensor(String sensorName, JArray rows)
 		{
 
+			if (!this.createConnection())
+			{
+				return;
+			}
+
 			ServiceConfiguration configuration = ServiceConfiguration.Instance;
+
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(configuration.sensorsCollection);
 
 			sensorsCollection.UpdateOne("{\"sensor_name\":\"" + sensorName + "\"}",
 			"{$push: { \"" + configuration.fieldWithRecords + "\": { $each : " + rows.ToString() + " } }}",
@@ -61,9 +81,17 @@ namespace CollectorService.Data
 		public List<JObject> getAllSamples()
 		{
 
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
 			List<JObject> ret_list = new List<JObject>();
 
-			List<BsonDocument> temp_cache = this.sensorsCollection.FindSync(_ => true).ToList();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> temp_cache = sensorsCollection.FindSync(_ => true).ToList();
 
 			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
 			// use this settings to deal with bson document specific "objects"
@@ -82,6 +110,11 @@ namespace CollectorService.Data
 
 		public List<JObject> getRecordsFromSensor(string sensorName = ".", long fromTimestamp = 0, long toTimestamp = long.MaxValue)
 		{
+
+			if (!this.createConnection())
+			{
+				return null;
+			}
 
 			// TODO deal with 'sql (mongo) ijection' through sensorName, it is used as regex for mongo query
 
@@ -106,7 +139,10 @@ namespace CollectorService.Data
 					BsonDocument.Parse(project_q)
 				};
 
-			List<BsonDocument> query_result = this.sensorsCollection.Aggregate<BsonDocument>(agregate_array).ToList();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> query_result = sensorsCollection.Aggregate<BsonDocument>(agregate_array).ToList();
 
 			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
 			List<JObject> result = new List<JObject>();
@@ -139,12 +175,16 @@ namespace CollectorService.Data
 
 			this.client = new MongoClient(newConfiguration.dbAddress);
 			this.database = this.client.GetDatabase(newConfiguration.dbName);
-			this.sensorsCollection = this.database.GetCollection<BsonDocument>(newConfiguration.sensorsCollection);
 
 		}
 
 		public void backupConfiguration(JObject oldJConfig)
 		{
+
+			if (!this.createConnection())
+			{
+				return;
+			}
 
 			String serviceAddr = NetworkInterface.GetAllNetworkInterfaces().Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
 
@@ -175,9 +215,16 @@ namespace CollectorService.Data
 		public List<JObject> customQuery()
 		{
 
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
 			List<JObject> retList = new List<JObject>();
 
-			List<BsonDocument> temp_cache = this.sensorsCollection.FindSync("{}").ToList();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> temp_cache = sensorsCollection.FindSync("{}").ToList();
 
 			Console.WriteLine("\n\nGot: " + temp_cache.Count + " lines ... \n\n");
 
@@ -203,6 +250,11 @@ namespace CollectorService.Data
 		public int getRecordsCount(string sensorName)
 		{
 
+			if (!this.createConnection())
+			{
+				return 0;
+			}
+
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 			string countFieldString = "records_count";
 			int count = 0;
@@ -215,7 +267,8 @@ namespace CollectorService.Data
 				BsonDocument.Parse(sCountQuery)
 			};
 
-			List<BsonDocument> queryResult = this.sensorsCollection.Aggregate<BsonDocument>(aggregateArray).ToList();
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> queryResult = sensorsCollection.Aggregate<BsonDocument>(aggregateArray).ToList();
 
 			if (queryResult != null && queryResult.Count > 0)
 			{

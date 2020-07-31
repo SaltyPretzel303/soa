@@ -1,35 +1,35 @@
 using System;
+using CommunicationModel.BrokerModels;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SensorRegistry.Broker;
 
-namespace SensorRegistry.src.Logger
+namespace SensorRegistry.Logger
 {
 	public class BasicLogger : ILogger
 	{
-		public string LogError(string error)
+
+		private IMessageBroker broker;
+
+		public BasicLogger(IMessageBroker broker)
 		{
-
-			string timestamp = DateTime.Now.ToString();
-
-
-
-			return timestamp;
-
+			this.broker = broker;
 		}
 
+		public string LogError(string error)
+		{
+			ServiceLog log = new ServiceLog(error, LogLevel.Error);
+			this.broker.publishLog(log);
+
+			return JsonConvert.SerializeObject(log, Formatting.Indented);
+		}
 
 		public string LogMessage(string message)
 		{
+			ServiceLog log = new ServiceLog(message, LogLevel.Message);
+			this.broker.publishLog(log);
 
-			string timestamp = DateTime.Now.ToString();
-
-			JObject messageObject = new JObject();
-
-			messageObject["timestamp"] = timestamp;
-			// messageObject[]
-
-
-			return timestamp;
-
+			return JsonConvert.SerializeObject(log, Formatting.Indented);
 		}
 	}
 }

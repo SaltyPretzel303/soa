@@ -15,12 +15,12 @@ namespace SensorService
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Read();
-			int port_num = config.listeningPort;
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			int portNum = config.listeningPort;
 
 			return WebHost.CreateDefaultBuilder(args)
 					.UseStartup<Startup>()
-					.UseUrls("http://+:" + port_num + "/");
+					.UseUrls("http://+:" + portNum + "/");
 
 		}
 	}

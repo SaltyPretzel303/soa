@@ -1,5 +1,4 @@
-using CollectorService.Broker.Events;
-using CollectorService.Broker.Reporter.Reports.Collector;
+using CommunicationModel.BrokerModels;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -13,12 +12,10 @@ namespace CollectorService.Broker.Reporter
 
 		public ControllerReporter(RequestDelegate next)
 		{
-
 			this.next = next;
-
 		}
 
-		public async Task Invoke(HttpContext context)
+		public async Task Invoke(HttpContext context, IMessageBroker messageBroker)
 		{
 
 			// this method is called on every http request 
@@ -27,10 +24,17 @@ namespace CollectorService.Broker.Reporter
 
 			await next.Invoke(context);
 
-			AccessReport report = new AccessReport(context.Request, context.Response, requestTime);
-			CollectorEvent c_event = new CollectorEvent(report);
+			CollectorAccessEvent newEvent = new CollectorAccessEvent(context.Request.Method,
+																context.Request.Path,
+																context.Request.QueryString.ToString(),
+																context.Connection.RemoteIpAddress.ToString(),
+																context.Connection.RemotePort,
+																requestTime,
+																context.Response.StatusCode,
+																context.Response.ContentType,
+																context.Response.ContentLength);
 
-			// MessageBroker.Instance.publishEvent(c_event);
+			messageBroker.PublishCollectorAccessEvent(newEvent);
 
 		}
 

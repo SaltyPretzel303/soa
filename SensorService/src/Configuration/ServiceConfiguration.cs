@@ -12,33 +12,48 @@ namespace SensorService.Configuration
 		private static string CONFIGURATION_PATH = "./service_config.json";
 		private static string STAGE_VAR_NAME = "stage";
 
+
+		#region  singleton specific
+		private static ServiceConfiguration instance;
+		public static ServiceConfiguration Instance
+		{
+			get
+			{
+				if (ServiceConfiguration.instance == null)
+				{
+					ServiceConfiguration.instance = ServiceConfiguration.Read();
+				}
+
+				return ServiceConfiguration.instance;
+			}
+			private set { ServiceConfiguration.instance = value; }
+		}
+
+		#endregion
+
 		private static ServiceConfiguration cache;
 
-		// configuration fileds
+		#region mapped fields
 		public string stage { get; private set; }
 
 		public string dataPath { get; set; }
-		public string responseTypeField { get; set; }
-		public string validResponse { get; set; }
-		public string recordsField { get; set; }
-		public string rowsCountField { get; set; }
 		public string samplePrefix { get; set; }
 		public string sampleExtension { get; set; }
 		public FromTo sensorsRange { get; set; }
 		public int readInterval { get; set; }
 		public int listeningPort { get; set; }
 		public string sensorNamePrefix { get; set; }
+		public int registerSensorDelay { get; set; }
 		public string registryAddress { get; set; }
 		public string registryPort { get; set; }
-		public string sensorName { get; set; }
 		public string registerSensorPath { get; set; }
 		public string unregisterSensorPath { get; set; }
 		public string updateSensorPath { get; set; }
 		public string sensorNameField { get; set; }
 		public string sensorAddrField { get; set; }
 		public string portNumField { get; set; }
+		public string readIndexField { get; set; }
 
-		// logging 
 		public string consoleLogLevel { get; set; }
 		public string logErrorLevel { get; set; }
 		public string logMessageLevel { get; set; }
@@ -46,16 +61,19 @@ namespace SensorService.Configuration
 		public string logErrorDest { get; set; }
 		public string logMsgDest { get; set; }
 
-		public string logTagField { get; set; }
-		public string logErrorTag { get; set; }
-		public string logMessageTag { get; set; }
+		public string brokerAddress { get; set; }
+		public int brokerPort { get; set; }
+		public string serviceLogTopic { get; set; }
+		public string sensorLogFilter { get; set; }
+		public string brokerLifetimeTopic { get; set; }
+		public string sensorReaderEventTopic { get; set; }
+		public string sensorReadEventFilter { get; set; }
+		public string brokerConfigTopic { get; set; }
+		public string brokerConfigFilter { get; set; }
 
-		public string logTimeField { get; set; }
-		public string logContentField { get; set; }
+		#endregion
 
-		// methods
-
-		public static ServiceConfiguration Read()
+		private static ServiceConfiguration Read()
 		{
 
 			if (ServiceConfiguration.cache != null)

@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using SensorService.Configuration;
 using System.Text.Json;
+using CommunicationModel.BrokerModels;
 
 namespace SensorService.Logger
 {
@@ -21,7 +22,7 @@ namespace SensorService.Logger
 		public BasicLogger(IWebHostEnvironment hostEnv)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Read();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			this.rootPath = hostEnv.ContentRootPath;
 
@@ -31,30 +32,13 @@ namespace SensorService.Logger
 
 			this.errorLock = new object();
 			this.msgLock = new object();
-
 		}
-
-		/*
-			log format 
-
-			log :  {
-
-				tag: dev_error | dev_msg | prod_error | prod_msg,
-				timestamp: 12/29/19 1:45:44 PM,
-				content: "some string describin error or message ... "
-
-			}
-
-		*/
 
 		public void logError(string error)
 		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			ServiceConfiguration config = ServiceConfiguration.Read();
-
-			ServiceLog newLog = new ServiceLog(config.logErrorTag,
-											DateTime.Now.ToString(),
-											error);
+			ServiceLog newLog = new ServiceLog(error, LogLevel.Error);
 
 			string serializedLog = JsonSerializer.Serialize(newLog);
 
@@ -79,13 +63,9 @@ namespace SensorService.Logger
 
 		public void logMessage(string message)
 		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-
-			ServiceConfiguration config = ServiceConfiguration.Read();
-
-			ServiceLog newLog = new ServiceLog(config.logMessageTag,
-											DateTime.Now.ToString(),
-											message);
+			ServiceLog newLog = new ServiceLog(message, LogLevel.Message);
 
 			string serializedLog = JsonSerializer.Serialize(newLog);
 

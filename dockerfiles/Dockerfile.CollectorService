@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+
+# copy and build CommunicationModel
+WORKDIR /CommunicationModel
+
+COPY ./CommunicationModel/CommunicationModel.csproj ./
+RUN dotnet restore
+COPY ./CommunicationModel/src ./src
+RUN dotnet publish
+
+# copy and build CollectorService
+WORKDIR /collector_service
+
+COPY ./CollectorService/CollectorService.csproj ./CollectorService.csproj
+RUN dotnet restore
+
+COPY ./CollectorService/src ./src
+COPY ./CollectorService/appsettings.json ./appsettings.json
+COPY ./CollectorService/service_config.json ./service_config.json
+
+RUN dotnet build
+RUN dotnet publish --output /collector_program
+
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "/collector_program/CollectorService.dll"]

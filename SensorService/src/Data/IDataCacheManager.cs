@@ -8,4 +8,6 @@ public interface IDataCacheManager
 
 	void AddData(string sensorName, List<string> header, string newRecords);
 
+	int GetLastReadIndex(string sensorName);
+
 }

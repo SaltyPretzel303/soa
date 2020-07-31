@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using System;
+﻿using System;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +7,7 @@ using SensorService.Configuration;
 using SensorService.Data;
 using SensorService.Logger;
 using Microsoft.Extensions.Hosting;
+using SensorService.Broker;
 
 namespace SensorService
 {
@@ -20,16 +20,17 @@ namespace SensorService
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Read();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			services.AddControllers();
 
 			services.AddSingleton<ILogger, BasicLogger>();
 			services.AddSingleton<IDataCacheManager, InMemoryCache>();
 
-			services.AddHostedService<SensorReader>();
+			services.AddSingleton<IMessageBroker, RabbitMqBroker>();
 
+			services.AddHostedService<RegistrationService>();
+			services.AddHostedService<SensorReader>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,37 +43,31 @@ namespace SensorService
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 
-			// next line is necessary in order to start reading (create reader once)
-			// it is added to the ServiceProvider but is not created at that moment (ConfiguraServices method)
-			// another way is to just request it (IReader) as the parameter of this method,
-			// service provider will then create it (using passed factory method) and pass it as the method argument
-			// app.ApplicationServices.GetService<IReader>();
-			// used shile sensorReader was simple singleton
+			// try
+			// {
+			// 	bool regResult = this.registerSensors();
 
-			try
-			{
-				bool regResult = this.registerSensors();
+			// 	if (regResult)
+			// 	{
+			// 		this.logger.logMessage("All sensors successfully registered ... ");
+			// 	}
+			// 	else
+			// 	{
+			// 		this.logger.logError("Failed to register sensors ... ");
 
-				if (regResult)
-				{
-					this.logger.logMessage("All sensors successfully registered ... ");
-				}
-				else
-				{
-					// TODO maybe try to register in another sensor registry (or that should be done in register method)
-					lifetime.StopApplication();
-					return;
-				}
+			// 		lifetime.StopApplication();
+			// 		return;
+			// 	}
 
-			}
-			catch (Exception e)
-			{
+			// }
+			// catch (Exception e)
+			// {
 
-				this.logger.logError($"Exception in sensor registration: {e.Message} ");
+			// 	this.logger.logError($"Exception in sensor registration: {e.Message} ");
 
-				lifetime.StopApplication();
-				return;
-			}
+			// 	lifetime.StopApplication();
+			// 	return;
+			// }
 
 			if (env.IsDevelopment())
 			{
@@ -87,10 +82,12 @@ namespace SensorService
 
 		}
 
+		// move this code in to the hosted service
+		// that way sensor can try to register itself again and again
+		// after that it wont depend on soa-registry status (active/inactive)
 		private bool registerSensors()
 		{
-
-			ServiceConfiguration conf = ServiceConfiguration.Read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			for (int sensorIndex = conf.sensorsRange.From;
 					sensorIndex < conf.sensorsRange.To;
@@ -121,11 +118,10 @@ namespace SensorService
 
 		private bool registerSensor(string sensorName)
 		{
-			ServiceConfiguration conf = ServiceConfiguration.Read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
-
-			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050
-			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={sensorName}&{conf.portNumField}={conf.listeningPort}";
+			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050&lastReadIndex=12
+			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={sensorName}&{conf.portNumField}={conf.listeningPort}&{conf.readIndexField}=0";
 			// port on which this sensor is serving http requests
 
 			this.logger.logMessage($"Going to register sensor: {sensorName} on address: {addr}");
@@ -174,7 +170,7 @@ namespace SensorService
 		private bool unregisterSensors()
 		{
 
-			ServiceConfiguration conf = ServiceConfiguration.Read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			for (int sensorIndex = conf.sensorsRange.From;
 					sensorIndex < conf.sensorsRange.To;
@@ -200,7 +196,7 @@ namespace SensorService
 		private bool unregisterSensor(string sensorName)
 		{
 
-			ServiceConfiguration conf = ServiceConfiguration.Read();
+			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			// e.g. http://localhost/sensor/registry/unregisterSensor?sensorName="sensor_1"
 			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.unregisterSensorPath}?{conf.sensorNameField}={sensorName}";

@@ -12,21 +12,6 @@ namespace SensorRegistry.Registry
 		noSuchRecord
 	}
 
-	// public class SensorRegistryRecord
-	// {
-
-	// 	public string name { get; set; }
-	// 	public string address { get; set; }
-	// 	public int port { get; set; }
-
-	// 	public SensorRegistryRecord(string name, string address, int port)
-	// 	{
-	// 		this.name = name;
-	// 		this.address = address;
-	// 		this.port = port;
-	// 	}
-	// }
-
 	public class RegistryResponse
 	{
 
@@ -49,13 +34,13 @@ namespace SensorRegistry.Registry
 	public interface ISensorRegistry
 	{
 
-		RegistryResponse addSensorRecord(string sensorName, string sensorAddr, int port);
+		RegistryResponse addSensorRecord(string sensorName, string sensorAddr, int port, int readIndex = 0);
 
-		RegistryResponse changeSensorRecord(string sensorName, string sensorAddr, int port);
+		RegistryResponse updateSensorRecord(string name, string address, int port, int readIndex);
 
 		RegistryResponse removeSensorRecord(string sensorName);
 
-		RegistryResponse getSensorAddr(string sensorName);
+		RegistryResponse getSensorRecord(string sensorName);
 
 		RegistryResponse getAllSensors();
 

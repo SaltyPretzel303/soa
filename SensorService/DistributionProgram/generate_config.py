@@ -2,7 +2,7 @@ import json
 import sys
 
 # this script should generate config file based on 
-# file 'template' with appropriate values for:
+# file 'config_template.json' with appropriate values for:
 # - starting and ending index of sample file which is going to be read.
 # - appropriate port number (all sensor services are going to be run 
 # on the same container with the different port number)
@@ -17,7 +17,7 @@ destination = sys.argv[2]
 
 print("Generating (py): " + str(index) + ", on path: " + destination)
 
-with open ("./template") as text_config:
+with open ("./config_template.json") as text_config:
 	json_config = json.load(text_config)
 
 	# just random hardcoded value

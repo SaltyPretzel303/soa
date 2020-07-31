@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SensorRegistry.Broker;
 using SensorRegistry.Configuration;
 
 namespace SensorRegistry
@@ -14,7 +17,7 @@ namespace SensorRegistry
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			int portNum = ServiceConfiguration.read().listeningPort;
+			int portNum = ServiceConfiguration.Instance.listeningPort;
 
 			return WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>()

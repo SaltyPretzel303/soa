@@ -24,7 +24,7 @@ do
 
 	config_dest=$sensor_dest/"service_config.json"
 
-	python ./generate_config.py $index $config_dest
+	python3 ./generate_config.py $index $config_dest
 
 	echo # new line
 
