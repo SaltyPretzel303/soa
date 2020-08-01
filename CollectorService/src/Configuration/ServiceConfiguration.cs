@@ -34,9 +34,9 @@ namespace CollectorService.Configuration
 
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
+		public int retryConnectionDelay { get; set; }
 
 		public string collectorTopic { get; set; }
-
 		public string accessEventFilter { get; set; }
 		public string pullEventFilter { get; set; }
 

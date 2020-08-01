@@ -1,5 +1,5 @@
 {
-	"stage": "Development",
+	"stage": "Production",
 	"Development": {
 		"port": 5003,
 		"dbAddress": "mongodb://localhost:27017",
@@ -12,6 +12,7 @@
 		"readInterval": 10000,
 		"sensorRegistryAddr": "localhost",
 		"sensorRegistryPort": 5002,
+		"retryConnectionDelay": "2000",
 		"sensorAddrResolutionPath": "sensor/registry/getAddress",
 		"sensorListReqPath": "sensor/registry/getSensors",
 		"brokerAddress": "localhost",
@@ -41,6 +42,7 @@
 		"readInterval": 5000,
 		"sensorRegistryAddr": "soa-registry",
 		"sensorRegistryPort": 5000,
+		"retryConnectionDelay": "2000",
 		"sensorAddrResolutionPath": "sensor/registry/getAddress",
 		"sensorListReqPath": "sensor/registry/getSensors",
 		"brokerAddress": "soa-broker",

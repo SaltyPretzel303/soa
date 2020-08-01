@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 
 namespace CollectorService.Broker
 {
-
 	public class RabbitMqBroker : IMessageBroker
 	{
 		private ServiceConfiguration config;
@@ -54,9 +53,13 @@ namespace CollectorService.Broker
 				Port = this.config.brokerPort
 			};
 
-			using (IConnection connection = factory.CreateConnection())
-			using (IModel channel = connection.CreateModel())
+			IConnection connection = null;
+			IModel channel = null;
+
+			try
 			{
+				connection = factory.CreateConnection();
+				channel = connection.CreateModel();
 
 				string txtEvent = JsonConvert.SerializeObject(newEvent);
 				byte[] byteContent = Encoding.UTF8.GetBytes(txtEvent);
@@ -74,9 +77,25 @@ namespace CollectorService.Broker
 									byteContent);
 
 			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Failed to establish connection with message broker\nBroker address: {config.brokerAddress}:{config.brokerPort}, Reason: {e.Message}");
+			}
+			finally
+			{
+				if (channel != null && channel.IsOpen)
+				{
+					channel.Close();
+				}
+
+				if (connection != null && connection.IsOpen)
+				{
+					connection.Close();
+				}
+			}
+
 
 		}
-
 
 	}
 

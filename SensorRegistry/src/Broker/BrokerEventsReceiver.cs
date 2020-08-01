@@ -33,17 +33,30 @@ namespace SensorRegistry.Broker
 			this.sensorEventHandler = sensorEventHandler;
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			stoppingToken.ThrowIfCancellationRequested();
 
-			this.ConfigureConnection();
-
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			Console.WriteLine("Consumer set ");
+			#region  establish connection
 
-			#region config consumer
+			bool connectionReady = false;
+			while (!connectionReady &&
+				!stoppingToken.IsCancellationRequested)
+			{
+				connectionReady = this.ConfigureConnection();
+
+				await Task.Delay(config.connectionRetryDelay);
+			}
+
+			Console.WriteLine("Broker connection established ... ");
+
+			#endregion
+
+			stoppingToken.ThrowIfCancellationRequested();
+
+			#region setup config consumers
 
 			string configQueue = this.channel.QueueDeclare().QueueName;
 			channel.QueueBind(configQueue,
@@ -67,9 +80,9 @@ namespace SensorRegistry.Broker
 
 			#endregion
 
-			#region sensor reader consumer
+			#region setup sensorReader event consumer
 
-			string sensorEventQueue = this.channel.QueueDeclare().QueueName;
+			string sensorReadEventQueue = this.channel.QueueDeclare().QueueName;
 
 			EventingBasicConsumer sensorEventConsumer = new EventingBasicConsumer(this.channel);
 			sensorEventConsumer.Received += (srcChannel, eventArg) =>
@@ -81,21 +94,20 @@ namespace SensorRegistry.Broker
 
 				this.sensorEventHandler.HandleSensorEvent(sensorEvent);
 			};
-			#endregion
 
-			this.channel.QueueBind(sensorEventQueue,
+			this.channel.QueueBind(sensorReadEventQueue,
 							config.sensorEventTopic,
-							"",
+							config.sensorReadEventFilter,
 							null);
 
-			this.channel.BasicConsume(sensorEventQueue,
+			this.channel.BasicConsume(sensorReadEventQueue,
 									true,
 									sensorEventConsumer);
 
-			return Task.CompletedTask;
+			#endregion
 		}
 
-		private void ConfigureConnection()
+		private bool ConfigureConnection()
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
@@ -112,6 +124,7 @@ namespace SensorRegistry.Broker
 			catch (Exception e)
 			{
 				this.logger.LogError($"Failed to create connection with broker: {e.Message}");
+				return false;
 			}
 
 			if (this.connection != null &&
@@ -132,7 +145,10 @@ namespace SensorRegistry.Broker
 										true,
 										null);
 
+				return true;
 			}
+
+			return false;
 		}
 
 		public override Task StopAsync(CancellationToken cancellationToken)

@@ -33,8 +33,12 @@ COPY SensorService/service_config.json ./config_template.json
 # COPY SensorService/data /data
 
 # generate specific config for each sensor program instance
-RUN /DistributionProgram/DistributionScript.sh
+# RUN /DistributionProgram/DistributionScript.sh
 
 EXPOSE 5000
-# ENTRYPOINT ["sh", "/DistributionProgram/DistributionScript.sh"]
-ENTRYPOINT [ "/bin/bash" ]
+
+# ENTRYPOINT [ "/bin/bash" ]
+# ENTRYPOINT ["bash", "/DistributionProgram/DistributionScript.sh"]
+# ENTRYPOINT ["dotnet","/sensors/sensor_0/SensorService.dll"]
+
+ENTRYPOINT ["bash", "/DistributionProgram/StartSensors.sh"]

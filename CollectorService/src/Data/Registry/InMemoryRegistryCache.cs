@@ -11,7 +11,6 @@ namespace CollectorService.Data.Registry
 	{
 
 		private Dictionary<string, SensorRegistryRecord> records;
-		// private Dictionary<string, DBrokerEventHandler> brokerEventHandlers;
 
 		private IDatabaseService databse;
 
@@ -22,14 +21,8 @@ namespace CollectorService.Data.Registry
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			this.records = new Dictionary<string, SensorRegistryRecord>();
-			this.pullRecords();
-
-			// this.brokerEventHandlers = new Dictionary<string, DBrokerEventHandler>();
-			// this.brokerEventHandlers.Add(config.newSensorFilter, NewSensorHandler);
-			// this.brokerEventHandlers.Add(config.sensorRemovedFilter, SensorRemovedHandler);
 
 			this.pullRecords();
-
 		}
 
 		#region brokerEventHandlers
@@ -43,10 +36,18 @@ namespace CollectorService.Data.Registry
 		{
 			this.RemoveRecord(oldRecord);
 		}
+
 		#endregion
 
 		public List<SensorRegistryRecord> GetAllSensors()
 		{
+
+			if (this.records == null ||
+			this.records.Keys.Count == 0)
+			{
+				this.pullRecords();
+			}
+
 			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();
 			foreach (string recordKey in this.records.Keys)
 			{
@@ -86,14 +87,14 @@ namespace CollectorService.Data.Registry
 			}
 			catch (Exception e)
 			{
-				Console.Write($"EXCEPTION occured while pulling sensor records: {e.Message}");
+				Console.WriteLine($"Exception occured while pulling sensor records: {e.Message}");
 			}
 
 			if (responseMessage != null &&
 			 responseMessage.IsSuccessStatusCode)
 			{
 				string txtContent = responseMessage.Content.ReadAsStringAsync().Result;
-				Console.WriteLine("Sensors: \n" + txtContent);
+
 				List<SensorRegistryRecord> newRecords = JsonConvert.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
 
 				Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");

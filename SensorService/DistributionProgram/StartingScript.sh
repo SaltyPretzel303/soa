@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# used for starting sensors manually after attaching to container
+
 pid_output=$1
 > $pid_output # clear pid_output file
 

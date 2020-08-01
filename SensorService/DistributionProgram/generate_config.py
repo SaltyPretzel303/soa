@@ -10,12 +10,10 @@ import sys
 # all values are calculated based on the index of sensor service
 # index of sensor service is passed trought cli args
 
-template_file=""
-
 index = sys.argv[1]
 destination = sys.argv[2]
 
-print("Generating (py): " + str(index) + ", on path: " + destination)
+print("Generating config (py): index: " + str(index) + ", on path: " + destination)
 
 with open ("./config_template.json") as text_config:
 	json_config = json.load(text_config)
@@ -30,8 +28,8 @@ with open ("./config_template.json") as text_config:
 	samples_range["From"] = index
 	samples_range["To"] = int(index) + 1
 
-	dev_part["samplesRange"] = samples_range
-	prod_part["samplesRange"] = samples_range
+	dev_part["sensorsRange"] = samples_range
+	prod_part["sensorsRange"] = samples_range
 
 	dev_part["listeningPort"] = int(port_num) + int(index)
 	prod_part["listeningPort"] = int(port_num) + int(index)

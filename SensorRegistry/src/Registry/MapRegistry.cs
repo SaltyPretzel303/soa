@@ -97,7 +97,7 @@ namespace SensorRegistry.Registry
 				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorUpdated,
 																	newRecord);
 				this.broker.publishRegistryEvent(newEvent,
-												config.sensorUpdatedFilter);
+												config.sensorUpdateFilter);
 
 				return this.okResponse(newRecord);
 			}

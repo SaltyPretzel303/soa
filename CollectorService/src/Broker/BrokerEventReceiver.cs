@@ -22,11 +22,6 @@ namespace CollectorService.Broker
 		private IConnection connection;
 		private IModel channel;
 
-		private string sensorRegistryQueue;
-		private string sensorRemovedQueue;
-		private string configEventQueue;
-
-
 		public BrokerEventReceiver(IConfigChange configChangeHandler,
 								ISensorRegistryUpdate sensoreRegistryUpdateHandler)
 		{
@@ -34,11 +29,35 @@ namespace CollectorService.Broker
 			this.sensoreRegistryUpdateHandler = sensoreRegistryUpdateHandler;
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			stoppingToken.ThrowIfCancellationRequested();
 
-			this.ConfigureConnection();
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			#region establish connection
+
+			bool connectionReady = false;
+			while (!connectionReady &&
+				!stoppingToken.IsCancellationRequested)
+			{
+				connectionReady = this.ConfigureConnection();
+
+				await Task.Delay(config.retryConnectionDelay);
+			}
+
+			#endregion
+
+			stoppingToken.ThrowIfCancellationRequested();
+
+			#region setup registry event consumer
+
+			string sensorRegistryQueue = this.channel.QueueDeclare().QueueName;
+			channel.QueueBind(sensorRegistryQueue,
+							config.sensorRegistryTopic,
+							config.allFilter,
+							null);
+
 
 			EventingBasicConsumer regEventConsumer = new EventingBasicConsumer(this.channel);
 			regEventConsumer.Received += (srcChannel, eventArg) =>
@@ -49,6 +68,21 @@ namespace CollectorService.Broker
 				this.sensoreRegistryUpdateHandler.HandleRegistryUpdate(eventData);
 			};
 
+			this.channel.BasicConsume(sensorRegistryQueue,
+									true,
+									regEventConsumer);
+
+			#endregion
+
+			#region setup config event consumer
+
+			string configEventQueue = this.channel.QueueDeclare().QueueName;
+			this.channel.QueueBind(configEventQueue,
+								config.configurationTopic,
+								config.targetConfiguration,
+								null);
+
+
 			EventingBasicConsumer configEventConsumer = new EventingBasicConsumer(this.channel);
 			regEventConsumer.Received += (srcChannel, eventArg) =>
 			{
@@ -58,18 +92,15 @@ namespace CollectorService.Broker
 				this.configChangeHandler.UpdateConfiguration(newConfig);
 			};
 
-			this.channel.BasicConsume(this.configEventQueue,
+			this.channel.BasicConsume(configEventQueue,
 									true,
 									configEventConsumer);
 
-			this.channel.BasicConsume(this.sensorRegistryQueue,
-									true,
-									regEventConsumer);
+			#endregion
 
-			return Task.CompletedTask;
 		}
 
-		private void ConfigureConnection()
+		private bool ConfigureConnection()
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
@@ -87,6 +118,8 @@ namespace CollectorService.Broker
 			catch (Exception e)
 			{
 				Console.WriteLine($"Failed to create connection with broker: {e.Message}");
+
+				return false;
 			}
 
 			if (this.connection != null &&
@@ -106,20 +139,10 @@ namespace CollectorService.Broker
 											true,
 											null);
 
-				this.sensorRegistryQueue = this.channel.QueueDeclare().QueueName;
-				channel.QueueBind(sensorRegistryQueue,
-								config.sensorRegistryTopic,
-								config.allFilter,
-								null);
-
-				this.configEventQueue = this.channel.QueueDeclare().QueueName;
-				this.channel.QueueBind(configEventQueue,
-									config.configurationTopic,
-									config.targetConfiguration,
-									null);
-
+				return true;
 			}
 
+			return false;
 		}
 
 		public override Task StopAsync(CancellationToken stoppingToken)

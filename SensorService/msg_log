@@ -3360,3 +3360,18 @@
 {"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-07-31T20:02:10.252023+02:00"}
 {"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-07-31T20:02:20.2490482+02:00"}
 {"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-07-31T20:02:26.0059042+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-07-31T21:02:12.9487926+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-07-31T21:02:12.960161+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-07-31T21:02:16.9563971+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-07-31T21:03:18.9631913+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-07-31T21:03:18.9742579+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-07-31T21:03:23.4641931+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-07-31T21:03:58.8007319+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-07-31T21:03:58.8116649+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-07-31T21:04:08.8123786+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 2","source":"B42E99C14DDA","time":"2020-07-31T21:04:18.8119025+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-07-31T21:04:26.6433153+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-07-31T21:04:34.5924575+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-07-31T21:04:34.6033321+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-07-31T21:04:44.6074409+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-07-31T21:04:54.2599497+02:00"}

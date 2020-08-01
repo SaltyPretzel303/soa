@@ -34,7 +34,7 @@ namespace SensorService.Logger
 			this.msgLock = new object();
 		}
 
-		public void logError(string error)
+		public void logError(string error, bool online = true)
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
@@ -61,7 +61,7 @@ namespace SensorService.Logger
 
 		}
 
-		public void logMessage(string message)
+		public void logMessage(string message, bool online = true)
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 

@@ -44,8 +44,6 @@ namespace SensorService
 
 			this.httpClient = new HttpClient();
 
-			Console.WriteLine($"SENSORS COUNT {this.waitingSensors.Count}");
-
 			if (this.waitingSensors.Count > 0)
 			{
 				this.timer = new System.Timers.Timer();
@@ -98,6 +96,7 @@ namespace SensorService
 			HttpResponseMessage responseMessage = null;
 			try
 			{
+				Console.WriteLine("Trying to register ... ");
 				responseMessage = this.httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
 			}
 			catch (Exception e)
@@ -107,7 +106,6 @@ namespace SensorService
 				return false;
 			}
 
-			bool retValue = false;
 			if (responseMessage != null &&
 				responseMessage.IsSuccessStatusCode)
 			{
@@ -115,7 +113,6 @@ namespace SensorService
 			}
 			else
 			{
-				retValue = false;
 
 				if (responseMessage == null)
 				{
@@ -127,9 +124,9 @@ namespace SensorService
 					// status code is not success
 					this.logger.logError("Http response for registration failed: " + responseMessage.ReasonPhrase);
 				}
+				return false;
 			}
 
-			return retValue;
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)

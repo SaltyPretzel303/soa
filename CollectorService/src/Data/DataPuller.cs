@@ -109,7 +109,7 @@ namespace CollectorService.Data
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine($"UNKNOWN EXCEPTION in gettin data: {e.ToString()}");
+					Console.WriteLine($"Exception in gettin data: {e.ToString()}");
 					continue; // pull from next sensor
 				}
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# used for manually shutingDown sensors started with ./StartingScript.sh
+
 pid_file="$1"
 
 while read -r pid_line

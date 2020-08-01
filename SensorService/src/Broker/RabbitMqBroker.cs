@@ -9,7 +9,6 @@ namespace SensorService.Broker
 {
 	public class RabbitMqBroker : IMessageBroker
 	{
-
 		private ServiceConfiguration config;
 
 		public RabbitMqBroker()
@@ -41,9 +40,15 @@ namespace SensorService.Broker
 				Port = config.brokerPort
 			};
 
-			using (IConnection connection = factory.CreateConnection())
-			using (IModel channel = connection.CreateModel())
+			IConnection connection = null;
+			IModel channel = null;
+
+			try
 			{
+
+				connection = factory.CreateConnection();
+				channel = connection.CreateModel();
+
 				string txtContent = JsonConvert.SerializeObject(serviceEvent);
 				byte[] content = Encoding.UTF8.GetBytes(txtContent);
 
@@ -58,8 +63,29 @@ namespace SensorService.Broker
 									false,
 									null,
 									content);
+
 			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
+			}
+			finally
+			{
+
+				if (channel != null && channel.IsOpen)
+				{
+					channel.Close();
+				}
+
+				if (connection != null && connection.IsOpen)
+				{
+					connection.Close();
+				}
+
+			}
+
 		}
 
 	}
+
 }

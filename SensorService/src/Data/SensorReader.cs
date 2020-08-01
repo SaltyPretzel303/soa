@@ -13,7 +13,6 @@ using CommunicationModel.BrokerModels;
 
 namespace SensorService.Data
 {
-
 	public class SensorReader : IHostedService
 	{
 
@@ -81,8 +80,6 @@ namespace SensorService.Data
 
 				}
 
-
-
 			}
 
 			this.lineCounter++;
@@ -137,6 +134,7 @@ namespace SensorService.Data
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
 
+			Console.WriteLine("Sensor reader is going down ... ");
 			if (this.timer != null)
 			{
 				this.timer.Stop();

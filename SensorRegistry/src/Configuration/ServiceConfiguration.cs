@@ -40,17 +40,21 @@ namespace SensorRegistry.Configuration
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
 
+		public int connectionRetryDelay { get; set; }
+
 		public string sensorRegistryTopic { get; set; }
 		public string configUpdateTopic { get; set; }
 		public string configFilter { get; set; }
 		public string serviceLifetimeTopic { get; set; }
-		public string collectorLifetimeFilter { get; set; }
+		public string registryLifetimeFilter { get; set; }
 		public string serviceLogTopic { get; set; }
-		public string collectorLogFilter { get; set; }
+		public string registryLogFilter { get; set; }
 		public string newSensorFilter { get; set; }
 		public string sensorRemovedFilter { get; set; }
-		public string sensorUpdatedFilter { get; set; }
+		public string sensorUpdateFilter { get; set; }
+
 		public string sensorEventTopic { get; set; }
+		public string sensorReadEventFilter { get; set; }
 
 		#endregion
 

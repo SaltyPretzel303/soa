@@ -5,16 +5,20 @@ dir_path="sensors"
 sensors_root="/sensors"
 sensor_program="/sensor_program"
 
-if [ "$#" -gt "0" ]
+first_sensor="0"
+last_sensor="10"
+
+if [ "$#" -eq "2" ]
 then 
-	sensors_root=$1
-	sensor_program=$2
+	first_sensor=$1
+	last_sensor=$2
 fi
 
-for index in {0..5}
+for (( index=$first_sensor; index<=$last_sensor; index++ ))
+# for index in {0..5}
 do
 
-	echo "Generating (shell): $index"
+	echo "Preparing sensor (shell): $index"
 
 	sensor_dest=$sensors_root"/sensor_"$index
 	mkdir -p $sensor_dest

@@ -15,6 +15,11 @@ namespace CollectorService.Broker.Events
 
 		private IRegistryCache localRegistry;
 
+		public SensorRegistryUpdateHandler(IRegistryCache localRegistry)
+		{
+			this.localRegistry = localRegistry;
+		}
+
 		public void HandleRegistryUpdate(SensorRegistryEvent registryEvent)
 		{
 			if (registryEvent.eventType == SensorRegEventType.NewSensor)
