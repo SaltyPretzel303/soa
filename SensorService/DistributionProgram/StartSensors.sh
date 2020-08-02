@@ -56,10 +56,8 @@ shutdown_sensors()
 
 		for single_pid in "${sensor_pids[@]}"
 		do
-
 			echo "Killing sensor with pid: $single_pid"
 			kill "$single_pid"
-
 		done
 
 		if [ "$sleep_pid" -ne "-1" ]
@@ -104,5 +102,6 @@ do
 
 done
 
-echo "No more live sensors (note: last healtcheck report may be invalid) ..."
+echo "No more live sensors ..."
+echo "NOTE: last healtcheck report may be invalid if container is stopped with docker stop command"
 echo "Exiting ..."
