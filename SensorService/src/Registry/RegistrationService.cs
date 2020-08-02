@@ -96,13 +96,11 @@ namespace SensorService
 			HttpResponseMessage responseMessage = null;
 			try
 			{
-				Console.WriteLine("Trying to register ... ");
 				responseMessage = this.httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
 			}
 			catch (Exception e)
 			{
-				this.logger.logError($"Failed to register sensor, reason: {e.Message}");
-
+				this.logger.logError($"Failed to register sensor on: {addr}, reason: {e.Message}");
 				return false;
 			}
 
