@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using SensorRegistry.Configuration;
 
-namespace SensorRegistry.Broker.Events
+namespace SensorRegistry.Broker.EventHandlers
 {
 	public interface IConfigEventHandler
 	{

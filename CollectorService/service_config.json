@@ -39,7 +39,7 @@
 		"configurationBackupCollection": "Configs",
 		"headerUrl": "sensor/data/header",
 		"dataRangeUrl": "sensor/data/range",
-		"readInterval": 5000,
+		"readInterval": 10000,
 		"sensorRegistryAddr": "soa-registry",
 		"sensorRegistryPort": 5000,
 		"retryConnectionDelay": "2000",

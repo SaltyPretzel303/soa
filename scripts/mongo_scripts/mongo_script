@@ -6,7 +6,7 @@ mongo soa_collector --eval '
 		[
 			{ 
 				
-				$match: {sensor_name:"sensor_2"}
+				$match: {sensor_name:"sensor_3"}
 		
 			},
 			{

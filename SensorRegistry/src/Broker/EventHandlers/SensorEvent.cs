@@ -2,7 +2,7 @@ using CommunicationModel;
 using CommunicationModel.BrokerModels;
 using SensorRegistry.Registry;
 
-namespace SensorRegistry.Broker.Events
+namespace SensorRegistry.Broker.EventHandlers
 {
 
 	public interface ISensorEventHandler
@@ -33,7 +33,6 @@ namespace SensorRegistry.Broker.Events
 													regResponse.singleData.LastReadIndex);
 
 			}
-
 		}
 	}
 }

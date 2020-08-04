@@ -87,8 +87,6 @@ namespace SensorService.Data
 
 		}
 
-		// public methods
-
 		#region IHostedService methods
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -139,6 +137,8 @@ namespace SensorService.Data
 			{
 				this.timer.Stop();
 			}
+
+			Console.WriteLine("Reader down ... ");
 
 			return Task.CompletedTask;
 		}

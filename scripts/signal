@@ -1,5 +1,0 @@
-#!/bin/bash
-
-a=2
-
-read a

@@ -114,7 +114,7 @@ namespace SensorRegistry.Registry
 			if (this.registry.TryRemove(sensorName, out record))
 			{
 
-				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorUpdated,
+				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorRemoved,
 																	record);
 				this.broker.publishRegistryEvent(newEvent,
 												config.sensorRemovedFilter);

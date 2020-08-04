@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SensorRegistry.Broker;
-using SensorRegistry.Broker.Events;
+using SensorRegistry.Broker.EventHandlers;
 using SensorRegistry.Configuration;
 using SensorRegistry.Logger;
 using SensorRegistry.Registry;

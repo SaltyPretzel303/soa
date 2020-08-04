@@ -54,10 +54,13 @@ shutdown_sensors()
 
 		shutdown_requested="1"
 
+		trap '' INT TERM # ignore INT and TERM while shutting down
+
 		for single_pid in "${sensor_pids[@]}"
 		do
 			echo "Killing sensor with pid: $single_pid"
 			kill "$single_pid"
+			wait "$single_pid"
 		done
 
 		if [ "$sleep_pid" -ne "-1" ]
@@ -74,7 +77,8 @@ dead_sensors="0"
 while [ "$dead_sensors" -ne "${#sensor_pids[@]}" ] && [ "$shutdown_requested" -eq "0" ]
 do
 
-	sleep 10 & sleep_pid="$!"
+	# "healtcheck every 30s"
+	sleep 30 & sleep_pid="$!"
 	wait "$sleep_pid"
 	sleep_pid="-1"
 

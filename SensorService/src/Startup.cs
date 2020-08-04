@@ -27,7 +27,7 @@ namespace SensorService
 			services.AddSingleton<ILogger, BasicLogger>();
 			services.AddSingleton<IDataCacheManager, InMemoryCache>();
 
-			services.AddSingleton<IMessageBroker, RabbitMqBroker>();
+			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 
 			services.AddHostedService<RegistrationService>();
 			services.AddHostedService<SensorReader>();
@@ -59,10 +59,12 @@ namespace SensorService
 		private void onShutDown()
 		{
 			this.logger.logMessage("Sensor is going down ... ");
-			// Console.WriteLine("Sensor is going down ... ");
 
-			// result is not used (potential exception is handled inside method)
+			// result is not used (potential exception is handled inside the method)
 			bool unregResult = this.unregisterSensors();
+
+			Console.WriteLine("Custom handler done ... ");
+
 		}
 
 		private bool unregisterSensors()
@@ -101,7 +103,9 @@ namespace SensorService
 
 			HttpClient httpClient = new HttpClient();
 
+			Console.WriteLine("Unreg. req. send ... ");
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
+			Console.WriteLine("Unreg. req. done ...  ");
 
 			bool retValue = false;
 			if (responseMessage != null &&

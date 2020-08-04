@@ -21,7 +21,6 @@ namespace SensorService.Logger
 
 		public BasicLogger(IWebHostEnvironment hostEnv)
 		{
-
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			this.rootPath = hostEnv.ContentRootPath;

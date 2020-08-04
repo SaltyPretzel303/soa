@@ -26,10 +26,12 @@ namespace CollectorService
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
 
 			services.AddTransient<IConfigChange, ConfigChangeHandler>();
+			services.AddTransient<ISensorRegistryUpdate, SensorRegistryUpdateHandler>();
 
 			services.AddSingleton<IMessageBroker, RabbitMqBroker>();
 
 			services.AddHostedService<DataPuller>();
+			services.AddHostedService<BrokerEventReceiver>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

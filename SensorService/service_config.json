@@ -44,7 +44,7 @@
 			"From": 55,
 			"To": 60
 		},
-		"readInterval": 10000,
+		"readInterval": 2000,
 		"listeningPort": 5000,
 		"sensorNamePrefix": "sensor_",
 		"registerSensorDelay": 5000,

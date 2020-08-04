@@ -58,7 +58,6 @@ namespace CollectorService.Broker
 							config.allFilter,
 							null);
 
-
 			EventingBasicConsumer regEventConsumer = new EventingBasicConsumer(this.channel);
 			regEventConsumer.Received += (srcChannel, eventArg) =>
 			{

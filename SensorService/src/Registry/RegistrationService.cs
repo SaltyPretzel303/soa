@@ -60,6 +60,8 @@ namespace SensorService
 		private void TimerEvent(Object source, ElapsedEventArgs args)
 		{
 
+			Console.WriteLine("register timer event ... ");
+
 			bool regResult = false;
 			for (int i = 0; i < waitingSensors.Count; i++)
 			{
@@ -74,12 +76,14 @@ namespace SensorService
 					this.waitingSensors.Remove(currentSensor);
 					i--;
 				}
+
 			}
 
 			if (this.waitingSensors.Count == 0)
 			{
-				this.timer.AutoReset = false;
+				this.timer.Stop();
 			}
+
 		}
 
 		private bool registerSensor(string sensorName)
@@ -140,8 +144,11 @@ namespace SensorService
 				this.httpClient.Dispose();
 			}
 
+			Console.WriteLine("registrator down ... ");
+
 			return Task.CompletedTask;
 		}
+
 	}
 
 }

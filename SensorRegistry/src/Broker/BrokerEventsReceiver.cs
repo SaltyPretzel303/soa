@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using SensorRegistry.Broker.Events;
+using SensorRegistry.Broker.EventHandlers;
 using SensorRegistry.Configuration;
 using SensorRegistry.Logger;
 
