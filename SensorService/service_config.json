@@ -1,5 +1,5 @@
 {
-	"stage": "Production",
+	"stage": "Development",
 	"Development": {
 		"dataPath": "./data/",
 		"samplePrefix": "user_",

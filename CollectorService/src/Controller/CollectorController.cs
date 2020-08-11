@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using CollectorService.Configuration;
 using CollectorService.Data;
+using CommunicationModel;
+using CommunicationModel.RestModels.CollectorCRUDRequest;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
@@ -20,16 +22,6 @@ namespace CollectorService.Controller
 			this.database = database;
 		}
 
-		// CRUD
-
-		// create
-
-		// read
-
-		// update
-
-		// delete
-
 		/* response format:
 				[
 				{sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[
@@ -39,8 +31,8 @@ namespace CollectorService.Controller
 				    .
 				]
 		 */
-		[Route("all")]
 		[HttpGet]
+		[Route("all")]
 		public IActionResult getAllData()
 		{
 
@@ -52,38 +44,108 @@ namespace CollectorService.Controller
 			return StatusCode(500);
 		}
 
-		// custom home used for testing 
-		public IActionResult getHome()
-		{
-			return Ok(database.customQuery());
-		}
-
-		[Route("sensorRecords")]
 		[HttpGet]
-		public IActionResult getSingleRecord([FromQuery] string sensorName, [FromQuery] long fromTimestamp, [FromQuery] long toTimestamp)
+		[Route("recordsRange")]
+		public IActionResult getRecordsRange([FromQuery] string sensorName,
+										[FromQuery] long fromTimestamp,
+										[FromQuery] long toTimestamp)
 		{
 
 			if (fromTimestamp >= toTimestamp)
 			{
-
 				string message = $"Invalid timestamps:\nFromTimestamp: {fromTimestamp}\nToTimestamp: {toTimestamp}";
 				Console.WriteLine("Bad request, invalid timestamps ... \n" + message);
 				return BadRequest(message);
-
 			}
 
-			List<JObject> ret_array = this.database.getRecordsFromSensor(sensorName, fromTimestamp, toTimestamp);
+			SensorDataRecords records = this.database.getRecordRange(sensorName, fromTimestamp, toTimestamp);
 
-			if (ret_array != null)
+			if (records != null)
 			{
-
-				return Ok(ret_array);
-
+				return Ok(records);
 			}
 
 			return StatusCode(500);
 		}
 
+		[HttpGet]
+		[Route("recordsList")]
+		public IActionResult getRecordsList([FromBody] GetListOfRecordsArg reqArg)
+		{
+			SensorDataRecords results = this.database.getRecordsList(reqArg.sensorName, reqArg.timestamps);
+
+			return new OkObjectResult(results);
+		}
+
+		[HttpPost]
+		[Route("addRecords")]
+		public IActionResult addRecords([FromBody] AddRecordsArg reqArg)
+		{
+			JArray dataArray = new JArray();
+			foreach (string txtData in reqArg.newRecords)
+			{
+				JObject tempData = JObject.Parse(txtData);
+				dataArray.Add(tempData);
+			}
+
+			this.database.pushToSensor(reqArg.sensorName, dataArray);
+
+			return new OkResult();
+		}
+
+		[HttpPost]
+		[Route("updateRecord")]
+		public IActionResult updateRecord([FromBody] UpdateRecordArg reqArg)
+		{
+			Console.WriteLine($"Request to update record:\nSensor name: {reqArg.sensorName}\nRecord timestamp: {reqArg.timestamp}\nField: {reqArg.field}\nNew value: {reqArg.value}");
+
+			bool updateRes = this.database.updateRecord(reqArg.sensorName,
+									reqArg.timestamp,
+									reqArg.field,
+									reqArg.value);
+			if (updateRes == true)
+			{
+				return new OkResult();
+			}
+			else
+			{
+				return new BadRequestResult();
+			}
+		}
+
+		[HttpDelete]
+		[Route("deleteRecord")]
+		public IActionResult deleteRecord([FromBody] DeleteRecordArg reqArg)
+		{
+
+			bool delResult = this.database.deleteRecord(reqArg.sensorName, reqArg.recordTimestamp);
+
+			if (delResult == true)
+			{
+				return new OkResult();
+			}
+			else
+			{
+				return new BadRequestResult();
+			}
+		}
+
+		[HttpDelete]
+		[Route("deleteSensorData")]
+		public IActionResult deleteSensorData([FromQuery] string sensorName)
+		{
+
+			bool delResult = this.database.deleteSensorData(sensorName);
+
+			if (delResult == true)
+			{
+				return new OkResult();
+			}
+			else
+			{
+				return new BadRequestResult();
+			}
+		}
 
 		[HttpPost]
 		public IActionResult updateConfiguration(string configUpdateRequest)

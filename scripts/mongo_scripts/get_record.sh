@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mongo soa_collector --eval '
+mongo soa_collector_dev --eval '
 	
 	db.Sensors.aggregate(
 		[
@@ -11,7 +11,7 @@ mongo soa_collector --eval '
 								{
 									input:"$records",
 									as:"single_record",
-									cond: {$eq: ["$$single_record.timestamp","1445368452"]}
+									cond: {$eq: ["$$single_record.timestamp","1444079281"]}
 								}	
 							}
 				}

@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using CommunicationModel.BrokerModels;
 using CommunicationModel;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CollectorService.Data
 {
@@ -23,6 +24,8 @@ namespace CollectorService.Data
 
 		private System.Timers.Timer timer;
 		private HttpClient httpClient;
+
+		private Dictionary<string, int> lastReadIndex;
 
 		public DataPuller(IDatabaseService databse, IRegistryCache localRegistry, IMessageBroker messageBroker)
 		{
@@ -37,6 +40,8 @@ namespace CollectorService.Data
 			this.timer.Interval = config.readInterval;
 
 			this.httpClient = new HttpClient();
+
+			this.lastReadIndex = new Dictionary<string, int>();
 		}
 
 		#region IHostedService methods
@@ -57,12 +62,13 @@ namespace CollectorService.Data
 
 		public void startReading()
 		{
-			Console.WriteLine("Started reading with interval: " + this.timer.Interval + "ms");
+			Console.WriteLine("Started pulling data with interval: " + this.timer.Interval + "ms");
 			this.timer.Start();
 		}
 
 		public void stopReading()
 		{
+			Console.WriteLine("Done with pulling data");
 			this.timer.Stop();
 		}
 
@@ -77,7 +83,13 @@ namespace CollectorService.Data
 			foreach (SensorRegistryRecord singleSensor in availableSensors)
 			{
 
-				int sensorLastReadIndex = singleSensor.LastReadIndex;
+				int sensorLastReadIndex = 0;
+				if (!this.lastReadIndex.TryGetValue(singleSensor.Name, out sensorLastReadIndex))
+				{
+					// initialize lastReadIndex if it doesn't exists for this sensor
+					sensorLastReadIndex = this.database.getRecordsCount(singleSensor.Name);
+					this.lastReadIndex.Add(singleSensor.Name, sensorLastReadIndex);
+				}
 
 				string sensorAddr = $"http://{singleSensor.Address}:{singleSensor.Port}";
 				string api_url = $"{sensorAddr}/{config.dataRangeUrl}?sensorName={singleSensor.Name}&index={sensorLastReadIndex}";
@@ -124,7 +136,6 @@ namespace CollectorService.Data
 
 					this.messageBroker.PublishCollectorPullEvent(newEvent);
 
-
 					continue; // pull from next sensor
 				}
 
@@ -134,6 +145,7 @@ namespace CollectorService.Data
 				// system.text.json can't deserialize it because class properties are actually in PascalCase 
 				// that is the reason to use newtonsoft - easier than forcing it to serialize in PascalCase
 				SensorDataRecords dataRecords = JsonConvert.DeserializeObject<SensorDataRecords>(txtResponseContent);
+				Console.WriteLine($"Sensor {singleSensor.Name} returned {dataRecords.RecordsCount} rows ... ");
 
 				// deserialize all records from response
 				// ListdataRecords.Records -> list of strings each representing one row from csv
@@ -147,9 +159,8 @@ namespace CollectorService.Data
 				this.database.pushToSensor(singleSensor.Name, dataArray);
 
 				// update read index for every sensor
-				this.localRegistry.GetSingleSensor(singleSensor.Name).LastReadIndex += dataRecords.RecordsCount;
-
-				Console.WriteLine($"Sensor {singleSensor.Name} returned {dataRecords.RecordsCount} rows ... ");
+				// at this point lastReadIndex[singleSensor.Name] has to exists (look at the beginning of this for loop)
+				this.lastReadIndex[singleSensor.Name] = sensorLastReadIndex + dataRecords.RecordsCount;
 
 			}
 

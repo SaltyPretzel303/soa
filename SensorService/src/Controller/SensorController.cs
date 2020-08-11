@@ -1,8 +1,5 @@
-using System.Threading.Tasks.Dataflow;
 using System;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using SensorService.Data;
 using SensorService.Configuration;
 using SensorService.Logger;
 using Newtonsoft.Json;

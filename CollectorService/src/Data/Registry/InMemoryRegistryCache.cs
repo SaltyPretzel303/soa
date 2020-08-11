@@ -28,7 +28,7 @@ namespace CollectorService.Data.Registry
 		#region brokerEventHandlers
 		private void NewSensorHandler(SensorRegistryRecord newRecord)
 		{
-			newRecord.LastReadIndex = this.databse.getRecordsCount(newRecord.Name);
+			newRecord.AvailableRecords = this.databse.getRecordsCount(newRecord.Name);
 			this.records.Add(newRecord.Name, newRecord);
 		}
 
@@ -126,10 +126,10 @@ namespace CollectorService.Data.Registry
 				this.records.Remove(newRecord.Name);
 			}
 
-			newRecord.LastReadIndex = this.databse.getRecordsCount(newRecord.Name);
+			newRecord.AvailableRecords = this.databse.getRecordsCount(newRecord.Name);
 			this.records.Add(newRecord.Name, newRecord);
 
-			Console.WriteLine("sensor: " + newRecord.Name + " last read index: " + newRecord.LastReadIndex);
+			Console.WriteLine("sensor: " + newRecord.Name + " last read index: " + newRecord.AvailableRecords);
 		}
 
 		public void UpdateRecord(SensorRegistryRecord newRecord)

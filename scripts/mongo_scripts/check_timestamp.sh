@@ -12,7 +12,7 @@ counter=0
 prev_timestamp=-1
 
 
-# this part will remove "timestamp" : and the " at the ond of each line
+# this part will remove "timestamp" : and " at the end of each line
 # leaving only the timestamps as numbers at each line
 sed 's/"timestamp" : "/ /' "$timestamps_file" > "./temp_timestamp"
 sed 's/"/ /' "./temp_timestamp" > "$timestamps_file"

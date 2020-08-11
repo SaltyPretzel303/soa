@@ -6,18 +6,18 @@ namespace CommunicationModel
 		public string Name { get; set; }
 		public string Address { get; set; }
 		public int Port { get; set; }
-		public int LastReadIndex { get; set; }
+		public int AvailableRecords { get; set; }
 
 		public SensorRegistryRecord()
 		{
 		}
 
-		public SensorRegistryRecord(string name, string address, int port, int lastReadIndex = 0)
+		public SensorRegistryRecord(string name, string address, int port, int availableRecords = 0)
 		{
 			this.Name = name;
 			this.Address = address;
 			this.Port = port;
-			this.LastReadIndex = lastReadIndex;
+			this.AvailableRecords = availableRecords;
 		}
 	}
 }

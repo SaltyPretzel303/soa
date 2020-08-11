@@ -6,7 +6,6 @@ using CollectorService.Data;
 
 namespace CollectorService.Configuration
 {
-
 	public class ServiceConfiguration
 	{
 

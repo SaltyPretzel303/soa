@@ -1,5 +1,5 @@
 {
-	"stage": "Production",
+	"stage": "Development",
 	"Development": {
 		"listeningPort": 5002,
 		"brokerAddress": "localhost",

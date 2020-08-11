@@ -60,8 +60,6 @@ namespace SensorService
 		private void TimerEvent(Object source, ElapsedEventArgs args)
 		{
 
-			Console.WriteLine("register timer event ... ");
-
 			bool regResult = false;
 			for (int i = 0; i < waitingSensors.Count; i++)
 			{

@@ -26,11 +26,11 @@ namespace SensorRegistry.Broker.EventHandlers
 			if (regResponse.status == RegistryStatus.ok)
 			{
 
-				regResponse.singleData.LastReadIndex = newEvent.LastReadIndex;
+				regResponse.singleData.AvailableRecords = newEvent.LastReadIndex;
 				this.localRegistry.updateSensorRecord(regResponse.singleData.Name,
 													regResponse.singleData.Address,
 													regResponse.singleData.Port,
-													regResponse.singleData.LastReadIndex);
+													regResponse.singleData.AvailableRecords);
 
 			}
 		}

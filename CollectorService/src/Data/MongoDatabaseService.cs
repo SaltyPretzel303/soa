@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Threading.Tasks.Dataflow;
 using System.Linq;
 using System;
 using MongoDB.Bson;
@@ -9,6 +7,8 @@ using System.Collections.Generic;
 using MongoDB.Bson.IO;
 using CollectorService.Configuration;
 using System.Net.NetworkInformation;
+using CommunicationModel;
+using Newtonsoft.Json;
 
 namespace CollectorService.Data
 {
@@ -60,8 +60,8 @@ namespace CollectorService.Data
 			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(configuration.sensorsCollection);
 
 			sensorsCollection.UpdateOne("{\"sensor_name\":\"" + sensorName + "\"}",
-			"{$push: { \"" + configuration.fieldWithRecords + "\": { $each : " + rows.ToString() + " } }}",
-			 new UpdateOptions { IsUpsert = true });
+								"{$push: { \"" + configuration.fieldWithRecords + "\": { $each : " + rows.ToString() + " } }}",
+								new UpdateOptions { IsUpsert = true });
 			// upsert true -> create document if doesn't exists
 
 		}
@@ -108,7 +108,7 @@ namespace CollectorService.Data
 			return ret_list;
 		}
 
-		public List<JObject> getRecordsFromSensor(string sensorName = ".", long fromTimestamp = 0, long toTimestamp = long.MaxValue)
+		public SensorDataRecords getRecordRange(string sensorName = ".", long fromTimestamp = 0, long toTimestamp = long.MaxValue)
 		{
 
 			if (!this.createConnection())
@@ -118,7 +118,67 @@ namespace CollectorService.Data
 
 			// TODO deal with 'sql (mongo) ijection' through sensorName, it is used as regex for mongo query
 
-			Console.WriteLine($"Received args: \n SensorName: {sensorName}\n From timestamp: {fromTimestamp} \n To timestamp: {toTimestamp}\n");
+			// TODO why is there regex ... ? 
+			string match_q = "{$match: {sensor_name: {$regex: '" + sensorName.Replace("\"", "") + "'}}}";
+
+			string filter_array = "records";
+			string single_item = "record";
+			string comp_field = "timestamp";
+
+			string gte_q = string.Format(@"{{$gte:[{{$convert: {{ input: '$${0}.{1}',to: 'long' }} }}, NumberLong({2})]}}",
+									single_item,
+									comp_field,
+									fromTimestamp);
+			string lte_q = string.Format(@"{{$lte:[{{$convert: {{ input: '$${0}.{1}',to: 'long' }} }}, NumberLong({2})]}}",
+									single_item,
+									comp_field,
+									toTimestamp);
+
+			string and_q = string.Format(@"{{$and: [{0},{1}]}}",
+									gte_q,
+									lte_q);
+
+			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }},sensor_name:1,_id:0 }} }}",
+										filter_array,
+										single_item,
+										and_q);
+
+			BsonDocument[] agregate_array = new BsonDocument[]{
+					BsonDocument.Parse(match_q),
+					BsonDocument.Parse(project_q)
+			};
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> query_result = sensorsCollection.Aggregate<BsonDocument>(agregate_array).ToList();
+
+			SensorDataRecords resultRecords = new SensorDataRecords()
+			{
+				SensorName = sensorName,
+				RecordsCount = query_result.Count
+			};
+
+
+			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+			foreach (BsonDocument single_bson in query_result)
+			{
+				JObject single_json = JObject.Parse(single_bson.ToJson<BsonDocument>(json_settings));
+				resultRecords.Records.Add(single_json.ToString(Formatting.None).Replace("\\n", " "));
+			}
+
+			return resultRecords;
+
+		}
+
+		public SensorDataRecords getRecordsList(string sensorName, List<string> timestamps)
+		{
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
+			// TODO deal with 'sql (mongo) ijection' through sensorName, it is used as regex for mongo query
 
 			// TODO why is there regex ... ? 
 			string match_q = "{$match: {sensor_name: {$regex: '" + sensorName.Replace("\"", "") + "'}}}";
@@ -127,41 +187,132 @@ namespace CollectorService.Data
 			string single_item = "record";
 			string comp_field = "timestamp";
 
-			string gte_q = string.Format(@"{{$gte:[{{$convert: {{ input: '$${0}.{1}',to: 'double' }} }}, NumberLong({2})]}}", single_item, comp_field, fromTimestamp);
-			string lte_q = string.Format(@"{{$lte:[{{$convert: {{ input: '$${0}.{1}',to: 'double' }} }}, NumberLong({2})]}}", single_item, comp_field, toTimestamp);
+			string s_timestamps = "";
+			for (int i = 0; i < timestamps.Count; i++)
+			{
+				if (i != 0)
+				{
+					s_timestamps += ", ";
+				}
+				s_timestamps += $"\"{timestamps[i]}\"";
+			}
 
-			string and_q = string.Format(@"{{$and: [{0},{1}]}}", gte_q, lte_q);
+			string in_q = string.Format(@"{{$in: ['$${0}.{1}',[{2}]] }}", single_item, comp_field, s_timestamps);
 
-			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }},sensor_name:1 }} }}", filter_array, single_item, and_q);
+			string project_q = string.Format(@"{{$project: {{ {0}: {{ $filter: {{ input: '${0}',as: '{1}',cond: {2} }} }},_id:0 }} }}",
+										filter_array,
+										single_item,
+										in_q);
+
+			Console.WriteLine($"Query: {project_q}");
 
 			BsonDocument[] agregate_array = new BsonDocument[]{
 					BsonDocument.Parse(match_q),
 					BsonDocument.Parse(project_q)
-				};
+			};
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
 			List<BsonDocument> query_result = sensorsCollection.Aggregate<BsonDocument>(agregate_array).ToList();
 
+			SensorDataRecords resultRecords = new SensorDataRecords()
+			{
+				SensorName = sensorName,
+				RecordsCount = query_result.Count
+			};
+
 			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
-			List<JObject> result = new List<JObject>();
 			foreach (BsonDocument single_bson in query_result)
 			{
-
 				JObject single_json = JObject.Parse(single_bson.ToJson<BsonDocument>(json_settings));
-
-				result.Add(single_json);
-
+				resultRecords.Records.Add(single_json.ToString(Formatting.None).Replace("\\n", " "));
 			}
 
-			return result;
-
+			return resultRecords;
 		}
 
-		public void shutDown()
+		public bool updateRecord(string sensorName, string timestamp, string field, string value)
 		{
 
+			if (!this.createConnection())
+			{
+				return false;
+			}
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+
+			string s_filter = String.Format(@"{{ 'sensor_name': '{0}', 'records.timestamp':'{1}' }}", sensorName, timestamp);
+			string s_command = String.Format(@"{{ $set: {{ 'records.$.{0}': '{1}' }} }}", field, value);
+			BsonDocument b_filter = BsonDocument.Parse(s_filter);
+			BsonDocument b_command = BsonDocument.Parse(s_command);
+
+			UpdateResult query_result = sensorsCollection.UpdateOne((FilterDefinition<BsonDocument>)b_filter,
+																(UpdateDefinition<BsonDocument>)b_command);
+
+			if (query_result != null &&
+				query_result.MatchedCount > 0 &&
+				query_result.ModifiedCount > 0)
+			{
+				return true;
+			}
+
+			return false; ;
+		}
+
+		public bool deleteRecord(string sensorName, string timestamp)
+		{
+
+			if (!this.createConnection())
+			{
+				return false;
+			}
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+
+			string s_filter = String.Format(@"{{ 'sensor_name': '{0}'}}", sensorName);
+			string s_command = String.Format(@"{{ $pull: {{ records: {{ 'timestamp':'{0}' }} }} }}", timestamp);
+			BsonDocument b_filter = BsonDocument.Parse(s_filter);
+			BsonDocument b_command = BsonDocument.Parse(s_command);
+
+			UpdateResult query_result = sensorsCollection.UpdateOne((FilterDefinition<BsonDocument>)b_filter,
+																(UpdateDefinition<BsonDocument>)b_command);
+
+			if (query_result != null &&
+				query_result.MatchedCount > 0 &&
+				query_result.ModifiedCount > 0)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool deleteSensorData(string sensorName)
+		{
+
+			if (!this.createConnection())
+			{
+				return false;
+			}
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+
+			string s_filter = String.Format(@"{{ 'sensor_name': '{0}'}}", sensorName);
+			BsonDocument b_filter = BsonDocument.Parse(s_filter);
+
+			DeleteResult query_result = sensorsCollection.DeleteOne((FilterDefinition<BsonDocument>)b_filter);
+
+			if (query_result != null &&
+				query_result.DeletedCount > 0)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		public void reload(ServiceConfiguration newConfiguration)
@@ -287,6 +438,7 @@ namespace CollectorService.Data
 
 			return count;
 		}
+
 	}
 
 }

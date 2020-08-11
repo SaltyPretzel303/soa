@@ -19,7 +19,7 @@ namespace CommunicationModel
 		public SensorDataRecords(string sensorName, int count, List<string> records)
 		{
 			this.SensorName = sensorName;
-			RecordsCount = count;
+			this.RecordsCount = count;
 			this.Records = records;
 		}
 

@@ -83,8 +83,10 @@ namespace CollectorService.Broker
 
 
 			EventingBasicConsumer configEventConsumer = new EventingBasicConsumer(this.channel);
-			regEventConsumer.Received += (srcChannel, eventArg) =>
+			configEventConsumer.Received += (srcChannel, eventArg) =>
 			{
+				Console.WriteLine("RECEIVED NEW CONFIG .... ");
+
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 				JObject newConfig = JObject.Parse(txtContent);
 
