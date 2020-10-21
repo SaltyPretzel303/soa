@@ -1,16 +1,14 @@
-using System.ComponentModel.Design;
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SensorRegistry.Broker;
 using SensorRegistry.Registry;
 using SensorRegistry.Configuration;
-using CommunicationModel.BrokerModels;
-using CommunicationModel;
 
 namespace SensorRegistry.Controller
 {
-	// port 5005
+	// dev port 5002
+	// prod port 5000
 	[ApiController]
 	[Route("sensor/registry")]
 	public class SensorRegistryController
@@ -41,7 +39,12 @@ namespace SensorRegistry.Controller
 		{
 
 			// sensor ip is extracted from request
-			string sensorIp = this.httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+			string sensorIp = this.httpContext.
+								HttpContext.
+								Connection.
+								RemoteIpAddress.
+								MapToIPv4().
+								ToString();
 
 			Console.WriteLine($"Request to register sensor: {sensorName}, with: {sensorIp}:{portNum}");
 

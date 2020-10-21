@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Collections.Generic;
+using System;
 
 namespace BrokerListener
 {
@@ -15,7 +15,7 @@ namespace BrokerListener
 			   "service_log",
 			   "service_lifetime",
 			   "sensor_registry",
-			   "test_topic",
+				   "test_topic",
 			   "sensor_reader",
 
 			};

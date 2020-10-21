@@ -74,7 +74,6 @@ namespace SensorService
 					this.waitingSensors.Remove(currentSensor);
 					i--;
 				}
-
 			}
 
 			if (this.waitingSensors.Count == 0)
@@ -142,7 +141,7 @@ namespace SensorService
 				this.httpClient.Dispose();
 			}
 
-			Console.WriteLine("registrator down ... ");
+			Console.WriteLine("Registration service down ... ");
 
 			return Task.CompletedTask;
 		}

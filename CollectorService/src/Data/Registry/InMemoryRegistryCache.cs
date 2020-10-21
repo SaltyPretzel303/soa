@@ -4,76 +4,34 @@ using System.Net.Http;
 using System;
 using CommunicationModel;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace CollectorService.Data.Registry
 {
 	public class InMemoryRegistryCache : IRegistryCache
 	{
 
-		private Dictionary<string, SensorRegistryRecord> records;
+		// static so it can be transient instead of singleton service
+		private static ConcurrentDictionary<string, SensorRegistryRecord> Records { get; set; }
 
-		private IDatabaseService databse;
+		// used to get last read index for specific sensor
+		private IDatabaseService database;
 
 		public InMemoryRegistryCache(IDatabaseService database)
 		{
-			this.databse = database;
+			this.database = database;
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			this.records = new Dictionary<string, SensorRegistryRecord>();
-
-			this.pullRecords();
-		}
-
-		#region brokerEventHandlers
-		private void NewSensorHandler(SensorRegistryRecord newRecord)
-		{
-			newRecord.AvailableRecords = this.databse.getRecordsCount(newRecord.Name);
-			this.records.Add(newRecord.Name, newRecord);
-		}
-
-		private void SensorRemovedHandler(SensorRegistryRecord oldRecord)
-		{
-			this.RemoveRecord(oldRecord);
-		}
-
-		#endregion
-
-		public List<SensorRegistryRecord> GetAllSensors()
-		{
-
-			if (this.records == null ||
-			this.records.Keys.Count == 0)
+			if (Records == null)
 			{
+				Records = new ConcurrentDictionary<string, SensorRegistryRecord>();
 				this.pullRecords();
 			}
-
-			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();
-			foreach (string recordKey in this.records.Keys)
-			{
-				SensorRegistryRecord tempRecord = null;
-				this.records.TryGetValue(recordKey, out tempRecord);
-				retList.Add(tempRecord);
-			}
-
-			return retList;
 		}
 
-		public SensorRegistryRecord GetSingleSensor(string sensorName)
+		private void pullRecords()
 		{
-			SensorRegistryRecord reqRecord = null;
-
-			this.records.TryGetValue(sensorName, out reqRecord);
-
-			return reqRecord;
-		}
-
-		public void pullRecords()
-		{
-			if (this.records == null)
-			{
-				this.records = new Dictionary<string, SensorRegistryRecord>();
-			}
 
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
@@ -87,7 +45,7 @@ namespace CollectorService.Data.Registry
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine($"Exception occured while pulling sensor records: {e.Message}");
+				Console.WriteLine($"Exception occured while pulling active sensors records: {e.Message}");
 			}
 
 			if (responseMessage != null &&
@@ -111,36 +69,70 @@ namespace CollectorService.Data.Registry
 
 		}
 
+		public List<SensorRegistryRecord> GetAllSensors()
+		{
+
+			if (Records == null ||
+			Records.Keys.Count == 0)
+			{
+				this.pullRecords();
+			}
+
+			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();
+			foreach (string recordKey in Records.Keys)
+			{
+				SensorRegistryRecord tempRecord = null;
+				Records.TryGetValue(recordKey, out tempRecord);
+				retList.Add(tempRecord);
+			}
+
+			return retList;
+		}
+
+		public SensorRegistryRecord GetSingleSensor(string sensorName)
+		{
+			SensorRegistryRecord reqRecord = null;
+
+			Records.TryGetValue(sensorName, out reqRecord);
+
+			return reqRecord;
+		}
+
 		public void RemoveRecord(SensorRegistryRecord oldRecord)
 		{
-			if (this.records.ContainsKey(oldRecord.Name))
+			SensorRegistryRecord outRecord = new SensorRegistryRecord();
+
+			if (Records.ContainsKey(oldRecord.Name))
 			{
-				this.records.Remove(oldRecord.Name);
+				Records.TryRemove(oldRecord.Name, out outRecord);
 			}
 		}
 
 		public void AddNewRecord(SensorRegistryRecord newRecord)
 		{
-			if (this.records.ContainsKey(newRecord.Name))
+			SensorRegistryRecord outRecord = new SensorRegistryRecord();
+			if (Records.ContainsKey(newRecord.Name))
 			{
-				this.records.Remove(newRecord.Name);
+				Records.TryRemove(newRecord.Name, out outRecord);
 			}
 
-			newRecord.AvailableRecords = this.databse.getRecordsCount(newRecord.Name);
-			this.records.Add(newRecord.Name, newRecord);
+			newRecord.AvailableRecords = this.database.getRecordsCount(newRecord.Name);
+			Records.TryAdd(newRecord.Name, newRecord);
 
 			Console.WriteLine("sensor: " + newRecord.Name + " last read index: " + newRecord.AvailableRecords);
 		}
 
 		public void UpdateRecord(SensorRegistryRecord newRecord)
 		{
-			if (this.records.ContainsKey(newRecord.Name))
+			SensorRegistryRecord outRecord = new SensorRegistryRecord();
+			if (Records.ContainsKey(newRecord.Name))
 			{
-				this.records.Remove(newRecord.Name);
+				Records.TryRemove(newRecord.Name, out outRecord);
 			}
 
-			this.records.Add(newRecord.Name, newRecord);
+			Records.TryAdd(newRecord.Name, newRecord);
 		}
+
 	}
 
 }

@@ -22,12 +22,13 @@ namespace CollectorService
 		{
 			services.AddControllers();
 
-			services.AddSingleton<IRegistryCache, InMemoryRegistryCache>();
+			services.AddTransient<IRegistryCache, InMemoryRegistryCache>();
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
 
 			services.AddTransient<IConfigChange, ConfigChangeHandler>();
 			services.AddTransient<ISensorRegistryUpdate, SensorRegistryUpdateHandler>();
 
+			// why is this singleton ... 
 			services.AddSingleton<IMessageBroker, RabbitMqBroker>();
 
 			services.AddHostedService<DataPuller>();

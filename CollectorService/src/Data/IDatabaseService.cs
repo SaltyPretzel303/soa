@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Data
 {
-	public interface IDatabaseService : IReloadable
+	public interface IDatabaseService
 	{
 		void pushToSensor(String sampleName, JArray values);
 

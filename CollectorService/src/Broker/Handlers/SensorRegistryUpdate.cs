@@ -12,7 +12,6 @@ namespace CollectorService.Broker.Events
 
 	public class SensorRegistryUpdateHandler : ISensorRegistryUpdate
 	{
-
 		private IRegistryCache localRegistry;
 
 		public SensorRegistryUpdateHandler(IRegistryCache localRegistry)

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace CollectorService.Broker
 {
-	public class RabbitMqBroker : IMessageBroker
+	public class RabbitMqBroker : IMessageBroker, IReloadable
 	{
 		private ServiceConfiguration config;
 
@@ -42,6 +42,13 @@ namespace CollectorService.Broker
 			this.PublishEvent(newLog,
 							this.config.serviceLogTopic,
 							this.config.serviceTypeFilter);
+		}
+
+		// remove if this service become transient
+		public void reload(ServiceConfiguration newConfiguration)
+		{
+			this.config = ServiceConfiguration.Instance;
+
 		}
 
 		private void PublishEvent(ServiceEvent newEvent, string topic, string filter)

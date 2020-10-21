@@ -42,7 +42,6 @@ namespace CollectorService.Data
 
 			Console.Write("Failed to establish connection with mongo ... ");
 			return false;
-
 		}
 
 		// methods
@@ -313,20 +312,6 @@ namespace CollectorService.Data
 			}
 
 			return false;
-		}
-
-		public void reload(ServiceConfiguration newConfiguration)
-		{
-
-			Console.WriteLine("Reloading mongo ... ");
-
-			// dont'w know how to close connection before opening new one
-			// someone said that i don't have to, .net driver will handle that for me 
-			// sooo ... yeap 
-
-			this.client = new MongoClient(newConfiguration.dbAddress);
-			this.database = this.client.GetDatabase(newConfiguration.dbName);
-
 		}
 
 		public void backupConfiguration(JObject oldJConfig)

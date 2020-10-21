@@ -138,7 +138,7 @@ namespace SensorService.Data
 				this.timer.Stop();
 			}
 
-			Console.WriteLine("Reader down ... ");
+			Console.WriteLine("Sensor reader is down ... ");
 
 			return Task.CompletedTask;
 		}

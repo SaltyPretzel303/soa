@@ -1,0 +1,9 @@
+CRUD on collector
+
+(node core)
+2xService sa ruleEngine-om i crud-om za evente
+
+reaktivni principi soa
+
+Dashboard - rezultati ruleEngine-a i pokreanje akcija
+

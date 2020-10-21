@@ -24,8 +24,9 @@ namespace CollectorService.Controller
 
 		/* response format:
 				[
-				{sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[ {},{},{} ... }, {sampleName: user_22, values[
-				{},{},{} ... },
+				{sampleName: user_22, values[ {},{},{} ... }, 
+				{sampleName: user_22, values[ {},{},{} ... }, 
+				{sampleName: user_22, values[ {},{},{} ... },
 				    .
 				    .
 				    .
@@ -160,7 +161,6 @@ namespace CollectorService.Controller
 			ServiceConfiguration.reload(JObject.Parse(configUpdateRequest), this.database);
 
 			return StatusCode(200);
-
 		}
 
 

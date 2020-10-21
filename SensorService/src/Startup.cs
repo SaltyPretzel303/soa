@@ -62,9 +62,6 @@ namespace SensorService
 
 			// result is not used (potential exception is handled inside the method)
 			bool unregResult = this.unregisterSensors();
-
-			Console.WriteLine("Custom handler done ... ");
-
 		}
 
 		private bool unregisterSensors()

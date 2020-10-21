@@ -79,7 +79,7 @@ namespace CollectorService.Configuration
 		private static ServiceConfiguration readFromFile()
 		{
 
-			Console.WriteLine($"Reading configuration file (ServiceConfiguration.CONFIGURATION_PATH) ... ");
+			Console.WriteLine($"Reading configuration file {ServiceConfiguration.CONFIGURATION_PATH} ... ");
 
 			string rawConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
 			JObject json_config = JObject.Parse(rawConfig);
@@ -99,6 +99,7 @@ namespace CollectorService.Configuration
 			return config_o;
 		}
 
+		// write current active configuration to the config file
 		private void writeToFile()
 		{
 			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
@@ -111,7 +112,6 @@ namespace CollectorService.Configuration
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
 
-			// backup old configuration
 			if (backupDatabase != null)
 			{
 				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);

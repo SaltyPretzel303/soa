@@ -14,10 +14,10 @@ using RabbitMQ.Client.Events;
 namespace CollectorService.Broker
 {
 	public class BrokerEventReceiver : BackgroundService
-	{
+ 	{
 
 		private IConfigChange configChangeHandler;
-		private ISensorRegistryUpdate sensoreRegistryUpdateHandler;
+		private ISensorRegistryUpdate sensorRegistryUpdateHandler;
 
 		private IConnection connection;
 		private IModel channel;
@@ -26,7 +26,7 @@ namespace CollectorService.Broker
 								ISensorRegistryUpdate sensoreRegistryUpdateHandler)
 		{
 			this.configChangeHandler = configChangeHandler;
-			this.sensoreRegistryUpdateHandler = sensoreRegistryUpdateHandler;
+			this.sensorRegistryUpdateHandler = sensoreRegistryUpdateHandler;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -64,7 +64,7 @@ namespace CollectorService.Broker
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 				SensorRegistryEvent eventData = JsonConvert.DeserializeObject<SensorRegistryEvent>(txtContent);
 
-				this.sensoreRegistryUpdateHandler.HandleRegistryUpdate(eventData);
+				this.sensorRegistryUpdateHandler.HandleRegistryUpdate(eventData);
 			};
 
 			this.channel.BasicConsume(sensorRegistryQueue,
@@ -85,9 +85,10 @@ namespace CollectorService.Broker
 			EventingBasicConsumer configEventConsumer = new EventingBasicConsumer(this.channel);
 			configEventConsumer.Received += (srcChannel, eventArg) =>
 			{
-				Console.WriteLine("RECEIVED NEW CONFIG .... ");
-
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
+
+				Console.WriteLine($"Received new configuration ... {txtContent}");
+
 				JObject newConfig = JObject.Parse(txtContent);
 
 				this.configChangeHandler.UpdateConfiguration(newConfig);

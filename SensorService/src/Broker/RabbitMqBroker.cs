@@ -9,24 +9,28 @@ namespace SensorService.Broker
 {
 	public class RabbitMqBroker : IMessageBroker
 	{
-		private ServiceConfiguration config;
 
 		public RabbitMqBroker()
 		{
-			this.config = ServiceConfiguration.Instance;
 		}
 
 		public void PublishLog(ServiceLog log)
 		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
 			this.Publish(log,
-					this.config.serviceLogTopic,
-					this.config.sensorLogFilter);
+					config.serviceLogTopic,
+					config.sensorLogFilter);
 		}
 
 		public void PublishSensorEvent(SensorReaderEvent sensorEvent, string filter)
 		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
 			this.Publish(sensorEvent,
-					this.config.sensorReaderEventTopic,
+					config.sensorReaderEventTopic,
 					filter);
 		}
 

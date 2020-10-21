@@ -3523,3 +3523,15 @@
 {"Content":"Data range request \u003E sensor: sensor_0 index: 5 ","source":"B42E99C14DDA","time":"2020-08-09T20:38:27.7700277+02:00"}
 {"Content":"Data range request \u003E sensor: sensor_1 index: 5 ","source":"B42E99C14DDA","time":"2020-08-09T20:38:27.7836638+02:00"}
 {"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-08-09T20:38:32.3542225+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-10-08T09:48:35.267344+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-10-08T09:48:35.2798477+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-10-08T09:48:45.2817601+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 2","source":"B42E99C14DDA","time":"2020-10-08T09:48:55.2820391+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-10-08T09:48:56.1981891+02:00"}
+{"Content":"Reading interval: 10000","source":"B42E99C14DDA","time":"2020-10-08T10:12:00.0396127+02:00"}
+{"Content":"Reader is running ...  ","source":"B42E99C14DDA","time":"2020-10-08T10:12:00.0526599+02:00"}
+{"Content":"Sensor sensor_0 successfully registred ... ","source":"B42E99C14DDA","time":"2020-10-08T10:12:02.1230116+02:00"}
+{"Content":"Sensor sensor_1 successfully registred ... ","source":"B42E99C14DDA","time":"2020-10-08T10:12:02.1409284+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-10-08T10:12:10.0556527+02:00"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 2","source":"B42E99C14DDA","time":"2020-10-08T10:12:20.0593522+02:00"}
+{"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-10-08T10:12:25.0461978+02:00"}
