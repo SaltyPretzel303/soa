@@ -8,7 +8,7 @@ namespace CollectorService.Data
 {
 	public interface IDatabaseService
 	{
-		void pushToSensor(String sampleName, JArray values);
+		void pushToSensor(String sensorName, JArray values);
 
 		List<JObject> getAllSamples();
 

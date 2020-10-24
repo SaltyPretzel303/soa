@@ -9,6 +9,10 @@ using CollectorService.Broker.Events;
 using CollectorService.Data.Registry;
 using Microsoft.Extensions.Hosting;
 using CommunicationModel.BrokerModels;
+using MediatR;
+using CollectorService.MediatrRequests;
+using System.Collections.Generic;
+using CommunicationModel;
 
 namespace CollectorService
 {
@@ -25,11 +29,19 @@ namespace CollectorService
 			services.AddTransient<IRegistryCache, InMemoryRegistryCache>();
 			services.AddTransient<IDatabaseService, MongoDatabaseService>();
 
-			services.AddTransient<IConfigChange, ConfigChangeHandler>();
-			services.AddTransient<ISensorRegistryUpdate, SensorRegistryUpdateHandler>();
+			services.AddMediatR(typeof(Startup));
 
-			// why is this singleton ... 
-			services.AddSingleton<IMessageBroker, RabbitMqBroker>();
+			// next services will be used by the mediatr
+			services.AddTransient<RequestHandler<ConfigChangeRequest>, ConfigChangeRequestHandler>();
+			services.AddTransient<RequestHandler<SensorRegistryUpdateRequest>, SensorRegistryUpdateRequestHandler>();
+
+			services.AddTransient<RequestHandler<GetRecordsCountRequest, int>, GetRecordsCountRequestHandler>();
+			services.AddTransient<RequestHandler<AddRecordsToSensorRequest>, AddRecordsToSensorRequestHandler>();
+
+			services.AddTransient<RequestHandler<GetAllSensorsRequest, List<SensorRegistryRecord>>, GetAllSensorsRequestHandler>();
+			services.AddTransient<RequestHandler<PublishCollectorPullEventRequest>, PublishCollectorPullEventRequestHandler>();
+
+			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 
 			services.AddHostedService<DataPuller>();
 			services.AddHostedService<BrokerEventReceiver>();

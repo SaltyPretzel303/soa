@@ -2,7 +2,6 @@ using System;
 using System.Timers;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
-using CollectorService.Broker;
 using CollectorService.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
@@ -11,33 +10,28 @@ using Newtonsoft.Json;
 using CommunicationModel.BrokerModels;
 using CommunicationModel;
 using System.Collections.Generic;
-using System.IO;
+using MediatR;
+using CollectorService.MediatrRequests;
 
 namespace CollectorService.Data
 {
 	public class DataPuller : IHostedService, IReloadable
 	{
 
-		private IDatabaseService database;
-		private IRegistryCache localRegistry;
-		private IMessageBroker messageBroker;
+		private IMediator mediator;
 
 		private System.Timers.Timer timer;
 		private HttpClient httpClient;
 
 		private Dictionary<string, int> lastReadIndex;
 
-		public DataPuller(IDatabaseService databse, IRegistryCache localRegistry, IMessageBroker messageBroker)
+		public DataPuller(IMediator mediator)
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			this.database = databse;
-			this.localRegistry = localRegistry;
-			this.messageBroker = messageBroker;
+			this.mediator = mediator;
 
 			this.timer = new System.Timers.Timer();
 			this.timer.Elapsed += new ElapsedEventHandler(this.timerEvent);
-			this.timer.Interval = config.readInterval;
+			this.timer.Interval = ServiceConfiguration.Instance.readInterval;
 
 			this.httpClient = new HttpClient();
 
@@ -49,6 +43,9 @@ namespace CollectorService.Data
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 			startReading();
+
+			ServiceConfiguration.subscribeForChange((IReloadable)this);
+
 			return Task.CompletedTask;
 		}
 
@@ -77,7 +74,7 @@ namespace CollectorService.Data
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			List<SensorRegistryRecord> availableSensors = this.localRegistry.GetAllSensors();
+			List<SensorRegistryRecord> availableSensors = this.mediator.Send(new GetAllSensorsRequest()).Result;
 
 			Console.WriteLine($"Ready to pull from: {availableSensors.Count} sensors ... ");
 			foreach (SensorRegistryRecord singleSensor in availableSensors)
@@ -87,7 +84,7 @@ namespace CollectorService.Data
 				if (!this.lastReadIndex.TryGetValue(singleSensor.Name, out sensorLastReadIndex))
 				{
 					// initialize lastReadIndex if it doesn't exists for this sensor
-					sensorLastReadIndex = this.database.getRecordsCount(singleSensor.Name);
+					sensorLastReadIndex = this.mediator.Send(new GetRecordsCountRequest(singleSensor.Name)).Result;
 					this.lastReadIndex.Add(singleSensor.Name, sensorLastReadIndex);
 				}
 
@@ -114,15 +111,15 @@ namespace CollectorService.Data
 																		false,
 																		e.Message);
 
-						this.messageBroker.PublishCollectorPullEvent(newEvent);
+						this.mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
-						continue; // pull from next sensor
+						continue; // pull from the next sensor
 					}
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine($"Exception in gettin data: {e.ToString()}");
-					continue; // pull from next sensor
+					continue; // pull from the next sensor
 				}
 
 				if (responseMessage == null ||
@@ -134,9 +131,9 @@ namespace CollectorService.Data
 																	false,
 																	"Sensor returned bad response.");
 
-					this.messageBroker.PublishCollectorPullEvent(newEvent);
+					this.mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
-					continue; // pull from next sensor
+					continue; // pull from the next sensor
 				}
 
 				string txtResponseContent = responseMessage.Content.ReadAsStringAsync().Result;
@@ -156,7 +153,7 @@ namespace CollectorService.Data
 					dataArray.Add(tempData);
 				}
 
-				this.database.pushToSensor(singleSensor.Name, dataArray);
+				this.mediator.Send(new AddRecordsToSensorRequest(singleSensor.Name, dataArray));
 
 				// update read index for every sensor
 				// at this point lastReadIndex[singleSensor.Name] has to exists (look at the beginning of this for loop)
@@ -166,14 +163,12 @@ namespace CollectorService.Data
 
 		}
 
-		public void shutDown()
-		{
-			this.timer.Stop();
-		}
-
 		public void reload(ServiceConfiguration newConfiguration)
 		{
-			Console.WriteLine("Reloading data puller: " + newConfiguration.ToString());
+
+			// just restart timer i guess ... 
+
+			Console.WriteLine("Reloading data puller ...  ");
 		}
 
 	}

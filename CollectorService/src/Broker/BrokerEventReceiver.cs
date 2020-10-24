@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CollectorService.Broker.Events;
 using CollectorService.Configuration;
+using CollectorService.MediatrRequests;
 using CommunicationModel.BrokerModels;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,44 +15,59 @@ using RabbitMQ.Client.Events;
 
 namespace CollectorService.Broker
 {
-	public class BrokerEventReceiver : BackgroundService
- 	{
+	public class BrokerEventReceiver : BackgroundService, IReloadable
+	{
 
-		private IConfigChange configChangeHandler;
-		private ISensorRegistryUpdate sensorRegistryUpdateHandler;
+		// provided from DI
+		private IMediator mediator;
 
 		private IConnection connection;
 		private IModel channel;
 
-		public BrokerEventReceiver(IConfigChange configChangeHandler,
-								ISensorRegistryUpdate sensoreRegistryUpdateHandler)
+		private bool inReload;
+
+		public BrokerEventReceiver(IMediator mediator)
 		{
-			this.configChangeHandler = configChangeHandler;
-			this.sensorRegistryUpdateHandler = sensoreRegistryUpdateHandler;
+			this.mediator = mediator;
+			this.inReload = false;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			stoppingToken.ThrowIfCancellationRequested();
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			await this.EstablishConnection(stoppingToken);
 
-			#region establish connection
+			this.SetupRegistryEventConsumer();
+
+			// TODO maybe close previously opened connection before just throwing exception 
+			stoppingToken.ThrowIfCancellationRequested();
+
+			this.SetupConfigEventConsumer();
+
+			ServiceConfiguration.subscribeForChange((IReloadable)this);
+		}
+
+		private async Task EstablishConnection(CancellationToken stoppingToken)
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			bool connectionReady = false;
 			while (!connectionReady &&
 				!stoppingToken.IsCancellationRequested)
 			{
+
 				connectionReady = this.ConfigureConnection();
 
 				await Task.Delay(config.retryConnectionDelay);
 			}
+		}
 
-			#endregion
+		private void SetupRegistryEventConsumer()
+		{
 
-			stoppingToken.ThrowIfCancellationRequested();
-
-			#region setup registry event consumer
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string sensorRegistryQueue = this.channel.QueueDeclare().QueueName;
 			channel.QueueBind(sensorRegistryQueue,
@@ -64,16 +81,19 @@ namespace CollectorService.Broker
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 				SensorRegistryEvent eventData = JsonConvert.DeserializeObject<SensorRegistryEvent>(txtContent);
 
-				this.sensorRegistryUpdateHandler.HandleRegistryUpdate(eventData);
+				this.mediator.Send(new SensorRegistryUpdateRequest(eventData));
 			};
 
 			this.channel.BasicConsume(sensorRegistryQueue,
 									true,
 									regEventConsumer);
 
-			#endregion
+		}
 
-			#region setup config event consumer
+		private void SetupConfigEventConsumer()
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string configEventQueue = this.channel.QueueDeclare().QueueName;
 			this.channel.QueueBind(configEventQueue,
@@ -87,18 +107,14 @@ namespace CollectorService.Broker
 			{
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 
-				Console.WriteLine($"Received new configuration ... {txtContent}");
-
 				JObject newConfig = JObject.Parse(txtContent);
 
-				this.configChangeHandler.UpdateConfiguration(newConfig);
+				this.mediator.Send(new ConfigChangeRequest(newConfig));
 			};
 
 			this.channel.BasicConsume(configEventQueue,
 									true,
 									configEventConsumer);
-
-			#endregion
 
 		}
 
@@ -149,7 +165,6 @@ namespace CollectorService.Broker
 
 		public override Task StopAsync(CancellationToken stoppingToken)
 		{
-
 			if (this.channel != null && this.channel.IsOpen)
 			{
 				this.channel.Close();
@@ -163,6 +178,30 @@ namespace CollectorService.Broker
 			return Task.CompletedTask;
 		}
 
+		public void reload(ServiceConfiguration newConfig)
+		{
+
+			// this.inReload = true;
+
+			// if (this.channel != null &&
+			// this.channel.IsOpen)
+			// {
+			// 	this.channel.Close();
+			// }
+
+			// if (this.connection != null &&
+			// this.connection.IsOpen)
+			// {
+			// 	this.connection.Close();
+			// }
+
+
+
+			// this.inReload = false;
+
+			Console.WriteLine("Reloading broker event receiver ... ");
+
+		}
 	}
 
 }

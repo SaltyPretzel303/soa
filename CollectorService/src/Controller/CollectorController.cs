@@ -163,7 +163,6 @@ namespace CollectorService.Controller
 			return StatusCode(200);
 		}
 
-
 	}
 
 }

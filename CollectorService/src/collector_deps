@@ -1,0 +1,41 @@
+collector requests:
+	* ApiController:
+	- database
+		.getAllSamples		- get
+		.getRecordsRange	- get
+		.getRecordsList		- get
+		.addRecords			- set
+		.updateRecord		- set
+		.deleteRecord		- set
+		.deleteSensor		- set
+	
+	*RegistryCache:
+	- database
+		.getRecordsCount 	- get
+	
+	*ConfigChangeHandler:
+	- database
+		.backupConfig		- set
+	
+	*SensorRegistryHangler:
+	- registryCache
+			.addRecord
+			.updateRecord
+			.removeRecord
+	
+	*DataPuller:
+	- database
+			.getRecordsCount - get
+			.pushToSensor	 - set
+
+	- registryCache
+			.getAllSensors	 - get
+
+	- messageBroker
+			.publishPullEvent - set
+			
+	 *BrokerEventReceiver
+	 - configChangeHandler	- set
+	 - registryUpdateHandler- set
+
+	 use mediatr to as a way to use transient services inside singleton
