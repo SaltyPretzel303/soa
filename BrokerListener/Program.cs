@@ -12,12 +12,11 @@ namespace BrokerListener
 		{
 
 			List<string> topics = new List<string>{
-			   "service_log",
-			   "service_lifetime",
-			   "sensor_registry",
-				   "test_topic",
-			   "sensor_reader",
-
+				"service_log",
+				"service_lifetime",
+				"sensor_registry",
+				"test_topic",
+				"sensor_reader",
 			};
 
 			string filter = "#";

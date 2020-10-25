@@ -97,11 +97,9 @@ namespace CollectorService.Data
 
 			foreach (BsonDocument bson_sample in temp_cache)
 			{
-
 				JObject json_sample = JObject.Parse(bson_sample.ToJson<BsonDocument>(json_settings));
 
 				ret_list.Add(json_sample);
-
 			}
 
 			return ret_list;
@@ -328,6 +326,8 @@ namespace CollectorService.Data
 
 			IMongoCollection<BsonDocument> configCollection = this.database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
 
+			oldJConfig[oldOConfig.configBackupField] = DateTime.Now.ToString();
+
 			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
 			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}", "old_configs", oldJConfig.ToString());
 
@@ -343,8 +343,6 @@ namespace CollectorService.Data
 			{
 				Console.WriteLine(e.StackTrace);
 			}
-
-
 
 		}
 

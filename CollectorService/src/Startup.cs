@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using CollectorService.Broker.Reporter;
-using CollectorService.Broker.Events;
 using CollectorService.Data.Registry;
 using Microsoft.Extensions.Hosting;
 using CommunicationModel.BrokerModels;
@@ -93,5 +92,4 @@ namespace CollectorService
 		}
 
 	}
-
 }

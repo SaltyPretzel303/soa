@@ -163,12 +163,19 @@ namespace CollectorService.Data
 
 		}
 
-		public void reload(ServiceConfiguration newConfiguration)
+		public void reload(ServiceConfiguration newConfig)
 		{
+			// with every timerEvent configuration is read again
+			// only readInterval is kept from the initial service construction
 
-			// just restart timer i guess ... 
+			if (this.timer.Interval != newConfig.readInterval)
+			{
+				this.timer.Stop();
+				this.timer.Interval = newConfig.readInterval;
+				this.timer.Start();
+			}
 
-			Console.WriteLine("Reloading data puller ...  ");
+			Console.WriteLine("Data puller reloaded ...  ");
 		}
 
 	}

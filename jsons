@@ -1,0 +1,13 @@
+./Observers/ServiceObserver/service_config.json
+./scripts/config_change/collector_or.json
+./scripts/config_change/sensor_or.json
+./scripts/config_change/collector_new.json
+./scripts/config_change/registry_or.json
+./scripts/curl/update_record.json
+./scripts/curl/records_list.json
+./scripts/curl/delete_record.json
+./scripts/curl/add_records.json
+./SensorRegistry/service_config.json
+./CollectorService/service_config.json
+./SensorService/DistributionProgram/config_template.json
+./SensorService/service_config.json

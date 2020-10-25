@@ -2,7 +2,6 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CollectorService.Broker.Events;
 using CollectorService.Configuration;
 using CollectorService.MediatrRequests;
 using CommunicationModel.BrokerModels;
@@ -24,44 +23,98 @@ namespace CollectorService.Broker
 		private IConnection connection;
 		private IModel channel;
 
-		private bool inReload;
+		private CancellationToken token;
 
 		public BrokerEventReceiver(IMediator mediator)
 		{
 			this.mediator = mediator;
-			this.inReload = false;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			stoppingToken.ThrowIfCancellationRequested();
 
-			await this.EstablishConnection(stoppingToken);
+			this.token = stoppingToken;
+
+			await this.EstablishConnection();
+
+			if (this.token.IsCancellationRequested)
+			{
+				if (this.connection != null &&
+				this.connection.IsOpen)
+				{
+					this.connection.Close();
+				}
+
+				return;
+			}
 
 			this.SetupRegistryEventConsumer();
-
-			// TODO maybe close previously opened connection before just throwing exception 
-			stoppingToken.ThrowIfCancellationRequested();
-
 			this.SetupConfigEventConsumer();
 
 			ServiceConfiguration.subscribeForChange((IReloadable)this);
 		}
 
-		private async Task EstablishConnection(CancellationToken stoppingToken)
+		private async Task EstablishConnection()
 		{
-
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			bool connectionReady = false;
 			while (!connectionReady &&
-				!stoppingToken.IsCancellationRequested)
+				!this.token.IsCancellationRequested)
 			{
 
 				connectionReady = this.ConfigureConnection();
 
 				await Task.Delay(config.retryConnectionDelay);
 			}
+
+			// at this point
+			// connection is ready or cancelation is requested (trough the token)
+		}
+
+		private bool ConfigureConnection()
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			ConnectionFactory connectionFactory = new ConnectionFactory
+			{
+				HostName = config.brokerAddress,
+				Port = config.brokerPort
+			};
+			try
+			{
+				this.connection = connectionFactory.CreateConnection();
+				this.channel = this.connection.CreateModel();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Failed to create connection with broker: {e.Message}");
+
+				return false;
+			}
+
+			if (this.connection != null &&
+				this.connection.IsOpen &&
+				this.channel != null &&
+				this.channel.IsOpen)
+			{
+
+				this.channel.ExchangeDeclare(config.sensorRegistryTopic,
+											"topic",
+											true,
+											true,
+											null);
+				this.channel.ExchangeDeclare(config.configurationTopic,
+											"topic",
+											true,
+											true,
+											null);
+
+				return true;
+			}
+
+			return false;
 		}
 
 		private void SetupRegistryEventConsumer()
@@ -118,50 +171,6 @@ namespace CollectorService.Broker
 
 		}
 
-		private bool ConfigureConnection()
-		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			ConnectionFactory connectionFactory = new ConnectionFactory
-			{
-				HostName = config.brokerAddress,
-				Port = config.brokerPort
-			};
-			try
-			{
-				this.connection = connectionFactory.CreateConnection();
-				this.channel = this.connection.CreateModel();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine($"Failed to create connection with broker: {e.Message}");
-
-				return false;
-			}
-
-			if (this.connection != null &&
-				this.connection.IsOpen &&
-				this.channel != null &&
-				this.channel.IsOpen)
-			{
-
-				this.channel.ExchangeDeclare(config.sensorRegistryTopic,
-											"topic",
-											true,
-											true,
-											null);
-				this.channel.ExchangeDeclare(config.configurationTopic,
-											"topic",
-											true,
-											true,
-											null);
-
-				return true;
-			}
-
-			return false;
-		}
 
 		public override Task StopAsync(CancellationToken stoppingToken)
 		{
@@ -178,29 +187,38 @@ namespace CollectorService.Broker
 			return Task.CompletedTask;
 		}
 
-		public void reload(ServiceConfiguration newConfig)
+		// has to be async because of connection retry 
+		public async void reload(ServiceConfiguration newConfig)
 		{
+			if (this.channel != null &&
+			this.channel.IsOpen)
+			{
+				this.channel.Close();
+			}
 
-			// this.inReload = true;
+			if (this.connection != null &&
+			this.connection.IsOpen)
+			{
+				this.connection.Close();
+			}
 
-			// if (this.channel != null &&
-			// this.channel.IsOpen)
-			// {
-			// 	this.channel.Close();
-			// }
+			await this.EstablishConnection();
 
-			// if (this.connection != null &&
-			// this.connection.IsOpen)
-			// {
-			// 	this.connection.Close();
-			// }
+			if (this.token.IsCancellationRequested)
+			{
+				if (this.connection != null &&
+				this.connection.IsOpen)
+				{
+					this.connection.Close();
+				}
 
+				return;
+			}
 
+			this.SetupRegistryEventConsumer();
+			this.SetupConfigEventConsumer();
 
-			// this.inReload = false;
-
-			Console.WriteLine("Reloading broker event receiver ... ");
-
+			Console.WriteLine("Broker event receiver reloaded ... ");
 		}
 	}
 

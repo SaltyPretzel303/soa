@@ -1,5 +1,4 @@
 
-using CollectorService.Broker.Events;
 using CommunicationModel.BrokerModels;
 
 namespace CollectorService.Broker

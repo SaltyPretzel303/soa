@@ -20,6 +20,7 @@ namespace CollectorService.Configuration
 		public string sensorsCollection { get; set; }
 		public string fieldWithRecords { get; set; }
 		public string configurationBackupCollection { get; set; }
+		public string configBackupField { get; set; }
 
 		public string headerUrl { get; set; }
 		public string dataRangeUrl { get; set; }
@@ -111,7 +112,6 @@ namespace CollectorService.Configuration
 
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
-
 			if (backupDatabase != null)
 			{
 				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
@@ -125,7 +125,6 @@ namespace CollectorService.Configuration
 			{
 				target.reload(ServiceConfiguration.Instance);
 			}
-
 		}
 
 		public static void subscribeForChange(IReloadable reloadableTarget)

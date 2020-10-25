@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using MediatR;
@@ -21,7 +18,6 @@ namespace CollectorService.MediatrRequests
 
 	public class ConfigChangeRequestHandler : RequestHandler<ConfigChangeRequest>
 	{
-
 		private IDatabaseService database;
 
 		public ConfigChangeRequestHandler(IDatabaseService database)
@@ -33,6 +29,5 @@ namespace CollectorService.MediatrRequests
 		{
 			ServiceConfiguration.reload(request.NewConfig, this.database);
 		}
-
 	}
 }
