@@ -112,9 +112,11 @@ namespace CollectorService.Configuration
 
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
+			Console.WriteLine("ConfigurationReload ... ");
 			if (backupDatabase != null)
 			{
 				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
+				Console.WriteLine("Backup done ... ");
 			}
 
 			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
@@ -124,6 +126,7 @@ namespace CollectorService.Configuration
 			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
 			{
 				target.reload(ServiceConfiguration.Instance);
+				Console.WriteLine("Subscriber reloaded ... ");
 			}
 		}
 

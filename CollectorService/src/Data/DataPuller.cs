@@ -42,9 +42,9 @@ namespace CollectorService.Data
 
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			startReading();
-
 			ServiceConfiguration.subscribeForChange((IReloadable)this);
+
+			startReading();
 
 			return Task.CompletedTask;
 		}

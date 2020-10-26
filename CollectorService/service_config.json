@@ -3,7 +3,7 @@
   "Development": {
     "port": 5003,
     "dbAddress": "mongodb://localhost:27017",
-    "dbName": "soa_collector_dev_test",
+    "dbName": "soa_collector_dev",
     "sensorsCollection": "Sensors",
     "fieldWithRecords": "records",
     "configurationBackupCollection": "Configs",

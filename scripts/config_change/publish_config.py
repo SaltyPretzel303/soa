@@ -58,8 +58,6 @@ routing_key = cli_input.route
 config_file = open(cli_input.file)
 config_txt = config_file.read()
 
-print(config_txt)
-
 channel.basic_publish("config", routing_key, config_txt)
 
 print(f"Published config: \n{config_txt}")

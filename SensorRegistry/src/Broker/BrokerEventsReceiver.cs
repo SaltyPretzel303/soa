@@ -168,5 +168,4 @@ namespace SensorRegistry.Broker
 		}
 
 	}
-
 }
