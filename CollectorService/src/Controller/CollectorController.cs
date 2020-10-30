@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using CommunicationModel;
+using CommunicationModel.RestModels;
 using CommunicationModel.RestModels.CollectorCRUDRequest;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -149,16 +150,10 @@ namespace CollectorService.Controller
 		}
 
 		[HttpPost]
-		public IActionResult updateConfiguration(string configUpdateRequest)
+		[Route("updateConfig")]
+		public IActionResult updateConfiguration([FromBody] UpdateConfigArg configArg)
 		{
-
-			// check does this user has privileges to change config
-			// backup current config in to the database 
-			// write this configuration in to the config file on default path 
-
-			// TODO follow above steps
-
-			ServiceConfiguration.reload(JObject.Parse(configUpdateRequest), this.database);
+			ServiceConfiguration.reload(JObject.Parse(configArg.TxtConfig), this.database);
 
 			return StatusCode(200);
 		}

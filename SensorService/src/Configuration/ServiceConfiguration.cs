@@ -1,11 +1,9 @@
 using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
 namespace SensorService.Configuration
 {
-
 	public class ServiceConfiguration
 	{
 

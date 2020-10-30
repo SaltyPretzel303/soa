@@ -26,9 +26,7 @@ namespace CollectorService.Broker
 		private CancellationToken masterToken;
 
 		private CancellationTokenSource connectionRetryTokenSrc;
-		private Task connectionRetryTask;
-
-		// private CancellationToken connectionRetryToken;
+		private CancellationToken connectionRetryToken;
 
 		public BrokerEventReceiver(IMediator mediator)
 		{
@@ -39,25 +37,15 @@ namespace CollectorService.Broker
 		{
 
 			this.masterToken = stoppingToken;
-			this.masterToken.Register(() =>
-			{
-				if (this.connectionRetryTokenSrc != null)
-				{
-					this.connectionRetryTokenSrc.Cancel();
-				}
-			});
-			// this will cancel connection retry if application shutDown is requested
-
 			ServiceConfiguration.subscribeForChange((IReloadable)this);
 
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
+			this.connectionRetryToken = this.connectionRetryTokenSrc.Token;
 
-			this.connectionRetryTask = this.EstablishConnection(this.connectionRetryTokenSrc.Token);
-			Console.WriteLine("Before await ... exec async ...");
-			await this.connectionRetryTask;
-			Console.WriteLine("After await ... exec async ...");
+			await this.EstablishConnection();
 
-			if (this.masterToken.IsCancellationRequested)
+			if (this.masterToken.IsCancellationRequested ||
+			this.connectionRetryToken.IsCancellationRequested)
 			{
 				if (this.connection != null &&
 				this.connection.IsOpen)
@@ -75,52 +63,29 @@ namespace CollectorService.Broker
 
 		}
 
-		private Task EstablishConnection(CancellationToken connectionRetryToken)
+		private async Task EstablishConnection()
 		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			return Task.Run(async () =>
+			bool connectionReady = false;
+			while (!connectionReady &&
+				!this.masterToken.IsCancellationRequested &&
+				!this.connectionRetryToken.IsCancellationRequested)
 			{
-				ServiceConfiguration config = ServiceConfiguration.Instance;
+				connectionReady = this.ConfigureConnection();
 
-				bool connectionReady = false;
-				while (!connectionReady &&
-					!connectionRetryToken.IsCancellationRequested)
+				try
 				{
-
-					connectionReady = this.ConfigureConnection();
-
-					if (!connectionReady)
-					{
-						try
-						{
-							await Task.Delay(config.retryConnectionDelay, connectionRetryToken);
-						}
-						catch (TaskCanceledException)
-						{
-							break;
-						}
-					}
-
+					await Task.Delay(config.retryConnectionDelay, this.connectionRetryToken);
 				}
-
-				if (connectionRetryToken.IsCancellationRequested)
+				catch (TaskCanceledException)
 				{
-					Console.WriteLine("Cancel conn. retry ... ");
-					if (this.connection != null &&
-					this.connection.IsOpen)
-					{
-						this.connection.Close();
-					}
+					continue;
 				}
-				else
-				{
-					Console.WriteLine("Conection established ... ");
-				}
+			}
 
-				// at this point
-				// connection is ready or cancellation is requested (trough the token)
-			});
-
+			// at this point
+			// connection is ready or cancellation is requested (trough the token)
 		}
 
 		private bool ConfigureConnection()
@@ -242,18 +207,13 @@ namespace CollectorService.Broker
 		public async void reload(ServiceConfiguration newConfig)
 		{
 
-			// TODO add check if this service has to be reloaded
-			// if address and port number are the same don't reload it 
+			Console.WriteLine("Realoading broker event receiver ... ");
 
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)
 			{
 				// cancel previous conenction retries
 				this.connectionRetryTokenSrc.Cancel();
-				if (this.connectionRetryTask != null)
-				{
-					await this.connectionRetryTask;
-				}
 			}
 
 			if (this.channel != null &&
@@ -269,11 +229,12 @@ namespace CollectorService.Broker
 			}
 
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
+			this.connectionRetryToken = this.connectionRetryTokenSrc.Token;
 
-			this.connectionRetryTask = this.EstablishConnection(this.connectionRetryTokenSrc.Token);
-			await this.connectionRetryTask;
+			await this.EstablishConnection();
 
-			if (this.masterToken.IsCancellationRequested)
+			if (this.masterToken.IsCancellationRequested ||
+			this.connectionRetryToken.IsCancellationRequested)
 			{
 				if (this.connection != null &&
 				this.connection.IsOpen)
@@ -286,17 +247,10 @@ namespace CollectorService.Broker
 
 			this.connectionRetryTokenSrc = null;
 
-			if (this.connection == null ||
-			!this.connection.IsOpen)
-			{
-				return;
-			}
-
 			this.SetupRegistryEventConsumer();
 			this.SetupConfigEventConsumer();
 
 			Console.WriteLine("Broker event receiver reloaded ... ");
 		}
-
 	}
 }

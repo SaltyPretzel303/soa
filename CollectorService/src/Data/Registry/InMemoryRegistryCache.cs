@@ -55,7 +55,7 @@ namespace CollectorService.Data.Registry
 
 				List<SensorRegistryRecord> newRecords = JsonConvert.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
 
-				Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
+				// Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
 
 				foreach (SensorRegistryRecord newSensor in newRecords)
 				{

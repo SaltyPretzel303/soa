@@ -13,6 +13,7 @@ namespace CollectorService.Configuration
 		public string stage { get; set; }
 
 		#region  mapped properties
+
 		public int port { get; set; }
 
 		public string dbAddress { get; set; }
@@ -64,7 +65,6 @@ namespace CollectorService.Configuration
 		{
 			get
 			{
-
 				if (ServiceConfiguration.instance == null)
 				{
 					ServiceConfiguration.instance = ServiceConfiguration.readFromFile();
@@ -112,11 +112,11 @@ namespace CollectorService.Configuration
 
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
-			Console.WriteLine("ConfigurationReload ... ");
+			Console.WriteLine("Configuration reload requestd  ... ");
+
 			if (backupDatabase != null)
 			{
 				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
-				Console.WriteLine("Backup done ... ");
 			}
 
 			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
@@ -126,7 +126,6 @@ namespace CollectorService.Configuration
 			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
 			{
 				target.reload(ServiceConfiguration.Instance);
-				Console.WriteLine("Subscriber reloaded ... ");
 			}
 		}
 
@@ -144,10 +143,11 @@ namespace CollectorService.Configuration
 
 		#endregion
 
-		public override string ToString()
-		{
-			return JObject.FromObject(this).ToString();
-		}
+		// never used 
+		// public override string ToString()
+		// {
+		// 	return JObject.FromObject(this).ToString();
+		// }
 
 	}
 
