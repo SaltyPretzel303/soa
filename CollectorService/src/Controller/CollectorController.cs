@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using CommunicationModel;

@@ -3,7 +3,7 @@
 	"Development": {
 		"listeningPort": 5002,
 		"brokerAddress": "localhost",
-		"brokerPort": 5672,
+		"brokerPort": 5677,
 		"connectionRetryDelay": 2000,
 		"sensorRegistryTopic": "sensor_registry",
 		"configUpdateTopic": "config",
@@ -21,7 +21,7 @@
 	"Production": {
 		"listeningPort": 5000,
 		"brokerAddress": "soa-broker",
-		"brokerPort": 5672,
+		"brokerPort": 5677,
 		"connectionRetryDelay": 3000,
 		"sensorRegistryTopic": "sensor_registry",
 		"configUpdateTopic": "config",

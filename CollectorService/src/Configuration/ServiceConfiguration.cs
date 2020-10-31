@@ -150,5 +150,4 @@ namespace CollectorService.Configuration
 		// }
 
 	}
-
 }

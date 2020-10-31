@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SensorRegistry.Broker;
 using SensorRegistry.Registry;
 using SensorRegistry.Configuration;
+using CommunicationModel.RestModels;
+using Newtonsoft.Json.Linq;
 
 namespace SensorRegistry.Controller
 {
@@ -16,6 +18,7 @@ namespace SensorRegistry.Controller
 
 		// used to get ip and port of request source
 		private IHttpContextAccessor httpContext;
+
 		private ISensorRegistry sensorRegistry;
 		private IMessageBroker broker;
 
@@ -132,6 +135,17 @@ namespace SensorRegistry.Controller
 
 			return new BadRequestObjectResult("Registry response: " + response.status.ToString());
 
+		}
+
+		[HttpPost]
+		[Route("updateConfig")]
+		public IActionResult updateConfig([FromBody] UpdateConfigArg configArg)
+		{
+
+			JObject jsonConfig = JObject.Parse(configArg.TxtConfig);
+			ServiceConfiguration.Instance.UpdateConfig(jsonConfig);
+
+			return new OkResult();
 		}
 
 	}

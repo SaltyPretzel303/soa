@@ -1,14 +1,15 @@
 ﻿using System;
 using CommunicationModel.BrokerModels;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SensorRegistry.Broker;
-using SensorRegistry.Broker.EventHandlers;
 using SensorRegistry.Configuration;
 using SensorRegistry.Logger;
+using SensorRegistry.MediatorRequests;
 using SensorRegistry.Registry;
 
 namespace SensorRegistry
@@ -25,13 +26,15 @@ namespace SensorRegistry
 
 			// used for accessing address and port of http req. src
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			// services.AddSingleton<ISensorRegistry>(new MapRegistry());
-			services.AddSingleton<ISensorRegistry, MapRegistry>();
+
+			services.AddTransient<ISensorRegistry, MapRegistry>();
 
 			services.AddTransient<ILogger, BasicLogger>();
 
-			services.AddTransient<IConfigEventHandler, NewConfigurationHandler>();
-			services.AddTransient<ISensorEventHandler, NewSensorEventHandler>();
+			services.AddMediatR(typeof(Startup));
+
+			services.AddTransient<RequestHandler<ConfigUpdateRequest>, ConfigUpdateRequestHandler>();
+			services.AddTransient<RequestHandler<SensorUpdateRequest>, SensorUpdateRequestHandler>();
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 			services.AddHostedService<BrokerEventsReceiver>();

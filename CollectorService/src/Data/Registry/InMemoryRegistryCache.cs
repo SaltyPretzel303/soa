@@ -134,5 +134,4 @@ namespace CollectorService.Data.Registry
 		}
 
 	}
-
 }

@@ -17,7 +17,7 @@ sed 's/"/\\"/'g "$source_file" > "./temp_output" # replace each " with \"
 # without g only the first occurrence will be replaced 
 cat ./temp_output > $source_file # put commnad output back to the original file
 
-tr -d '\040\011\012\015' < $source_file > ./temp_tr_output # remove every empty space
+tr -d '\040\011\012\015' < $source_file > ./temp_output # remove every empty space
 # this will remove spaces, tabs, carriage return and newlines
 # tr -d "\n" < $source_file > ./dest_file - this format is also valid
 cat ./temp_output > $source_file

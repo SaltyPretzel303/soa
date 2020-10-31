@@ -3,108 +3,122 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunicationModel.BrokerModels;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using SensorRegistry.Broker.EventHandlers;
 using SensorRegistry.Configuration;
 using SensorRegistry.Logger;
+using SensorRegistry.MediatorRequests;
 
 namespace SensorRegistry.Broker
 {
-	public class BrokerEventsReceiver : BackgroundService
+	public class BrokerEventsReceiver : BackgroundService, IReloadable
 	{
 
 		private ILogger logger;
-		private IConfigEventHandler newConfigHandler;
-		private ISensorEventHandler sensorEventHandler;
 
 		private IConnection connection;
 		private IModel channel;
 
+		private IMediator mediator;
+
+		private CancellationToken masterToken;
+
+		private Task connectionRetryTask;
+		private CancellationTokenSource connectionRetryTokenSrc;
+
 		public BrokerEventsReceiver(ILogger logger,
-								IConfigEventHandler newConfigHandler,
-								ISensorEventHandler sensorEventHandler)
+								IMediator mediator)
 		{
 			this.logger = logger;
-			this.newConfigHandler = newConfigHandler;
-			this.sensorEventHandler = sensorEventHandler;
+			this.mediator = mediator;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			stoppingToken.ThrowIfCancellationRequested();
+
+			this.masterToken = stoppingToken;
+			this.masterToken.Register(() =>
+			{
+				if (this.connectionRetryTokenSrc != null)
+				{
+					this.connectionRetryTokenSrc.Cancel();
+				}
+			});
+			// this will cancel connection reatry if application shutdown is requested
+
+			ServiceConfiguration.Instance.ListenForChange((IReloadable)this);
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			#region  establish connection
+			this.connectionRetryTokenSrc = new CancellationTokenSource();
 
-			bool connectionReady = false;
-			while (!connectionReady &&
-				!stoppingToken.IsCancellationRequested)
+			this.connectionRetryTask = this.establishConnection(this.connectionRetryTokenSrc.Token);
+			await this.connectionRetryTask;
+
+			this.connectionRetryTokenSrc = null;
+			this.connectionRetryTask = null;
+
+			if (this.masterToken.IsCancellationRequested)
 			{
-				connectionReady = this.ConfigureConnection();
+				if (this.connection != null &&
+				this.connection.IsOpen)
+				{
+					this.connection.Close();
+				}
 
-				await Task.Delay(config.connectionRetryDelay);
+				return;
 			}
 
-			Console.WriteLine("Broker connection established ... ");
+			this.setupConfigConsumer();
+			this.setupSensorReaderConsumer();
 
-			#endregion
+		}
 
-			stoppingToken.ThrowIfCancellationRequested();
-
-			#region setup config consumers
-
-			string configQueue = this.channel.QueueDeclare().QueueName;
-			channel.QueueBind(configQueue,
-							config.configUpdateTopic,
-							config.configFilter,
-							null);
-
-			EventingBasicConsumer newConfigEventConsumer = new EventingBasicConsumer(this.channel);
-			newConfigEventConsumer.Received += (srcChannel, eventArg) =>
+		private Task establishConnection(CancellationToken token)
+		{
+			return Task.Run(async () =>
 			{
-				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-				JObject jsonContent = JObject.Parse(txtContent);
+				ServiceConfiguration config = ServiceConfiguration.Instance;
 
-				this.newConfigHandler.HandleNewConfig(jsonContent);
+				bool connectionReady = false;
+				while (!connectionReady &&
+					!token.IsCancellationRequested)
+				{
 
-				this.logger.LogMessage($"Received new configuration: {jsonContent.ToString()}");
-			};
-			this.channel.BasicConsume(configQueue,
-									true,
-									newConfigEventConsumer);
+					connectionReady = this.ConfigureConnection();
 
-			#endregion
+					if (!connectionReady)
+					{
+						try
+						{
+							await Task.Delay(config.connectionRetryDelay);
+						}
+						catch (TaskCanceledException)
+						{
+							break;
+						}
+					}
 
-			#region setup sensorReader event consumer
+				}
 
-			string sensorReadEventQueue = this.channel.QueueDeclare().QueueName;
+				if (token.IsCancellationRequested)
+				{
+					if (this.connection != null &&
+					this.connection.IsOpen)
+					{
+						this.connection.Close();
+					}
+				}
+				else
+				{
+					Console.WriteLine("Broker connection established ... ");
+				}
 
-			EventingBasicConsumer sensorEventConsumer = new EventingBasicConsumer(this.channel);
-			sensorEventConsumer.Received += (srcChannel, eventArg) =>
-			{
-				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-				SensorReaderEvent sensorEvent = JsonConvert.DeserializeObject<SensorReaderEvent>(txtContent);
-
-				Console.WriteLine("Received ... : " + txtContent);
-
-				this.sensorEventHandler.HandleSensorEvent(sensorEvent);
-			};
-
-			this.channel.QueueBind(sensorReadEventQueue,
-							config.sensorEventTopic,
-							config.sensorReadEventFilter,
-							null);
-
-			this.channel.BasicConsume(sensorReadEventQueue,
-									true,
-									sensorEventConsumer);
-
-			#endregion
+			});
 		}
 
 		private bool ConfigureConnection()
@@ -151,6 +165,62 @@ namespace SensorRegistry.Broker
 			return false;
 		}
 
+		private void setupConfigConsumer()
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			string configQueue = this.channel.QueueDeclare().QueueName;
+			channel.QueueBind(configQueue,
+							config.configUpdateTopic,
+							config.configFilter,
+									null);
+
+			EventingBasicConsumer newConfigEventConsumer = new EventingBasicConsumer(this.channel);
+			newConfigEventConsumer.Received += (srcChannel, eventArg) =>
+					{
+						string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
+						JObject jsonContent = JObject.Parse(txtContent);
+
+						this.mediator.Send(new ConfigUpdateRequest(jsonContent));
+						// this.newConfigHandler.HandleNewConfig(jsonContent);
+					};
+			this.channel.BasicConsume(configQueue,
+									true,
+									newConfigEventConsumer);
+
+		}
+
+		private void setupSensorReaderConsumer()
+		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+
+			string sensorReadEventQueue = this.channel.QueueDeclare().QueueName;
+
+			EventingBasicConsumer sensorEventConsumer = new EventingBasicConsumer(this.channel);
+			sensorEventConsumer.Received += (srcChannel, eventArg) =>
+			{
+				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
+				SensorReaderEvent sensorEvent = JsonConvert.DeserializeObject<SensorReaderEvent>(txtContent);
+
+				Console.WriteLine("Received ... : " + txtContent);
+
+				this.mediator.Send(new SensorUpdateRequest(sensorEvent));
+				// this.sensorEventHandler.HandleSensorEvent(sensorEvent);
+			};
+
+			this.channel.QueueBind(sensorReadEventQueue,
+							config.sensorEventTopic,
+							config.sensorReadEventFilter,
+							null);
+
+			this.channel.BasicConsume(sensorReadEventQueue,
+									true,
+									sensorEventConsumer);
+
+		}
+
 		public override Task StopAsync(CancellationToken cancellationToken)
 		{
 
@@ -167,5 +237,62 @@ namespace SensorRegistry.Broker
 			return Task.CompletedTask;
 		}
 
+		public async void reload(ServiceConfiguration newConfiguration)
+		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			if (this.connectionRetryTask != null)
+			{
+				if (this.connectionRetryTokenSrc != null)
+				{
+					this.connectionRetryTokenSrc.Cancel();
+					await this.connectionRetryTask;
+
+					this.connectionRetryTask = null;
+					this.connectionRetryTokenSrc = null;
+				}
+			}
+
+			if (this.channel != null &&
+			this.channel.IsOpen)
+			{
+				this.channel.Close();
+			}
+
+			if (this.connection != null &&
+			this.connection.IsOpen)
+			{
+				this.connection.Close();
+			}
+
+			this.connectionRetryTokenSrc = new CancellationTokenSource();
+			this.connectionRetryTask = this.establishConnection(this.connectionRetryTokenSrc.Token);
+			await this.connectionRetryTask;
+
+			this.connectionRetryTokenSrc = null;
+			this.connectionRetryTask = null;
+
+			if (this.masterToken.IsCancellationRequested)
+			{
+				if (this.connection != null &&
+				this.connection.IsOpen)
+				{
+					this.connection.Close();
+				}
+
+				return;
+			}
+
+			if (this.connection == null ||
+			!this.connection.IsOpen)
+			{
+				return;
+			}
+
+			this.setupConfigConsumer();
+			this.setupSensorReaderConsumer();
+
+			Console.WriteLine("Broker event receiver reloaded ... ");
+		}
 	}
 }

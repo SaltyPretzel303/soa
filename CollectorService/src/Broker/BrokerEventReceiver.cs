@@ -53,9 +53,9 @@ namespace CollectorService.Broker
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
 
 			this.connectionRetryTask = this.EstablishConnection(this.connectionRetryTokenSrc.Token);
-			Console.WriteLine("Before await ... exec async ...");
+			// Console.WriteLine("Before await ... exec async ...");
 			await this.connectionRetryTask;
-			Console.WriteLine("After await ... exec async ...");
+			// Console.WriteLine("After await ... exec async ...");
 
 			if (this.masterToken.IsCancellationRequested)
 			{
@@ -68,6 +68,7 @@ namespace CollectorService.Broker
 				return;
 			}
 
+			this.connectionRetryTask = null;
 			this.connectionRetryTokenSrc = null;
 
 			this.SetupRegistryEventConsumer();
@@ -117,8 +118,6 @@ namespace CollectorService.Broker
 					Console.WriteLine("Conection established ... ");
 				}
 
-				// at this point
-				// connection is ready or cancellation is requested (trough the token)
 			});
 
 		}

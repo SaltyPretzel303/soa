@@ -11,7 +11,7 @@ namespace SensorRegistry.Registry
 	public class MapRegistry : ISensorRegistry
 	{
 
-		private ConcurrentDictionary<string, SensorRegistryRecord> registry;
+		private static ConcurrentDictionary<string, SensorRegistryRecord> Registry { get; set; }
 
 		private IMessageBroker broker;
 
@@ -19,7 +19,10 @@ namespace SensorRegistry.Registry
 		{
 			this.broker = broker;
 
-			this.registry = new ConcurrentDictionary<string, SensorRegistryRecord>();
+			if (Registry == null)
+			{
+				Registry = new ConcurrentDictionary<string, SensorRegistryRecord>();
+			}
 		}
 
 		#region responses
@@ -60,14 +63,20 @@ namespace SensorRegistry.Registry
 
 		#region ISensorRegistry
 
-		public RegistryResponse addSensorRecord(string sensorName, string sensorAddr, int sensorPort, int readIndex)
+		public RegistryResponse addSensorRecord(string sensorName,
+											string sensorAddr,
+											int sensorPort,
+											int readIndex)
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			SensorRegistryRecord newRecord = new SensorRegistryRecord(sensorName, sensorAddr, sensorPort, readIndex);
+			SensorRegistryRecord newRecord = new SensorRegistryRecord(sensorName,
+																	sensorAddr,
+																	sensorPort,
+																	readIndex);
 
-			if (this.registry.TryAdd(sensorName, newRecord))
+			if (Registry.TryAdd(sensorName, newRecord))
 			{
 
 				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.NewSensor,
@@ -83,16 +92,22 @@ namespace SensorRegistry.Registry
 		}
 
 		// ATTENTION this method may not be thread safe 
-		public RegistryResponse updateSensorRecord(string name, string address, int port, int readIndex)
+		public RegistryResponse updateSensorRecord(string name,
+												string address,
+												int port, int readIndex)
+
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			SensorRegistryRecord oldRecord = null;
-			if (this.registry.TryRemove(name, out oldRecord))
+			if (Registry.TryRemove(name, out oldRecord))
 			{
 
-				SensorRegistryRecord newRecord = new SensorRegistryRecord(name, address, port, readIndex);
-				this.registry.TryAdd(name, newRecord);
+				SensorRegistryRecord newRecord = new SensorRegistryRecord(name,
+																		address,
+																		port,
+																		readIndex);
+				Registry.TryAdd(name, newRecord);
 
 				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorUpdated,
 																	newRecord);
@@ -111,7 +126,7 @@ namespace SensorRegistry.Registry
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			SensorRegistryRecord record = null;
-			if (this.registry.TryRemove(sensorName, out record))
+			if (Registry.TryRemove(sensorName, out record))
 			{
 
 				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorRemoved,
@@ -127,13 +142,13 @@ namespace SensorRegistry.Registry
 
 		public RegistryResponse getAllSensors()
 		{
-			return this.okResponse(this.registry.Values.ToList());
+			return this.okResponse(Registry.Values.ToList());
 		}
 
 		public RegistryResponse getSensorRecord(string sensorName)
 		{
 			SensorRegistryRecord record = null;
-			if (this.registry.TryGetValue(sensorName, out record))
+			if (Registry.TryGetValue(sensorName, out record))
 			{
 				return this.okResponse(record);
 			}

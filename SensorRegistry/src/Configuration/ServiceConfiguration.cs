@@ -1,11 +1,10 @@
 using System.IO;
-using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace SensorRegistry.Configuration
 {
-
 	public class ServiceConfiguration
 	{
 
@@ -30,7 +29,9 @@ namespace SensorRegistry.Configuration
 
 		#endregion
 
-		private List<IReloadable> changeListeners;
+		private static List<IReloadable> ChangeListeners;
+
+		public JObject rawJsonConfig { get; private set; }
 
 		#region mapped fields
 
@@ -76,24 +77,46 @@ namespace SensorRegistry.Configuration
 		public void UpdateConfig(JObject newConfig)
 		{
 
-			// TODO update Instance
-			// TODO write to file maybe
+			Console.WriteLine("Configuration update requested ... ");
 
-			foreach (IReloadable singleListener in this.changeListeners)
+			ServiceConfiguration.Instance = ServiceConfiguration.parseJson(newConfig);
+			Console.WriteLine("Json parsed ... ");
+			ServiceConfiguration.Instance.WriteToFile();
+			Console.WriteLine("Config written to the file ... ");
+
+			foreach (IReloadable singleListener in ChangeListeners)
 			{
+				Console.WriteLine("Updating some service ... ");
 				singleListener.reload(ServiceConfiguration.Instance);
 			}
-
 		}
 
 		public void ListenForChange(IReloadable newListener)
 		{
-			if (this.changeListeners == null)
+			if (ChangeListeners == null)
 			{
-				this.changeListeners = new List<IReloadable>();
+				ChangeListeners = new List<IReloadable>();
 			}
 
-			this.changeListeners.Add(newListener);
+			ChangeListeners.Add(newListener);
+		}
+
+		public static ServiceConfiguration parseJson(JObject jsonConfig)
+		{
+			string stage = jsonConfig.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
+
+			JObject confStage = (JObject)jsonConfig.GetValue(stage);
+
+			ServiceConfiguration objConfig = confStage.ToObject<ServiceConfiguration>();
+			objConfig.stage = stage;
+			objConfig.rawJsonConfig = jsonConfig;
+
+			return objConfig;
+		}
+
+		private void WriteToFile()
+		{
+			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJsonConfig.ToString());
 		}
 
 	}
