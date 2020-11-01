@@ -1,4 +1,0 @@
-test CRUD operations on controller service
-
-test (implement again, it should be broken from the last refactor) configuration changing
-maybe implement configuration changing as a REST api and not an broke event

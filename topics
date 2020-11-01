@@ -1,0 +1,32 @@
+COLLECTOR
+----------
+collectorTopic		-collector
+	accessEventFilter 	- collector_access
+	pullEventFilter 	- sensor_pull
+
+serviceLifetimeTopic	- service_lifetime
+	serviceTypeFilter	- collector
+
+serviceLogTopic 	- service_log
+	serviceTypeFilter	- collector
+
+REGISTRY
+----------
+sensorRegistryTopic	- sensor_registry
+	newSensorFilter		- new_sensor
+	sensorUpdateFilter	- sensor_update
+	sensorRemovedFilter	- sensor_removed
+
+serviceLifetimeTopic	- service_lifetime
+	registryLifetimeFilter	- registry
+
+serviceLogTopic		- service_log
+	registryLogFilter	- registry
+
+SENSOR
+---------
+serviceLogTopic		- service_log
+	sensorLogFilter		- sensor
+
+sensorReaderEventTopic	- sensor_reader
+	sensorReadEventFilter	- read_event

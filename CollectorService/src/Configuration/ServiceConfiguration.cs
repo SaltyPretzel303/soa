@@ -108,7 +108,7 @@ namespace CollectorService.Configuration
 
 		#region reload configuration specific
 
-		private static List<IReloadable> reloadableTargets;
+		private static List<IReloadable> ReloadableTargets;
 
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
@@ -123,7 +123,7 @@ namespace CollectorService.Configuration
 
 			ServiceConfiguration.Instance.writeToFile();
 
-			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
+			foreach (IReloadable target in ServiceConfiguration.ReloadableTargets)
 			{
 				target.reload(ServiceConfiguration.Instance);
 			}
@@ -132,12 +132,12 @@ namespace CollectorService.Configuration
 		public static void subscribeForChange(IReloadable reloadableTarget)
 		{
 
-			if (ServiceConfiguration.reloadableTargets == null)
+			if (ServiceConfiguration.ReloadableTargets == null)
 			{
-				ServiceConfiguration.reloadableTargets = new List<IReloadable>();
+				ServiceConfiguration.ReloadableTargets = new List<IReloadable>();
 			}
 
-			ServiceConfiguration.reloadableTargets.Add(reloadableTarget);
+			ServiceConfiguration.ReloadableTargets.Add(reloadableTarget);
 
 		}
 
