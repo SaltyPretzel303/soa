@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using ServiceObserver.Broker;
-using ServiceObserver.Configuration;
 
 namespace ServiceObserver.Report.Processor
 {
-
-
 	public class RuleBasedProcessor : ReportProcessor
 	{
-
 		private delegate ServiceEvent DServiceQosRule(ServiceReportEvent report);
 
 		private Dictionary<string, DServiceQosRule> rules;
@@ -44,7 +39,7 @@ namespace ServiceObserver.Report.Processor
 				if (foundEvent != null)
 				{
 					// TODO create appropriate service event, pass it some arguments
-					MessageBroker.Instance.publishServiceEvent(new ServiceEvent());
+					// IMessageBroker.Instance.publishServiceEvent(new ServiceEvent());
 
 				}
 

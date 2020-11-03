@@ -1,198 +1,93 @@
 using System;
-using Newtonsoft.Json.Linq;
+using System.Text;
+using CommunicationModel.BrokerModels;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using ServiceObserver.Configuration;
-using ServiceObserver.Report;
-using ServiceObserver.Report.Processor;
 
 namespace ServiceObserver.Broker
 {
-	public class RabbitMqBroker : MessageBroker
+	public class RabbitMqBroker : IMessageBroker
 	{
-
-		private bool ready;
-		public bool IsReady
-		{
-			get { return this.ready; }
-		}
-
-		private string brokerHostName;
-		private int port;
-
-		private IConnection connection;
-
-		// initialized after subscribe for configuration call 
-		private string configQueue;
-		private DConfigurationHandler configurationHandler;
-
-		// initialized after subscribe for reports call
-		private string reportsQueue;
-		private ReportProcessor reportProcessor;
+		private ServiceConfiguration config;
 
 		public RabbitMqBroker()
 		{
-
-			this.ready = false;
-
-			ServiceConfiguration configuration = ServiceConfiguration.Instance;
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
-
-			this.createConnection();
-
+			this.config = ServiceConfiguration.Instance;
 		}
 
-		private void createConnection()
+		public void PublishLifetimeEvent(ServiceLifetimeEvent ltEvent)
 		{
-			ConnectionFactory conn_factory = new ConnectionFactory() { HostName = this.brokerHostName, Port = this.port };
-
-			// if create connections is called from reload previous connections is still alive
-			if (this.connection != null && this.connection.IsOpen)
-			{
-				this.connection.Close();
-			}
-
-			this.connection = conn_factory.CreateConnection();
-
-			if (connection.IsOpen)
-			{
-
-				IModel channel = connection.CreateModel();
-				this.initBroker(channel);
-
-				this.ready = true;
-
-			}
+			this.PublishEvent(ltEvent,
+							config.serviceLifetimeTopic,
+							config.serviceTypeFilter);
 		}
 
-		private void initBroker(IModel channel)
+		public void PublishLog(ServiceLog log)
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-
+			this.PublishEvent(log,
+							config.serviceLogTopic,
+							config.serviceTypeFilter);
 		}
 
-		public override void shutDown()
+		public void PublishObserverReport(SensorRegistryEvent newEvent, string filter)
 		{
-
-			Console.WriteLine("Closing rabbit connection ... ");
-
-			if (this.connection != null && this.connection.IsOpen)
-			{
-				this.connection.Close();
-			}
-
-			Console.WriteLine(" Rabbit connection closed ...  ");
-
+			this.PublishEvent(newEvent,
+							config.observerReportTopic,
+							filter);
 		}
 
-		public override void subscribeForConfiguration(DConfigurationHandler configHandler)
+		private void PublishEvent(ServiceEvent newEvent, string topicName, string filter)
 		{
-
-			this.configurationHandler = configHandler;
-
-			// declare exchange for receiving configuration
-			IModel channel = this.connection.CreateModel();
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			channel.ExchangeDeclare(config.configurationTopic, "topic", true, true, null);
-
-			this.configQueue = channel.QueueDeclare().QueueName;
-
-			channel.QueueBind(this.configQueue, config.configurationTopic, config.targetConfiguration, null);
-
-			EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-			consumer.Received += (srcChannel, eventArg) =>
+			ConnectionFactory connFactory = new ConnectionFactory()
 			{
-
-				Console.WriteLine("New configuration received ...");
-
-				// extract configuration 
-				string sConfig = System.Text.Encoding.UTF8.GetString(eventArg.Body);
-				JObject jConfig = JObject.Parse(sConfig);
-
-				// pass it to the configHandler
-				configurationHandler(jConfig);
-
+				HostName = config.brokerAddress,
+				Port = config.brokerPort
 			};
 
-			channel.BasicConsume(this.configQueue, true, consumer);
+			IConnection connection = null;
+			IModel channel = null;
 
-		}
-
-		public override void reload(ServiceConfiguration newConfiguration)
-		{
-
-			Console.WriteLine("Reloading rabbit ... ");
-
-			this.ready = false;
-
-			ServiceConfiguration configuration = ServiceConfiguration.Instance;
-
-			this.brokerHostName = configuration.brokerAddress;
-			this.port = configuration.brokerPort;
-
-			// "re-create" connection
-			this.createConnection();
-
-			if (this.configurationHandler != null)
+			try
 			{
-				this.subscribeForConfiguration(this.configurationHandler);
+				string txtEvent = JsonConvert.SerializeObject(newEvent);
+				byte[] content = Encoding.UTF8.GetBytes(txtEvent);
+
+				Console.WriteLine("Publishing: " + txtEvent);
+
+				connection = connFactory.CreateConnection();
+				channel = connection.CreateModel();
+
+				channel.ExchangeDeclare(topicName,
+									"topic",
+									true,
+									true,
+									null);
+
+				channel.BasicPublish(topicName,
+									filter,
+									false,
+									null,
+									content);
+
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($@"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
+			}
+			finally
+			{
+				if (channel != null && channel.IsOpen)
+				{
+					channel.Close();
+				}
+
+				if (connection != null && connection.IsOpen)
+				{
+					connection.Close();
+				}
 			}
 
-			this.ready = true;
-
 		}
-
-		public override void subscribeForReports(ReportProcessor reportProcessor)
-		{
-
-			this.reportProcessor = reportProcessor;
-
-			IModel channel = this.connection.CreateModel();
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-			channel.ExchangeDeclare(config.serviceReportTopic, "topic", true, true, null);
-
-			this.reportsQueue = channel.QueueDeclare().QueueName;
-
-			// match all routing keys
-			channel.QueueBind(this.reportsQueue, config.serviceReportTopic, config.serviceReportFilter, null);
-			EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-			consumer.Received += (srcChannel, eventArg) =>
-			{
-
-				Console.WriteLine("Consuming service report ...  ");
-
-				JObject jContent = JObject.Parse(System.Text.Encoding.UTF8.GetString(eventArg.Body));
-				Console.WriteLine("Report: " + jContent.ToString());
-
-				ServiceReportEvent reportEvent = jContent.ToObject<ServiceReportEvent>();
-
-				reportProcessor.processReport(reportEvent);
-
-
-			};
-			channel.BasicConsume(this.reportsQueue, true, consumer);
-
-		}
-
-		public override void publishServiceEvent(ServiceEvent serviceEvent)
-		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			IModel channel = this.connection.CreateModel();
-			channel.ExchangeDeclare(config.serviceQosTopic, "topic", true, true, null);
-
-			byte[] byteContent = System.Text.Encoding.UTF8.GetBytes(serviceEvent.toJson().ToString());
-
-			channel.BasicPublish(config.serviceQosTopic, "", false, null, byteContent);
-
-		}
-
 	}
 }

@@ -6,9 +6,9 @@ namespace ServiceObserver.Storage
 	public interface IDatabaseService
 	{
 
-		void backupConfiguration(JObject rawConfig);
+		void BackupConfiguration(JObject rawConfig);
 
-		void saveEvent(ServiceEvent newEvent);
+		void SaveEvent(ServiceEvent newEvent);
 
 	}
 }

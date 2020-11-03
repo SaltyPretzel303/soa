@@ -21,7 +21,7 @@ namespace CollectorService.Configuration
 		public string sensorsCollection { get; set; }
 		public string fieldWithRecords { get; set; }
 		public string configurationBackupCollection { get; set; }
-		public string configBackupField { get; set; }
+		public string configBackupDateField { get; set; }
 
 		public string headerUrl { get; set; }
 		public string dataRangeUrl { get; set; }
@@ -142,12 +142,6 @@ namespace CollectorService.Configuration
 		}
 
 		#endregion
-
-		// never used 
-		// public override string ToString()
-		// {
-		// 	return JObject.FromObject(this).ToString();
-		// }
 
 	}
 }

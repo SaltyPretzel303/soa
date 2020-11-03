@@ -12,12 +12,14 @@ using MediatR;
 using CollectorService.MediatrRequests;
 using System.Collections.Generic;
 using CommunicationModel;
+using System;
 
 namespace CollectorService
 {
 	public class Startup
 	{
-		private IMessageBroker BrokerInstance;
+
+		private IServiceProvider provider;
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -49,15 +51,12 @@ namespace CollectorService
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app,
 							IWebHostEnvironment env,
-							IHostApplicationLifetime lifetime,
-							IDatabaseService database,
-							IMessageBroker messageBroker)
+							IHostApplicationLifetime lifetime)
 		{
-
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
-			// reference used in methods from this class
-			this.BrokerInstance = messageBroker;
+			// reference used for onShutDown/onStartup events
+			this.provider = app.ApplicationServices;
 
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 			lifetime.ApplicationStarted.Register(this.onStartup);
@@ -83,12 +82,20 @@ namespace CollectorService
 
 		private void onStartup()
 		{
-			this.BrokerInstance.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup));
+			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
+			if (broker != null)
+			{
+				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup));
+			}
 		}
 
 		private void onShutDown()
 		{
-			this.BrokerInstance.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Shutdown));
+			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
+			if (broker != null)
+			{
+				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Shutdown));
+			}
 		}
 
 	}

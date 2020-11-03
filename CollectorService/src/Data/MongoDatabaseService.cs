@@ -320,13 +320,18 @@ namespace CollectorService.Data
 				return;
 			}
 
-			String serviceAddr = NetworkInterface.GetAllNetworkInterfaces().Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
+			String serviceAddr = NetworkInterface.
+								GetAllNetworkInterfaces().
+								Where(nic => nic.OperationalStatus == OperationalStatus.Up
+											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
+								Select(nic => nic.GetPhysicalAddress().ToString()).
+								FirstOrDefault();
 
 			ServiceConfiguration oldOConfig = ServiceConfiguration.Instance;
 
 			IMongoCollection<BsonDocument> configCollection = this.database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
 
-			oldJConfig[oldOConfig.configBackupField] = DateTime.Now.ToString();
+			oldJConfig[oldOConfig.configBackupDateField] = DateTime.Now.ToString();
 
 			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
 			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}", "old_configs", oldJConfig.ToString());
@@ -423,5 +428,4 @@ namespace CollectorService.Data
 		}
 
 	}
-
 }

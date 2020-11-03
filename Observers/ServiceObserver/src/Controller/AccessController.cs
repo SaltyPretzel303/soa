@@ -11,7 +11,7 @@ namespace ServiceObserver.Controller
 		[HttpGet]
 		public string getSomeString()
 		{
-			return "Some nice string ... ";
+			return "Hello there, I am observing, don't worry ... ";
 		}
 
 	}

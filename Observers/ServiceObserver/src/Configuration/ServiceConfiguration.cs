@@ -7,39 +7,46 @@ using ServiceObserver.Report;
 
 namespace ServiceObserver.Configuration
 {
-
 	public class ServiceConfiguration
 	{
 
 		public JObject rawJConfig { get; private set; }
-
-		// configuration variables
 		public string stage { get; set; }
 
+		// configuration variables
+		#region mapped fields
+
+		// REST api listening port 
 		public int port { get; set; }
+
+		// database
 		public string dbAddress { get; set; }
 		public string dbName { get; set; }
-		public string serviceEventsCollections { get; set; }
-		public string fieldWithRecords { get; set; }
+		public string observerReportsCollection { get; set; }
 		public string configurationBackupCollection { get; set; }
+		public string configBackupDateField { get; set; }
 
+		// message broker
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
+		public int connectionRetryDelay { get; set; }
 
-		public string serviceReportTopic { get; set; }
-		public string serviceReportFilter { get; set; }
-		public string configurationTopic { get; set; }
-		public string serviceQosTopic { get; set; }
-		public string targetConfiguration { get; set; }
+		// topics and filters
+		public string observerReportTopic { get; set; }
+		public string configUpdateTopic { get; set; }
+		public string serviceLifetimeTopic { get; set; }
+		public string serviceLogTopic { get; set; }
+		public string serviceTypeFilter { get; set; }
 
+		// rule engine
 		public List<Pattern> patters { get; set; }
+
+		#endregion
 
 		// ent of the configuration variables
 
 		private static string CONFIGURATION_PATH = "./service_config.json";
 		private static string STAGE_VAR_NAME = "stage";
-		private static string rawConfig;
-
 
 		// singleton specific
 		private static ServiceConfiguration instance;
@@ -89,9 +96,7 @@ namespace ServiceObserver.Configuration
 
 		private void writeToFile()
 		{
-
 			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
-
 		}
 
 		// reload specific methods
@@ -104,7 +109,7 @@ namespace ServiceObserver.Configuration
 			// backup old configuration
 			if (backupDatabase != null)
 			{
-				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
+				backupDatabase.BackupConfiguration(ServiceConfiguration.Instance.rawJConfig);
 			}
 
 			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
