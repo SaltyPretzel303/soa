@@ -25,7 +25,6 @@ namespace CommunicationModel.BrokerModels
 							FirstOrDefault();
 			this.time = DateTime.Now;
 			this.customMessage = customMessage;
-
 		}
 
 	}

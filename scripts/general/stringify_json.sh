@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -ne "1" ]
 then 
 	echo "Please provide source file as the first arg ... "
 	exit 1

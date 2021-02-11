@@ -24,9 +24,20 @@ serviceLogTopic		- service_log
 	registryLogFilter	- registry
 
 SENSOR
----------
+----------
 serviceLogTopic		- service_log
 	sensorLogFilter		- sensor
 
 sensorReaderEventTopic	- sensor_reader
 	sensorReadEventFilter	- read_event
+
+COMMON TOPICS
+----------
+serviceLogTopic
+	- collector
+	- registry
+	- sensor
+
+serviceLifetimeTopic
+	- collector
+	- registry

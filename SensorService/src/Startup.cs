@@ -18,8 +18,6 @@ namespace SensorService
 		// it is singleton anyway ... 
 		private ILogger logger;
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
@@ -102,13 +100,13 @@ namespace SensorService
 
 			HttpClient httpClient = new HttpClient();
 
-			Console.WriteLine("Unreg. req. send ... ");
+			Console.WriteLine("Unregister request sent ... ");
 			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
-			Console.WriteLine("Unreg. req. done ...  ");
+			Console.WriteLine("Sensor successfully unregistered ...  ");
 
 			bool retValue = false;
-			if (responseMessage != null &&
-				responseMessage.IsSuccessStatusCode)
+			if (responseMessage != null
+				&& responseMessage.IsSuccessStatusCode)
 			{
 				retValue = true;
 			}
@@ -132,5 +130,4 @@ namespace SensorService
 		}
 
 	}
-
 }

@@ -39,7 +39,11 @@ namespace SensorService.Data
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 			// read one more line for evey sensor
 			// read this.line_counter. row
-			this.logger.logMessage($"Read event sensorRange({conf.sensorsRange.From}, {conf.sensorsRange.To}), rowCounter: {this.lineCounter}");
+			this.logger.logMessage(string.Join("",
+							$"Read event sensorRange",
+							$"({conf.sensorsRange.From}, ",
+							$"{conf.sensorsRange.To})",
+							", rowCounter: {this.lineCounter}"));
 
 			int logicIndex = 0;
 			for (int realIndex = conf.sensorsRange.From; realIndex < conf.sensorsRange.To; realIndex++)

@@ -1,9 +1,50 @@
-CRUD on collector
+REQUESTED:
 
-(node core)
-2xService sa ruleEngine-om i crud-om za evente
+	FAZA: I
 
-reaktivni principi soa
+	1) SensorService
+		- cita podatke sa sensora (sensor_data file)
+		- obezbedjuje REST api za pristup istim
 
-Dashboard - rezultati ruleEngine-a i pokreanje akcija
+	2) CollectorService
+		- periodicno cita podatke sa SensorService i skladisti ih u noSql bazu
+		- obezbedjuje rest api za pristup procitanim podacima
+
+	FAZA: II
+
+	1) 2x ( NodeJS & ASP.NET Core ) 
+		- servisi citaju podatke sa CollectorService
+		- koriscenjem RuleEngine-a detektuju dogadjaje/kontekste ... 
+		- skladiste podatke o detekciji u NoSql bazu 
+
+	FAZA: III
+
+	1) Obezvediti reaktivno povezivanje koriscenjem MessageBroker
+	2) Asinhrona komunikacija putem event-a pri nastanku dogadjaja
+	3) Dashborad servis za: 
+		- prcenje rezultata obrade i analize
+		- pokretanja odredjenih akcije u servisima
+		- menjanje konfiguracije
+
+	DODATNO: 
+	
+	1) sensor registry 
+
+DONE: 
+
+	FAZA: I
+
+	FAZA: II
+
+	FAZA: III
+
+POSSIBLE:
+	1)	sensorService & collectorService imaju istu ulogu, 
+		- periodicno citaju podatke, 
+		- pamte ih u bazu 
+		- expose REST api za pristup istim. 
+		
+		- mogu da prime config. preko broker-a ili restApi
+
+
 

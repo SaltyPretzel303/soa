@@ -18,40 +18,30 @@ namespace ServiceObserver.Report.Processor
 
 		private void populateRules()
 		{
-
 			this.rules = new Dictionary<string, DServiceQosRule>();
 
 			this.rules.Add("life_cycle_report", this.lifecycleRule);
 			this.rules.Add("sensor_pull_report", this.sensorDataPullRule);
 			this.rules.Add("access_report", this.apiAccessibilityRule);
-
 		}
 
 
 		public void processReport(ServiceReportEvent report)
 		{
-
 			DServiceQosRule rule = null;
 			if (this.rules.TryGetValue(report.eventSourceType, out rule))
 			{
-
 				ServiceEvent foundEvent = rule(report);
 				if (foundEvent != null)
 				{
 					// TODO create appropriate service event, pass it some arguments
 					// IMessageBroker.Instance.publishServiceEvent(new ServiceEvent());
-
 				}
-
 			}
 			else
 			{
-
 				Console.WriteLine("Unknown source event type received, eventSourceType: " + report.eventSourceType);
-
 			}
-
-
 		}
 
 		private ServiceEvent lifecycleRule(ServiceReportEvent report)

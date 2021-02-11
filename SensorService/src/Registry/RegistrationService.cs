@@ -56,7 +56,7 @@ namespace SensorService
 			return Task.CompletedTask;
 		}
 
-
+		// this will be executed repeatedly until all of the "sensors" are registered
 		private void TimerEvent(Object source, ElapsedEventArgs args)
 		{
 
@@ -70,7 +70,7 @@ namespace SensorService
 				if (regResult == true)
 				{
 					// sensor successfully registered
-					this.logger.logMessage($"Sensor {currentSensor} successfully registred ... ");
+					this.logger.logMessage($"Sensor {currentSensor} successfully registered ... ");
 					this.waitingSensors.Remove(currentSensor);
 					i--;
 				}
@@ -91,13 +91,13 @@ namespace SensorService
 
 			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050&lastReadIndex=12
 			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={sensorName}&{conf.portNumField}={conf.listeningPort}&{conf.readIndexField}={lastReadIndex}";
-			// port on which this sensor is serving http requests
 
 			// this method could possibly throw exception 
 			HttpResponseMessage responseMessage = null;
 			try
 			{
-				responseMessage = this.httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
+				responseMessage = this.httpClient.GetAsync(addr).Result;
+				// .Result is going to force blocking execution
 			}
 			catch (Exception e)
 			{
@@ -147,5 +147,4 @@ namespace SensorService
 		}
 
 	}
-
 }

@@ -5,6 +5,12 @@ import json  # used to parse and prettyPrint events
 import sys
 import pika  # rabbitmq client
 import argparse  # util used to parse cli arguments
+from os import environ  # used for reading environment variables
+
+ENV_ADDRESS = 'BROKER_ADDRESS'
+ENV_PORT = "BROKER_PORT"
+ENV_TOPICS = "TARGET_TOPICS"  # comma separated values
+ENV_FILTER = "TARGET_FILTER"
 
 DEFAULT_TOPICS = [
     "service_lifetime",
@@ -18,6 +24,75 @@ DEFAULT_FILTER = "#"
 
 DEFAULT_BROKER_ADDRESS = "localhost"
 DEFAULT_BROKER_PORT = 5672
+
+# region helper methods for resolving varibales
+# priority: env_variables -> cli_input -> default_values
+
+
+def resolveAddress(cli_input):
+    address = environ.get(ENV_ADDRESS)
+    if(address is not None and address != ""):
+        return address
+
+    if (hasattr(cli_input, "broker_address") and
+            (cli_input.broker_address is not None) and (cli_input.broker_address != "")):
+
+        return cli_input.broker_address
+
+    print("Using default address value ... ")
+    return DEFAULT_BROKER_ADDRESS
+
+
+def resolvePort(cli_inpupt):
+    port = environ.get(ENV_PORT)
+    if(port is not None):
+        return port
+
+    if (hasattr(cli_input, "broker_port") and
+            (cli_input.broker_port is not None) and (cli_input.broker_port != "")):
+
+        return cli_input.broker_port
+
+    print("Using default port value ... ")
+    return DEFAULT_BROKER_PORT
+
+
+def resolveTopics(cli_input):
+    topics_str = environ.get(ENV_TOPICS)
+    if(topics_str is not None):
+
+        topics_str.replace(" ", '')  # remove all spaces
+        topics_arr = topics_str.split(",")
+
+        return topics_arr
+
+    if(hasattr(cli_input, "topic") and
+       (cli_input.topic is not None) and ((cli_input.topic != ""))):
+
+        cli_input.topic.replace(" ", "")
+        topics = cli_input.topic.split(",")
+
+        return topics
+
+    print("Using default topics ... ")
+    return DEFAULT_TOPICS
+
+
+def resolveFilter(cli_input):
+    filter = environ.get(ENV_FILTER)
+    if(filter is not None):
+        return filter
+
+    if (hasattr(cli_input, "filter") and
+            (cli_input.filter is not None) and (cli_input.filter != "")):
+
+        return cli_input.filter
+
+    print("Using default filter ... ")
+    return DEFAULT_FILTER
+
+# endregion
+
 
 parser = argparse.ArgumentParser(
     "Listen on specific topic with specific filter.\n\
@@ -45,21 +120,24 @@ parser.add_argument("--filter",
 
 cli_input = parser.parse_args()
 
+broker_address = resolveAddress(cli_input)
+broker_port = resolvePort(cli_input)
+
 # resolve broker address
-broker_address = DEFAULT_BROKER_ADDRESS
-if (hasattr(cli_input, "broker_address") and
-        (cli_input.broker_address is not None) and
-        (not cli_input.broker_address)):
+# broker_address = DEFAULT_BROKER_ADDRESS
+# if (hasattr(cli_input, "broker_address") and
+#         (cli_input.broker_address is not None) and
+#         (not cli_input.broker_address)):
 
-    broker_address = cli_input.broker_address
+#     broker_address = cli_input.broker_address
 
-# resolve broker port
-broker_port = DEFAULT_BROKER_PORT
-if (hasattr(cli_input, "broker_port") and
-        (cli_input.broker_port is not None) and
-        (not cli_input.broker_port)):
+# # resolve broker port
+# broker_port = DEFAULT_BROKER_PORT
+# if (hasattr(cli_input, "broker_port") and
+#         (cli_input.broker_port is not None) and
+#         (not cli_input.broker_port)):
 
-    broker_address = cli_input.broker_port
+#     broker_address = cli_input.broker_port
 
 print(f"Connecting with: {broker_address}:{broker_port}")
 
@@ -67,19 +145,22 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(host=broker_addre
                                                                port=broker_port))
 channel = connection.channel()
 
-topics = DEFAULT_TOPICS
-if(hasattr(cli_input, "topic") and
-   (cli_input.topic is not None) and
-   (not cli_input.topic)):
+topics = resolveTopics(cli_input)
+filter = resolveFilter(cli_input)
 
-    topics = [cli_input.topic]
+# topics = DEFAULT_TOPICS
+# if(hasattr(cli_input, "topic") and
+#    (cli_input.topic is not None) and
+#    (not cli_input.topic)):
 
-filter = DEFAULT_FILTER
-if(hasattr(cli_input, "filter") and
-        (cli_input.filter is not None) and
-        (not cli_input.filter)):
+#     topics = [cli_input.topic]
 
-    filter = cli_input.filter
+# filter = DEFAULT_FILTER
+# if(hasattr(cli_input, "filter") and
+#         (cli_input.filter is not None) and
+#         (not cli_input.filter)):
+
+#     filter = cli_input.filter
 
 for single_topic in topics:
     channel.exchange_declare(single_topic,
