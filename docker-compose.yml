@@ -1,14 +1,14 @@
 version: '3'
 services:
-  soa-mongo:
-    container_name: soa-mongo
+  soa-mongo-db:
+    container_name: soa-mongo-db
     image: mongo:latest
     ports:
     - "0.0.0.0:27017:27017"
 
   soa-broker:
     container_name: soa-broker
-    image: rabbitmq:3.8-rc-management
+    image: rabbitmq:3.8-management
     ports: 
     - "0.0.0.0:5672:5672"
     - "0.0.0.0:15672:15672"
@@ -38,14 +38,15 @@ services:
     - "5002:5000"
 
   soa-collector:
+    container_name: soa-collector
     build:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.CollectorService
     image: soa/collector-service
-    depends_on:
-      - soa-broker
-      - soa-mongo
-      - soa-registry
+    # depends_on:
+    #   - soa-broker
+    #   - soa-mongo-db
+    #   - soa-registry
     ports:
     - "5003:5000"
 

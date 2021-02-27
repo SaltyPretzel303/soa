@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using CommunicationModel;
@@ -39,7 +40,21 @@ namespace CollectorService.Controller
 
 			if (this.database != null)
 			{
-				return Ok(this.database.getAllSamples());
+
+				List<JObject> dbJsonResponse = this.database.getAllSamples();
+				List<string> dbTxtResponse = new List<string>();
+
+				if (dbJsonResponse == null)
+				{
+					return StatusCode(500);
+				}
+
+				foreach (JObject jsonValue in dbJsonResponse)
+				{
+					dbTxtResponse.Add(jsonValue.ToString());
+				}
+
+				return Ok(dbTxtResponse);
 			}
 
 			return StatusCode(500);

@@ -43,7 +43,7 @@ namespace SensorService.Data
 							$"Read event sensorRange",
 							$"({conf.sensorsRange.From}, ",
 							$"{conf.sensorsRange.To})",
-							", rowCounter: {this.lineCounter}"));
+							$", rowCounter: {this.lineCounter}"));
 
 			int logicIndex = 0;
 			for (int realIndex = conf.sensorsRange.From; realIndex < conf.sensorsRange.To; realIndex++)

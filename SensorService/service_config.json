@@ -1,5 +1,5 @@
 {
-	"stage": "Development",
+	"stage": "Production",
 	"Development": {
 		"dataPath": "./data/",
 		"samplePrefix": "user_",
@@ -44,7 +44,7 @@
 			"From": 55,
 			"To": 60
 		},
-		"readInterval": 2000,
+		"readInterval": 5000,
 		"listeningPort": 5000,
 		"sensorNamePrefix": "sensor_",
 		"registerSensorDelay": 5000,

@@ -1,5 +1,5 @@
 {
-  "stage": "Development",
+  "stage": "Production",
   "Development": {
     "port": 5003,
     "dbAddress": "mongodb://localhost:27017",
@@ -33,7 +33,7 @@
   },
   "Production": {
     "port": 5000,
-    "dbAddress": "mongodb://soa-mongo:27017",
+    "dbAddress": "mongodb://soa-mongo-db:27017",
     "dbName": "soa_collector",
     "sensorsCollection": "Sensors",
     "fieldWithRecords": "records",

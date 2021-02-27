@@ -22,7 +22,7 @@
 	},
 	"Production": {
 		"port": "5000",
-		"dbAddress": "mongodb://soa-mongo:27017",
+		"dbAddress": "mongodb://soa-mongo-db:27017",
 		"dbName": "soa_service_observer",
 		"observerReportsCollection": "observer_reports",
 		"configurationBackupCollection": "configs",
