@@ -1,7 +1,7 @@
 {
 	"stage": "Development",
 	"Development": {
-		"port": "5003",
+		"port": "5100",
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa_service_observer",
 		"observerReportsCollection": "observer_reports",
@@ -13,8 +13,10 @@
 		"observerReportTopic": "observer_reports",
 		"configUpdateTopic": "config",
 		"serviceLifetimeTopic": "service_lifetime",
+		"lifetimeEventFilter": "#",
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
+		"ruleEngineTriggerInterval": 5000,
 		"patterns": [
 			{},
 			{}
@@ -33,8 +35,10 @@
 		"observerReportTopic": "observer_reports",
 		"configUpdateTopic": "config",
 		"serviceLifetimeTopic": "service_lifetime",
+		"lifetimeEventFilter": "#",
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
+		"ruleEngineTriggerInterval": 3000,
 		"patterns": [
 			{},
 			{}

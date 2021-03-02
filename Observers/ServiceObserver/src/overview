@@ -1,0 +1,13 @@
+DONE -> rabbit - hostedService 
+					-> receivesEvents 
+					-> storeThemIn LocalCache
+
+timer - timedService 
+					-> periodicallyReads LocalCache
+					-> triggers nRulesExecution 
+					-> storesDataIn MongoDb
+					
+					-> publish newConclusion event 
+
+controller 
+					-> provides READ operations 

@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using ServiceObserver.Report;
 
-namespace ServiceObserver.Storage
+namespace ServiceObserver.Data
 {
 	public interface IDatabaseService
 	{

@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
 using ServiceObserver.Report;
 
-namespace ServiceObserver.Storage
+namespace ServiceObserver.Data
 {
 	public class MongoStorage : IDatabaseService
 	{

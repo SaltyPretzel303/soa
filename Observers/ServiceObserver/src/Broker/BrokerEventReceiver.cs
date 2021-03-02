@@ -3,8 +3,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunicationModel.BrokerModels;
 using MediatR;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -71,6 +73,7 @@ namespace ServiceObserver.Broker
 			this.connectionRetryTokenSrc = null;
 
 			this.SetupConfigEventConsumer();
+			this.SetupLifetimeEventConsumer();
 
 		}
 
@@ -154,6 +157,12 @@ namespace ServiceObserver.Broker
 											true,
 											null);
 
+				this.channel.ExchangeDeclare(config.serviceLifetimeTopic,
+											"topic",
+											true,
+											true,
+											null);
+
 				return true;
 			}
 
@@ -188,6 +197,36 @@ namespace ServiceObserver.Broker
 
 		}
 
+		private void SetupLifetimeEventConsumer()
+		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			string lifetimeQueue = this.channel.QueueDeclare().QueueName;
+			this.channel.QueueBind(lifetimeQueue,
+								config.serviceLifetimeTopic,
+								config.lifetimeEventFilter,
+								null);
+
+			EventingBasicConsumer lifetimeEventConsumer = new EventingBasicConsumer(this.channel);
+			lifetimeEventConsumer.Received += (srcChannel, eventArg) =>
+			{
+
+				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
+
+				Console.WriteLine($"Received: {txtContent} ");
+
+				ServiceLifetimeEvent newEvent = JsonConvert.DeserializeObject<ServiceLifetimeEvent>(txtContent);
+
+				this.mediator.Send(new SaveEventRequest(newEvent));
+
+			};
+
+			this.channel.BasicConsume(lifetimeQueue,
+									true,
+									lifetimeEventConsumer);
+
+		}
 
 		public override Task StopAsync(CancellationToken stoppingToken)
 		{
@@ -259,6 +298,7 @@ namespace ServiceObserver.Broker
 			}
 
 			this.SetupConfigEventConsumer();
+			this.SetupLifetimeEventConsumer();
 
 			Console.WriteLine("Broker event receiver reloaded ... ");
 		}

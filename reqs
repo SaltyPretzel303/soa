@@ -33,10 +33,25 @@ REQUESTED:
 DONE: 
 
 	FAZA: I
+		1)
+		- sensorService cita podatke 
+		- api za pristup podacima od odredjenog indeksa (redni broj citanja)
+		2)
+		- collectorService cita podatke sa sensorService-a
+		- smesta podatke u mongoDb bazu
+		- obezbedjuje CRUD restApi
 
 	FAZA: II
+		+ in progress
+		- Observers project
+		- DataObserver NodeJS & ServiceObserver AspNetCore
 
 	FAZA: III
+		1) 
+		+ - vecina servisa salje event-e preko messageBroker-a
+		- collector preko event-a pribavlja info. o novim sensorima
+		- servisi iz druge faze primaju i obradjuju event-e sa messageBroker-a
+		
 
 POSSIBLE:
 	1)	sensorService & collectorService imaju istu ulogu, 

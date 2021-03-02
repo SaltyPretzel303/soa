@@ -8,5 +8,6 @@ namespace SensorService.Broker
 
 		void PublishSensorEvent(SensorReaderEvent sensorEvent,string filter);
 
+		void PublishLifetimeEvent(ServiceLifetimeEvent newEvent);
 	}
 }

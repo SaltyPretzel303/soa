@@ -30,11 +30,12 @@
 		"brokerPort": 5672,
 		"serviceLogTopic": "service_log",
 		"sensorLogFilter": "sensor",
-		"brokerLifetimeTopic": "service_lifetime",
 		"sensorReaderEventTopic": "sensor_reader",
 		"sensorReadEventFilter": "read_event",
 		"brokerConfigTopic": "config",
-		"brokerConfigFilter": "reader"
+		"brokerConfigFilter": "reader",
+		"serviceLifetimeTopic": "service_lifetime",
+		"sensorLifetimeFilter": "sensor"
 	},
 	"Production": {
 		"dataPath": "/data/",
@@ -44,7 +45,7 @@
 			"From": 55,
 			"To": 60
 		},
-		"readInterval": 5000,
+		"readInterval": 10000,
 		"listeningPort": 5000,
 		"sensorNamePrefix": "sensor_",
 		"registerSensorDelay": 5000,
@@ -66,10 +67,11 @@
 		"brokerPort": 5672,
 		"serviceLogTopic": "service_log",
 		"sensorLogFilter": "sensor",
-		"brokerLifetimeTopic": "service_lifetime",
 		"sensorReaderEventTopic": "sensor_reader",
 		"sensorReadEventFilter": "read_event",
 		"brokerConfigTopic": "config",
-		"brokerConfigFilter": "reader"
+		"brokerConfigFilter": "reader",
+		"serviceLifetimeTopic": "service_lifetime",
+		"sensorLifetimeFilter": "sensor"
 	}
 }

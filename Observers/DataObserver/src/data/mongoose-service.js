@@ -32,3 +32,7 @@ const createConnection = () => {
 }
 
 module.exports.createConnection = createConnection;
+
+process.on('exit',(code)=>{
+	mognoose.disconnect
+});

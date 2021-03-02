@@ -34,6 +34,15 @@ namespace SensorService.Broker
 					filter);
 		}
 
+		public void PublishLifetimeEvent(ServiceLifetimeEvent newEvent)
+		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			this.Publish(newEvent,
+					config.serviceLifetimeTopic,
+					config.sensorLifetimeFilter);
+		}
+
 		private void Publish(ServiceEvent serviceEvent, string topic, string filter)
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
@@ -91,5 +100,4 @@ namespace SensorService.Broker
 		}
 
 	}
-
 }

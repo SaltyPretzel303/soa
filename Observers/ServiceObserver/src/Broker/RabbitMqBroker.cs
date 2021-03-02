@@ -37,7 +37,9 @@ namespace ServiceObserver.Broker
 							filter);
 		}
 
-		private void PublishEvent(ServiceEvent newEvent, string topicName, string filter)
+		private void PublishEvent(ServiceEvent newEvent,
+							string topicName,
+							string filter)
 		{
 			ConnectionFactory connFactory = new ConnectionFactory()
 			{
@@ -73,6 +75,7 @@ namespace ServiceObserver.Broker
 			}
 			catch (Exception e)
 			{
+				// what is @ sign for
 				Console.WriteLine($@"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
 			}
 			finally

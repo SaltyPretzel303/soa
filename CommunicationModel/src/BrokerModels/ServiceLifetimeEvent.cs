@@ -10,12 +10,12 @@ namespace CommunicationModel.BrokerModels
 
 	public class ServiceLifetimeEvent : ServiceEvent
 	{
-		public LifetimeStages eventStage;
+		public LifetimeStages lifeStage;
 
 		public ServiceLifetimeEvent(LifetimeStages eventStage, string customMessage = "") :
 				base(customMessage)
 		{
-			this.eventStage = eventStage;
+			this.lifeStage = eventStage;
 			this.customMessage = customMessage;
 		}
 	}

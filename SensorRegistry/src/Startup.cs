@@ -70,7 +70,6 @@ namespace SensorRegistry
 			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
 			if (broker != null)
 			{
-
 				broker.publishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup));
 			}
 		}

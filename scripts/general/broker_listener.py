@@ -25,7 +25,7 @@ DEFAULT_FILTER = "#"
 DEFAULT_BROKER_ADDRESS = "localhost"
 DEFAULT_BROKER_PORT = 5672
 
-# region helper methods for resolving varibales
+# region helper methods for resolving variables
 # priority: env_variables -> cli_input -> default_values
 
 
@@ -177,13 +177,15 @@ for single_topic in topics:
                        filter)
 
     def event_callback(ch, method, properties, body):
-        print(F"Topic: {single_topic}\nFilter: {filter}")
-
         txt_content = body.decode("utf-8")
-        json_obj = json.loads(txt_content)
-        json_output = json.dumps(json_obj, indent=4)
 
-        print(f"{json_output}")
+        print(txt_content)  # this will print json in one line
+
+        # next section will print json with propper formating
+        # json_obj = json.loads(txt_content)
+        # json_output = json.dumps(json_obj, indent=4)
+        # print(f"{json_output}")
+
         print()  # just an empty line
 
     channel.basic_consume(queue_name,
@@ -201,7 +203,7 @@ def sig_handler(sig, frame):
 
     if(connection is not None and connection.is_open):
         connection.close()
-        print("Conneciton closed ... ")
+        print("Connection closed ... ")
 
     sys.exit(0)
 

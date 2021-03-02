@@ -14,17 +14,28 @@ else
 	echo "e.g. ./stop_sensors.sh soa-sensor-"
 fi
 
-sensors_count=$(docker ps | grep "$name_prefix" | wc --lines)
+name_regex=$name_prefix"*"
+sensor_ids=$(docker ps --filter name="$name_regex" -q)
 
-if [ "$sensors_count" -gt 0 ]
+if [ "$sensor_ids" == "" ]
 then
-
-	for ((index=0; index<$sensors_count; index++))
-	do
-		echo "Stopping: $name_prefix$index"
-		docker stop "$name_prefix$index"
-	done
-
-else
-	echo "There is no active containers with given name prefix."
+	echo "Not found any running sensor matching given sensor_name_prefix: " $name_prefix
+	exit 
 fi
+
+for single_id in $sensor_ids
+do
+		single_name=$(docker inspect $single_id --format '{{.Name}}')
+		single_status=$(docker inspect $single_id --format '{{.State.Status}}')
+		echo $single_id " ---> " $single_name " ---> " $single_status
+		docker stop $single_id
+done
+
+echo # new line
+
+for single_id in $sensor_ids
+do
+		single_name=$(docker inspect $single_id --format '{{.Name}}')
+		single_status=$(docker inspect $single_id --format '{{.State.Status}}')
+		echo $single_id " ---> " $single_name " ---> " $single_status
+done

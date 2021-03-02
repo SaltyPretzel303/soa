@@ -7,6 +7,7 @@ namespace CommunicationModel.BrokerModels
 
 	public class ServiceEvent
 	{
+		// mac address 
 		public string source { get; set; }
 		public DateTime time { get; set; }
 

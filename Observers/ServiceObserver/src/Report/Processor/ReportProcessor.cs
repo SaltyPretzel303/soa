@@ -1,4 +1,4 @@
-using ServiceObserver.Storage;
+using ServiceObserver.Data;
 
 namespace ServiceObserver.Report.Processor
 {

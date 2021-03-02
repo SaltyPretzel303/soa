@@ -2,7 +2,7 @@ using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using ServiceObserver.Storage;
+using ServiceObserver.Data;
 using ServiceObserver.Report;
 
 namespace ServiceObserver.Configuration
@@ -35,10 +35,13 @@ namespace ServiceObserver.Configuration
 		public string observerReportTopic { get; set; }
 		public string configUpdateTopic { get; set; }
 		public string serviceLifetimeTopic { get; set; }
+		public string lifetimeEventFilter { get; set; }
 		public string serviceLogTopic { get; set; }
 		public string serviceTypeFilter { get; set; }
 
 		// rule engine
+		public int ruleEngineTriggerInterval{get;set;}
+
 		public List<Pattern> patters { get; set; }
 
 		#endregion

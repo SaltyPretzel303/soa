@@ -8,6 +8,7 @@ using SensorService.Data;
 using SensorService.Logger;
 using Microsoft.Extensions.Hosting;
 using SensorService.Broker;
+using CommunicationModel.BrokerModels;
 
 namespace SensorService
 {
@@ -16,7 +17,9 @@ namespace SensorService
 
 		// this one is ok to be kept here
 		// it is singleton anyway ... 
-		private ILogger logger;
+		// private ILogger logger;
+
+		private IServiceProvider serviceProvider;
 
 		public void ConfigureServices(IServiceCollection services)
 		{
@@ -39,8 +42,11 @@ namespace SensorService
 							IHostApplicationLifetime lifetime)
 		{
 
-			this.logger = app.ApplicationServices.GetService<ILogger>();
+			serviceProvider = app.ApplicationServices;
 
+			// this.logger = app.ApplicationServices.GetService<ILogger>();
+
+			lifetime.ApplicationStarted.Register(this.onStarted);
 			lifetime.ApplicationStopping.Register(this.onShutDown);
 
 			if (env.IsDevelopment())
@@ -56,9 +62,26 @@ namespace SensorService
 
 		}
 
+		private void onStarted()
+		{
+			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
+			if (broker != null)
+			{
+				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Startup);
+				broker.PublishLifetimeEvent(newEvent);
+			}
+		}
+
 		private void onShutDown()
 		{
-			this.logger.logMessage("Sensor is going down ... ");
+			this.serviceProvider.GetService<ILogger>()?.logMessage("Sensor is going down ... ");
+
+			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
+			if (broker != null)
+			{
+				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Shutdown);
+				broker.PublishLifetimeEvent(newEvent);
+			}
 
 			// result is not used (potential exception is handled inside the method)
 			bool unregResult = this.unregisterSensors();
@@ -81,7 +104,9 @@ namespace SensorService
 				}
 				catch (Exception e)
 				{
-					this.logger.logError($"EXCEPTION in sensor: {sensorName} unregistration: {e.Message}\n");
+					this.serviceProvider
+						.GetService<ILogger>()
+						?.logError($"EXCEPTION in sensor: {sensorName} unregistration: {e.Message}\n");
 				}
 
 			}
@@ -116,12 +141,16 @@ namespace SensorService
 
 				if (responseMessage == null)
 				{
-					this.logger.logError("Http request for sensor unregister failed ... ");
+					this.serviceProvider
+						.GetService<ILogger>()
+						?.logError("Http request for sensor unregister failed ... ");
 				}
 				else
 				{
 					// status code is not success
-					this.logger.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
+					this.serviceProvider
+						.GetService<ILogger>()
+						?.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
 				}
 
 			}

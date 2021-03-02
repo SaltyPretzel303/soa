@@ -1,6 +1,7 @@
 using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace SensorService.Configuration
 {
@@ -9,7 +10,6 @@ namespace SensorService.Configuration
 
 		private static string CONFIGURATION_PATH = "./service_config.json";
 		private static string STAGE_VAR_NAME = "stage";
-
 
 		#region  singleton specific
 		private static ServiceConfiguration instance;
@@ -63,11 +63,12 @@ namespace SensorService.Configuration
 		public int brokerPort { get; set; }
 		public string serviceLogTopic { get; set; }
 		public string sensorLogFilter { get; set; }
-		public string brokerLifetimeTopic { get; set; }
 		public string sensorReaderEventTopic { get; set; }
 		public string sensorReadEventFilter { get; set; }
 		public string brokerConfigTopic { get; set; }
 		public string brokerConfigFilter { get; set; }
+		public string serviceLifetimeTopic { get; set; }
+		public string sensorLifetimeFilter { get; set; }
 
 		#endregion
 
