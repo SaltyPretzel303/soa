@@ -17,10 +17,7 @@
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
 		"ruleEngineTriggerInterval": 5000,
-		"patterns": [
-			{},
-			{}
-		]
+		"unstableRecordsLimit": 3
 	},
 	"Production": {
 		"port": "5000",
@@ -39,9 +36,6 @@
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
 		"ruleEngineTriggerInterval": 3000,
-		"patterns": [
-			{},
-			{}
-		]
+		"unstableRecordsLimit": 3
 	}
 }

@@ -116,7 +116,7 @@ namespace ServiceObserver.Broker
 				}
 				else
 				{
-					Console.WriteLine("Conection established ... ");
+					Console.WriteLine("Connection established ... ");
 				}
 
 			});
@@ -253,7 +253,7 @@ namespace ServiceObserver.Broker
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)
 			{
-				// cancel previous conenction retries
+				// cancel previous connections retries
 				this.connectionRetryTokenSrc.Cancel();
 				if (this.connectionRetryTask != null)
 				{

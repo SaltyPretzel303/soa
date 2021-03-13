@@ -3,7 +3,6 @@ using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using ServiceObserver.Data;
-using ServiceObserver.Report;
 
 namespace ServiceObserver.Configuration
 {
@@ -40,9 +39,8 @@ namespace ServiceObserver.Configuration
 		public string serviceTypeFilter { get; set; }
 
 		// rule engine
-		public int ruleEngineTriggerInterval{get;set;}
-
-		public List<Pattern> patters { get; set; }
+		public int ruleEngineTriggerInterval { get; set; }
+		public int unstableRecordsLimit { get; set; }
 
 		#endregion
 
@@ -61,10 +59,6 @@ namespace ServiceObserver.Configuration
 				if (ServiceConfiguration.instance == null)
 				{
 					ServiceConfiguration.instance = ServiceConfiguration.readFromFile();
-				}
-				else
-				{
-					Console.WriteLine("Reading cached configuration ... ");
 				}
 
 				return ServiceConfiguration.instance;

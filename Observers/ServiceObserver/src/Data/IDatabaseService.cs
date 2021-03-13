@@ -1,5 +1,4 @@
 using Newtonsoft.Json.Linq;
-using ServiceObserver.Report;
 
 namespace ServiceObserver.Data
 {
@@ -7,8 +6,6 @@ namespace ServiceObserver.Data
 	{
 
 		void BackupConfiguration(JObject rawConfig);
-
-		void SaveEvent(ServiceEvent newEvent);
 
 	}
 }

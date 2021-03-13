@@ -28,7 +28,6 @@ DEFAULT_BROKER_PORT = 5672
 # region helper methods for resolving variables
 # priority: env_variables -> cli_input -> default_values
 
-
 def resolveAddress(cli_input):
     address = environ.get(ENV_ADDRESS)
     if(address is not None and address != ""):
@@ -43,7 +42,7 @@ def resolveAddress(cli_input):
     return DEFAULT_BROKER_ADDRESS
 
 
-def resolvePort(cli_inpupt):
+def resolvePort(cli_input):
     port = environ.get(ENV_PORT)
     if(port is not None):
         return port

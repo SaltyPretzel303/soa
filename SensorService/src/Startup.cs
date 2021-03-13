@@ -15,10 +15,6 @@ namespace SensorService
 	public class Startup
 	{
 
-		// this one is ok to be kept here
-		// it is singleton anyway ... 
-		// private ILogger logger;
-
 		private IServiceProvider serviceProvider;
 
 		public void ConfigureServices(IServiceCollection services)
@@ -43,8 +39,6 @@ namespace SensorService
 		{
 
 			serviceProvider = app.ApplicationServices;
-
-			// this.logger = app.ApplicationServices.GetService<ILogger>();
 
 			lifetime.ApplicationStarted.Register(this.onStarted);
 			lifetime.ApplicationStopping.Register(this.onShutDown);

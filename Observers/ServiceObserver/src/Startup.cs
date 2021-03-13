@@ -1,6 +1,4 @@
-﻿using System;
-using CommunicationModel.BrokerModels;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,8 +13,6 @@ namespace ServiceObserver
 	public class Startup
 	{
 
-		private IServiceProvider provider;
-
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
@@ -29,15 +25,17 @@ namespace ServiceObserver
 			services.AddTransient<IEventsCache, InMemoryEventsCache>();
 
 			services.AddMediatR(typeof(Startup));
-			services.AddTransient<RequestHandler<ConfigChangeRequest>, ConfigChangeRequestHandler>();
-			services.AddTransient<RequestHandler<SaveEventRequest>, SaveEventRequestHandler>();
+			services.AddTransient<RequestHandler<ConfigChangeRequest>,
+								 ConfigChangeRequestHandler>();
+
+			services.AddTransient<RequestHandler<SaveEventRequest>,
+			 					SaveEventRequestHandler>();
+
+			services.AddTransient<RequestHandler<UnstableServiceRequest>,
+								UnstableServiceRequestHandler>();
 
 			services.AddHostedService<BrokerEventReceiver>();
 			services.AddHostedService<PeriodicRuleEngine>();
-
-			// mockup 
-			// services.AddHostedService<EventSource>();
-			// services.AddHostedService<RuleEngine>();
 
 		}
 
@@ -45,13 +43,7 @@ namespace ServiceObserver
 		public void Configure(IApplicationBuilder app,
 							IWebHostEnvironment env,
 							IHostApplicationLifetime lifetime)
-
 		{
-
-			this.provider = app.ApplicationServices;
-
-			// lifetime.ApplicationStopping.Register(this.onShutdown);
-			// lifetime.ApplicationStarted.Register(this.onStartup);
 
 			if (env.IsDevelopment())
 			{
@@ -64,24 +56,6 @@ namespace ServiceObserver
 				endpoints.MapControllers();
 			});
 
-		}
-
-		public void onStartup()
-		{
-			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
-			if (broker != null)
-			{
-				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup));
-			}
-		}
-
-		public void onShutdown()
-		{
-			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
-			if (broker != null)
-			{
-				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Shutdown));
-			}
 		}
 
 	}

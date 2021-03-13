@@ -5,7 +5,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
-using ServiceObserver.Report;
 
 namespace ServiceObserver.Data
 {
@@ -77,11 +76,6 @@ namespace ServiceObserver.Data
 				Console.WriteLine(e.StackTrace);
 			}
 
-		}
-
-		public void SaveEvent(ServiceEvent newEvent)
-		{
-			throw new System.NotImplementedException();
 		}
 
 	}

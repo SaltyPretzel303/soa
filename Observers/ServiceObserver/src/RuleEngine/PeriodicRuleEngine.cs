@@ -22,9 +22,19 @@ namespace ServiceObserver.RuleEngine
 
 		private IEventsCache eventsCache;
 
-		public PeriodicRuleEngine(IEventsCache eventsCache)
+		private IServiceProvider serviceProvider;
+
+		public PeriodicRuleEngine(IEventsCache eventsCache,
+							IServiceProvider provider)
 		{
 			this.eventsCache = eventsCache;
+			this.serviceProvider = provider;
+
+			if (this.serviceProvider == null)
+			{
+				Console.WriteLine("Provider is null ... :(");
+			}
+
 		}
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -53,6 +63,7 @@ namespace ServiceObserver.RuleEngine
 			ISessionFactory factory = ruleRepo.Compile();
 
 			engineSession = factory.CreateSession();
+			engineSession.DependencyResolver = new AspNetCoreDepResolver(this.serviceProvider);
 
 		}
 
@@ -69,6 +80,10 @@ namespace ServiceObserver.RuleEngine
 			if (cacheContent.Count > 0)
 			{
 				Console.WriteLine($"Rule engine started with {cacheContent.Count} new items ... ");
+			}
+			else
+			{
+				Console.Write(". ");
 			}
 
 			engineSession.Fire();
