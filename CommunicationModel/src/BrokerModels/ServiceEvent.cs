@@ -8,14 +8,16 @@ namespace CommunicationModel.BrokerModels
 	public class ServiceEvent
 	{
 		// mac address 
-		public string source { get; set; }
+		public string sourceId { get; set; }
+		public ServiceType sourceType { get; set; }
+
 		public DateTime time { get; set; }
 
 		public string customMessage;
 
-		public ServiceEvent(string customMessage)
+		public ServiceEvent(ServiceType type, string customMessage)
 		{
-			this.source = NetworkInterface.
+			this.sourceId = NetworkInterface.
 							GetAllNetworkInterfaces().
 							Where((nic) =>
 							{

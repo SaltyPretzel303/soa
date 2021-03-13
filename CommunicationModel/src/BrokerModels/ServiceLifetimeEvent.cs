@@ -12,9 +12,8 @@ namespace CommunicationModel.BrokerModels
 	{
 		public LifetimeStages lifeStage;
 
-		// TODO this class should have serviceType as a field (sensor|collector| ... )
-		public ServiceLifetimeEvent(LifetimeStages eventStage, string customMessage = "") :
-				base(customMessage)
+		public ServiceLifetimeEvent(LifetimeStages eventStage, ServiceType type, string customMessage = "") :
+				base(type, customMessage)
 		{
 			this.lifeStage = eventStage;
 			this.customMessage = customMessage;
