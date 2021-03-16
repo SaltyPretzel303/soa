@@ -29,10 +29,7 @@ namespace ServiceObserver.MediatrRequests
 
 		protected override void Handle(SaveEventRequest request)
 		{
-			string txtContent = JsonConvert.SerializeObject(request.newEvent);
-
 			this.eventsCache.SaveEvent(request.newEvent);
-
 		}
 	}
 

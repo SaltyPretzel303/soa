@@ -26,7 +26,7 @@ namespace CommunicationModel.BrokerModels
 							int lastReadIndex,
 							string additionalDesc = "",
 							string customMessage = "") :
-			base(customMessage)
+			base(ServiceType.SensorReader, customMessage)
 		{
 			SensorName = sensorName;
 			LastReadIndex = lastReadIndex;

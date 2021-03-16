@@ -54,9 +54,7 @@ namespace ServiceObserver.Broker
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
 
 			this.connectionRetryTask = this.EstablishConnection(this.connectionRetryTokenSrc.Token);
-			// Console.WriteLine("Before await ... exec async ...");
 			await this.connectionRetryTask;
-			// Console.WriteLine("After await ... exec async ...");
 
 			if (this.masterToken.IsCancellationRequested)
 			{
@@ -216,7 +214,8 @@ namespace ServiceObserver.Broker
 
 				Console.WriteLine($"Received: {txtContent} ");
 
-				ServiceLifetimeEvent newEvent = JsonConvert.DeserializeObject<ServiceLifetimeEvent>(txtContent);
+				ServiceLifetimeEvent newEvent = JsonConvert
+							.DeserializeObject<ServiceLifetimeEvent>(txtContent);
 
 				this.mediator.Send(new SaveEventRequest(newEvent));
 
@@ -247,8 +246,8 @@ namespace ServiceObserver.Broker
 		public async void reload(ServiceConfiguration newConfig)
 		{
 
-			// TODO add check if this service have to be reloaded
-			// if address and port number are the same don't reload it 
+			// TODO add check if this service has to be reloaded
+			// if address and port number are the same don't reload it ...
 
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)
@@ -300,7 +299,7 @@ namespace ServiceObserver.Broker
 			this.SetupConfigEventConsumer();
 			this.SetupLifetimeEventConsumer();
 
-			Console.WriteLine("Broker event receiver reloaded ... ");
+			Console.WriteLine("BrokerEventReceiver reloaded using new config ... ");
 		}
 
 	}

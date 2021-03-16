@@ -8,7 +8,7 @@ namespace ServiceObserver.Data
 
 		void SaveEvent(ServiceEvent newEvent);
 
-		List<string> GetEvents();
+		List<ServiceEvent> GetEvents();
 
 	}
 }

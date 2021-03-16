@@ -34,8 +34,8 @@ namespace ServiceObserver.RuleEngine
 		public override void Define()
 		{
 			ServiceLifetimeEvent singleEvent = null;
-			IEnumerable<ServiceLifetimeEvent> listEvents = null;
-			IEnumerable<UnstableRecord> listRecords = null;
+			IEnumerable<ServiceLifetimeEvent> oldDownEvents = null;
+			IEnumerable<UnstableRecord> oldDownRecords = null;
 
 			IMediator mediator = null;
 
@@ -48,33 +48,30 @@ namespace ServiceObserver.RuleEngine
 					e => e.lifeStage == LifetimeStages.Shutdown
 				)
 				.Query(
-					() => listEvents,
+					() => oldDownEvents,
 					eventItem => eventItem.Match<ServiceLifetimeEvent>(
-						e => e.source == singleEvent.source,
-						e => e.lifeStage == LifetimeStages.Shutdown
+						e => e.lifeStage == LifetimeStages.Shutdown,
+						e => e.sourceId == singleEvent.sourceId
 					// e => e != singleEvent
 					)
 					.Collect()
 				)
 				.Query(
-					() => listRecords,
+					() => oldDownRecords,
 					recordItem => recordItem.Match<UnstableRecord>(
-						r => r.serviceId == singleEvent.source
+						r => r.serviceId == singleEvent.sourceId
 					)
 					.Collect()
 				);
 
 			Then()
 				.Do(ctx => PrintSingleDownEvent(singleEvent))
-				.Do(ctx => ProcessAllDownEvents(listEvents))
+				.Do(ctx => ProcessAllDownEvents(oldDownEvents))
 
-				.Do(ctx => ProcessUnstableRecords(listRecords,
-											listEvents,
+				.Do(ctx => ProcessUnstableRecords(oldDownRecords,
+											oldDownEvents,
 											ctx,
 											mediator));
-
-			// .Do(ctx => PrintSeparator());
-
 		}
 
 
@@ -104,42 +101,43 @@ namespace ServiceObserver.RuleEngine
 
 		}
 
-		private static void ProcessUnstableRecords(IEnumerable<UnstableRecord> recordsList,
+		private static void ProcessUnstableRecords(IEnumerable<UnstableRecord> oldRecords,
 										IEnumerable<ServiceLifetimeEvent> oldEvents,
 										NRules.RuleModel.IContext ctx,
 										IMediator mediator)
 		{
-			if (recordsList == null)
+			if (oldRecords == null)
 			{
 				Console.WriteLine("We got null for ListRecords ..");
 				return;
 			}
 
-			if (recordsList.Count() > 0)
+			if (oldRecords.Count() > 0)
 			{
-				if (recordsList.First().downCount < oldEvents.Count())
+				if (oldRecords.First().downCount < oldEvents.Count())
 				{
-					ctx.Retract(recordsList.First());
+					ctx.Retract(oldRecords.First());
 				}
 				else
 				{
-					Console.WriteLine("Record is already updated ... ");
+					Console.WriteLine("Record is already up to date ... ");
 					return;
 				}
 			}
 
-			UnstableRecord record = new UnstableRecord(oldEvents.First().source,
-													oldEvents.Count());
-			ctx.Insert(record);
+			UnstableRecord newRecord = new UnstableRecord(oldEvents.First().sourceId,
+													oldEvents.Count(),
+													oldEvents.ToList());
+			ctx.Insert(newRecord);
 			Console.WriteLine("\tRecord update: "
-							+ $"s.ID:{record.serviceId} been down "
-							+ $"{record.downCount}x ... ");
+							+ $"s.ID:{newRecord.serviceId} been down "
+							+ $"{newRecord.downCount}x ... ");
 
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
-			if (record.downCount >= config.unstableRecordsLimit)
+			if (newRecord.downCount >= config.unstableRecordsLimit)
 			{
-				mediator.Send(new UnstableServiceRequest(record));
+				mediator.Send(new UnstableServiceRequest(newRecord));
 			}
 
 			return;
@@ -153,7 +151,7 @@ namespace ServiceObserver.RuleEngine
 		private static string IdTimeFormat(ServiceLifetimeEvent newEvent)
 		{
 			return String.Format("ID:{0} -> TIME: {1}:{2}:{3}",
-							newEvent.source,
+							newEvent.sourceId,
 							newEvent.time.Hour,
 							newEvent.time.Minute,
 							newEvent.time.Second);

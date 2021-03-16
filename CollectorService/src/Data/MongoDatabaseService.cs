@@ -320,7 +320,7 @@ namespace CollectorService.Data
 				return;
 			}
 
-			String serviceAddr = NetworkInterface.
+			string serviceAddr = NetworkInterface.
 								GetAllNetworkInterfaces().
 								Where(nic => nic.OperationalStatus == OperationalStatus.Up
 											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
@@ -329,7 +329,8 @@ namespace CollectorService.Data
 
 			ServiceConfiguration oldOConfig = ServiceConfiguration.Instance;
 
-			IMongoCollection<BsonDocument> configCollection = this.database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
+			IMongoCollection<BsonDocument> configCollection =
+								database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
 
 			oldJConfig[oldOConfig.configBackupDateField] = DateTime.Now.ToString();
 

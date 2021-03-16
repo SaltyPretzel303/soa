@@ -37,7 +37,9 @@ namespace SensorService.Logger
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			ServiceLog newLog = new ServiceLog(error, LogLevel.Error);
+			ServiceLog newLog = new ServiceLog(ServiceType.SensorReader,
+										error,
+										LogLevel.Error);
 
 			string serializedLog = JsonSerializer.Serialize(newLog);
 
@@ -64,7 +66,9 @@ namespace SensorService.Logger
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			ServiceLog newLog = new ServiceLog(message, LogLevel.Message);
+			ServiceLog newLog = new ServiceLog(ServiceType.SensorReader,
+									message,
+									LogLevel.Message);
 
 			string serializedLog = JsonSerializer.Serialize(newLog);
 

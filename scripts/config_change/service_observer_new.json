@@ -1,7 +1,7 @@
 {
 	"stage": "Development",
 	"Development": {
-		"port": "5004",
+		"port": "5100",
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa_service_observer",
 		"observerReportsCollection": "observer_reports",

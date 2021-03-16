@@ -15,8 +15,10 @@ namespace CommunicationModel.BrokerModels
 
 		public LogLevel logLevel;
 
-		public ServiceLog(string log, LogLevel logLevel = LogLevel.Message) :
-			base(log)
+		public ServiceLog(ServiceType serviceType,
+					string log,
+					LogLevel logLevel = LogLevel.Message)
+		: base(serviceType, log)
 		{
 			this.logLevel = logLevel;
 		}

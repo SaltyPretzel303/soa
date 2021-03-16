@@ -9,11 +9,17 @@ namespace CommunicationModel.BrokerModels
 	{
 		// mac address 
 		public string sourceId { get; set; }
+
 		public ServiceType sourceType { get; set; }
 
 		public DateTime time { get; set; }
 
-		public string customMessage;
+		public string customMessage { get; set; }
+
+		public ServiceEvent()
+		{
+
+		}
 
 		public ServiceEvent(ServiceType type, string customMessage)
 		{
@@ -27,6 +33,7 @@ namespace CommunicationModel.BrokerModels
 							Select((nic) => { return nic.GetPhysicalAddress().ToString(); }).
 							FirstOrDefault();
 			this.time = DateTime.Now;
+			this.sourceType = type;
 			this.customMessage = customMessage;
 		}
 

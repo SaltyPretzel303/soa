@@ -13,6 +13,9 @@ namespace ServiceObserver.Broker
 
 		public RabbitMqBroker()
 		{
+			// it is ok to keep configuration as a field
+			// this service is registered as a transient
+			// which means it will be created/destoyed for/after every request
 			this.config = ServiceConfiguration.Instance;
 		}
 
@@ -37,6 +40,62 @@ namespace ServiceObserver.Broker
 							filter);
 		}
 
+		// public void PublishUnstableEvent(UnstableServiceEvent newEvent)
+		// {
+		// 	ConnectionFactory connFactory = new ConnectionFactory()
+		// 	{
+		// 		HostName = config.brokerAddress,
+		// 		Port = config.brokerPort
+		// 	};
+
+		// 	IConnection connection = null;
+		// 	IModel channel = null;
+
+		// 	try
+		// 	{
+
+		// 		connection = connFactory.CreateConnection();
+		// 		channel = connection.CreateModel();
+
+		// 		string txtEvent = JsonConvert.SerializeObject(newEvent);
+		// 		byte[] content = Encoding.UTF8.GetBytes(txtEvent);
+
+		// 		Console.WriteLine("Publishing: " + txtEvent);
+
+		// 		channel.ExchangeDeclare(config.observingResultsTopic,
+		// 							"topic",
+		// 							true,
+		// 							true,
+		// 							null);
+
+		// 		channel.BasicPublish(config.observingResultsTopic,
+		// 							config.observingResultsFilter,
+		// 							false,
+		// 							null,
+		// 							content);
+
+		// 	}
+		// 	catch (Exception e)
+		// 	{
+		// 		// what is @ sign for
+		// 		Console.WriteLine($@"Failed to establish connection with message broker: "
+		// 					+ $"address: {config.brokerAddress}:{config.brokerPort}, "
+		// 					+ $"reason: {e.Message} ");
+		// 	}
+		// 	finally
+		// 	{
+		// 		if (channel != null && channel.IsOpen)
+		// 		{
+		// 			channel.Close();
+		// 		}
+
+		// 		if (connection != null && connection.IsOpen)
+		// 		{
+		// 			connection.Close();
+		// 		}
+		// 	}
+		// }
+
 		private void PublishEvent(ServiceEvent newEvent,
 							string topicName,
 							string filter)
@@ -52,13 +111,14 @@ namespace ServiceObserver.Broker
 
 			try
 			{
+
+				connection = connFactory.CreateConnection();
+				channel = connection.CreateModel();
+
 				string txtEvent = JsonConvert.SerializeObject(newEvent);
 				byte[] content = Encoding.UTF8.GetBytes(txtEvent);
 
 				Console.WriteLine("Publishing: " + txtEvent);
-
-				connection = connFactory.CreateConnection();
-				channel = connection.CreateModel();
 
 				channel.ExchangeDeclare(topicName,
 									"topic",
@@ -76,7 +136,10 @@ namespace ServiceObserver.Broker
 			catch (Exception e)
 			{
 				// what is @ sign for
-				Console.WriteLine($@"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
+				Console.WriteLine($@"Failed to establish connection with message broker: "
+							+ $"address: {config.brokerAddress}:{config.brokerPort}, "
+							+ $"reason: {e.Message} ");
+
 			}
 			finally
 			{

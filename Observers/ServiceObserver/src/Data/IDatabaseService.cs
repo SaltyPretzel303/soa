@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using ServiceObserver.RuleEngine;
 
 namespace ServiceObserver.Data
 {
@@ -6,6 +7,8 @@ namespace ServiceObserver.Data
 	{
 
 		void BackupConfiguration(JObject rawConfig);
+
+		void SaveUnstableRecord(UnstableRecord newRecord);
 
 	}
 }

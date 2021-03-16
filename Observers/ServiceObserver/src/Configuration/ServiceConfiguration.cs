@@ -25,6 +25,9 @@ namespace ServiceObserver.Configuration
 		public string configurationBackupCollection { get; set; }
 		public string configBackupDateField { get; set; }
 
+		// rule engine records
+		public string unstableRecordCollection { get; set; }
+
 		// message broker
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }
@@ -37,6 +40,10 @@ namespace ServiceObserver.Configuration
 		public string lifetimeEventFilter { get; set; }
 		public string serviceLogTopic { get; set; }
 		public string serviceTypeFilter { get; set; }
+
+		// rule engine results
+		public string observingResultsTopic { get; set; }
+		public string observingResultsFilter { get; set; }
 
 		// rule engine
 		public int ruleEngineTriggerInterval { get; set; }
@@ -96,6 +103,8 @@ namespace ServiceObserver.Configuration
 			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
 		}
 
+		#region config reload
+
 		// reload specific methods
 
 		private static List<IReloadable> reloadableTargets;
@@ -110,7 +119,6 @@ namespace ServiceObserver.Configuration
 			}
 
 			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
-
 			ServiceConfiguration.Instance.writeToFile();
 
 			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
@@ -136,6 +144,8 @@ namespace ServiceObserver.Configuration
 		{
 			return JObject.FromObject(this).ToString();
 		}
+
+		#endregion
 
 	}
 }

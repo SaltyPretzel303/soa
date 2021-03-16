@@ -1,7 +1,7 @@
 {
 	"stage": "Development",
 	"Development": {
-		"port": "5004",
+		"port": "5100",
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa_service_observer",
 		"observerReportsCollection": "observer_reports",
@@ -19,7 +19,7 @@
 		"serviceTypeFilter": "service_observer",
 		"observingResultsTopic": "service_observing_results",
 		"observingResultsFilter": "service",
-		"ruleEngineTriggerInterval": 1000,
+		"ruleEngineTriggerInterval": 5000,
 		"unstableRecordsLimit": 3
 	},
 	"Production": {

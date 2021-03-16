@@ -12,11 +12,17 @@ namespace CommunicationModel.BrokerModels
 	{
 		public LifetimeStages lifeStage;
 
-		public ServiceLifetimeEvent(LifetimeStages eventStage, ServiceType type, string customMessage = "") :
+		public ServiceLifetimeEvent()
+		{
+
+		}
+
+		public ServiceLifetimeEvent(LifetimeStages eventStage,
+								ServiceType type,
+								string customMessage = "") :
 				base(type, customMessage)
 		{
 			this.lifeStage = eventStage;
-			this.customMessage = customMessage;
 		}
 	}
 }

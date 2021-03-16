@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using CommunicationModel.BrokerModels;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using NRules;
 using NRules.Fluent;
 using ServiceObserver.Configuration;
@@ -13,7 +12,7 @@ using ServiceObserver.Data;
 
 namespace ServiceObserver.RuleEngine
 {
-	public class PeriodicRuleEngine : IHostedService
+	public class PeriodicRuleEngine : IHostedService, IReloadable
 	{
 
 		private System.Timers.Timer timer;
@@ -41,6 +40,7 @@ namespace ServiceObserver.RuleEngine
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
+			ServiceConfiguration.subscribeForReload((IReloadable)this);
 
 			setupRuleEngine();
 
@@ -69,12 +69,11 @@ namespace ServiceObserver.RuleEngine
 
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
-			List<string> cacheContent = eventsCache.GetEvents();
+			List<ServiceEvent> cacheContent = eventsCache.GetEvents();
 
-			foreach (string strItem in cacheContent)
+			foreach (ServiceEvent singleEvent in cacheContent)
 			{
-				ServiceLifetimeEvent objItem = JsonConvert.DeserializeObject<ServiceLifetimeEvent>(strItem);
-				engineSession.Insert(objItem);
+				engineSession.Insert(singleEvent);
 			}
 
 			if (cacheContent.Count > 0)
@@ -83,7 +82,7 @@ namespace ServiceObserver.RuleEngine
 			}
 			else
 			{
-				Console.Write(". ");
+				Console.WriteLine(". ");
 			}
 
 			engineSession.Fire();
@@ -97,6 +96,32 @@ namespace ServiceObserver.RuleEngine
 			}
 
 			return Task.CompletedTask;
+		}
+
+		public void reload(ServiceConfiguration newConfig)
+		{
+
+			if (timer != null)
+			{
+				timer.Stop();
+			}
+
+			// currently there is no point in recreating ruleEngine
+			// it doesn't depend on current configuration
+			// rules can't be changed (each rule is a single class)
+			// setupRuleEngine();
+
+			ServiceConfiguration config = newConfig;
+
+			timer = new System.Timers.Timer();
+			timer.Interval = config.ruleEngineTriggerInterval;
+			timer.Elapsed += this.timerEvent;
+			timer.AutoReset = true;
+
+			timer.Start();
+
+			Console.WriteLine("PeriodicRuleEngine reloaded using new config ... ");
+
 		}
 	}
 }

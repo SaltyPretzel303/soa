@@ -8,7 +8,7 @@ namespace ServiceObserver.Data
 	public class InMemoryEventsCache : IEventsCache
 	{
 
-		private static List<string> Cache { get; set; }
+		private static List<ServiceEvent> Cache;
 
 		private static object rwLock;
 
@@ -16,7 +16,7 @@ namespace ServiceObserver.Data
 		{
 			if (Cache == null)
 			{
-				Cache = new List<string>();
+				Cache = new List<ServiceEvent>();
 			}
 
 			if (rwLock == null)
@@ -29,16 +29,15 @@ namespace ServiceObserver.Data
 		{
 			lock (rwLock)
 			{
-				string txtEvent = JsonConvert.SerializeObject(newEvent);
-				Cache.Add(txtEvent);
+				Cache.Add(newEvent);
 			}
 		}
 
-		public List<string> GetEvents()
+		public List<ServiceEvent> GetEvents()
 		{
 			lock (rwLock)
 			{
-				List<string> retList = new List<string>(Cache);
+				List<ServiceEvent> retList = new List<ServiceEvent>(Cache);
 				Cache.Clear();
 
 				return retList;

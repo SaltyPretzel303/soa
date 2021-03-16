@@ -1,6 +1,7 @@
 using MediatR;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
+using ServiceObserver.Data;
 
 namespace ServiceObserver.MediatrRequests
 {
@@ -17,9 +18,16 @@ namespace ServiceObserver.MediatrRequests
 	public class ConfigChangeRequestHandler : RequestHandler<ConfigChangeRequest>
 	{
 
+		private IDatabaseService db;
+
+		public ConfigChangeRequestHandler(IDatabaseService db)
+		{
+			this.db = db;
+		}
+
 		protected override void Handle(ConfigChangeRequest request)
 		{
-			ServiceConfiguration.reload(request.NewConfig);
+			ServiceConfiguration.reload(request.NewConfig, db);
 		}
 	}
 

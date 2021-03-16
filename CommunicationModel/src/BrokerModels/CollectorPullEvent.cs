@@ -10,7 +10,7 @@ namespace CommunicationModel.BrokerModels
 		public CollectorPullEvent(string sensorAddress,
 								bool success,
 								string additionalDesc = "")
-				: base(additionalDesc)
+				: base(ServiceType.DataCollector, additionalDesc)
 		{
 			this.sensorAddress = sensorAddress;
 			this.success = success;

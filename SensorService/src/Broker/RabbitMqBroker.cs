@@ -63,6 +63,7 @@ namespace SensorService.Broker
 				channel = connection.CreateModel();
 
 				string txtContent = JsonConvert.SerializeObject(serviceEvent);
+
 				byte[] content = Encoding.UTF8.GetBytes(txtContent);
 
 				channel.ExchangeDeclare(topic,

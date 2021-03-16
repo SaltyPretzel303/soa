@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
+using ServiceObserver.RuleEngine;
 
 namespace ServiceObserver.Data
 {
@@ -44,24 +45,28 @@ namespace ServiceObserver.Data
 		{
 			if (!this.createConnection())
 			{
+				// if connection fails 
 				return;
 			}
 
 			String serviceAddr = NetworkInterface.
-								GetAllNetworkInterfaces().
-								Where(nic => nic.OperationalStatus == OperationalStatus.Up
-											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
-								Select(nic => nic.GetPhysicalAddress().ToString()).
-								FirstOrDefault();
+								GetAllNetworkInterfaces()
+								.Where(nic => nic.OperationalStatus == OperationalStatus.Up
+											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+								.Select(nic => nic.GetPhysicalAddress()
+								.ToString())
+								.FirstOrDefault();
 
 			ServiceConfiguration oldObjConfig = ServiceConfiguration.Instance;
 
-			IMongoCollection<BsonDocument> configCollection = this.database.GetCollection<BsonDocument>(oldObjConfig.configurationBackupCollection);
+			IMongoCollection<BsonDocument> configCollection = database.GetCollection<BsonDocument>(oldObjConfig.configurationBackupCollection);
 
 			oldJConfig[oldObjConfig.configBackupDateField] = DateTime.Now.ToString();
 
 			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
-			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}", "old_configs", oldJConfig.ToString());
+			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}",
+										"old_configs",
+										oldJConfig.ToString());
 
 			try
 			{
@@ -78,5 +83,21 @@ namespace ServiceObserver.Data
 
 		}
 
+		public void SaveUnstableRecord(UnstableRecord newRecord)
+		{
+			if (!this.createConnection())
+			{
+				// failed to establish connection 
+				return;
+			}
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			IMongoCollection<UnstableRecord> dbCollection =
+						database.GetCollection<UnstableRecord>(config.unstableRecordCollection);
+
+			dbCollection.InsertOne(newRecord);
+
+		}
 	}
 }

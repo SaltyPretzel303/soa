@@ -28,7 +28,7 @@ namespace CommunicationModel.BrokerModels
 							string repsonseType,
 							long? responseLength,
 							string additionalDesc = "")
-				: base(additionalDesc)
+				: base(ServiceType.DataCollector, additionalDesc)
 		{
 			this.method = method;
 			this.requestPath = requestPath;

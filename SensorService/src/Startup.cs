@@ -61,7 +61,9 @@ namespace SensorService
 			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
 			if (broker != null)
 			{
-				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Startup);
+				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Startup,
+												ServiceType.SensorReader);
+
 				broker.PublishLifetimeEvent(newEvent);
 			}
 		}
@@ -73,7 +75,8 @@ namespace SensorService
 			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
 			if (broker != null)
 			{
-				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Shutdown);
+				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Shutdown,
+												ServiceType.SensorReader);
 				broker.PublishLifetimeEvent(newEvent);
 			}
 

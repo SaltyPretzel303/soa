@@ -15,7 +15,7 @@ namespace CommunicationModel.BrokerModels
 		public SensorRegistryEvent(SensorRegEventType eventType,
 								SensorRegistryRecord sensorRecord,
 								string customMessage = "") :
-				base(customMessage)
+				base(ServiceType.SensorRegistry, customMessage)
 		{
 			this.eventType = eventType;
 			this.sensorRecord = sensorRecord;
