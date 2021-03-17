@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using CollectorService.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
@@ -59,27 +60,47 @@ namespace ServiceObserver.Data
 
 			ServiceConfiguration oldObjConfig = ServiceConfiguration.Instance;
 
-			IMongoCollection<BsonDocument> configCollection = database.GetCollection<BsonDocument>(oldObjConfig.configurationBackupCollection);
+			// IMongoCollection<BsonDocument> configCollection = database.GetCollection<BsonDocument>(oldObjConfig.configurationBackupCollection);
+			IMongoCollection<ConfigBackupRecord> configCollection =
+								 database.GetCollection<ConfigBackupRecord>(oldObjConfig.configBackupCollection);
 
-			oldJConfig[oldObjConfig.configBackupDateField] = DateTime.Now.ToString();
+			// string oldTxtConfig = oldJConfig.ToString();
 
-			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
-			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}",
-										"old_configs",
-										oldJConfig.ToString());
+			DatedConfigRecord newRecord = new DatedConfigRecord(oldJConfig, DateTime.Now);
 
-			try
-			{
+			FilterDefinition<ConfigBackupRecord> filter = Builders<ConfigBackupRecord>
+											.Filter.Eq(r => r.serviceId, serviceAddr);
 
-				configCollection.UpdateOne(matchQuery, updateQuery, new UpdateOptions { IsUpsert = true });
-				// upsert true -> create document if doesn't exists
-				Console.WriteLine("Configuration backup done ... ");
+			UpdateDefinition<ConfigBackupRecord> update = Builders<ConfigBackupRecord>
+											.Update
+											.Push<DatedConfigRecord>(r => r.oldConfigs,
+																	newRecord);
 
-			}
-			catch (FormatException e)
-			{
-				Console.WriteLine(e.StackTrace);
-			}
+			configCollection.UpdateOne(filter,
+									update,
+									new UpdateOptions { IsUpsert = true });
+			// upsert -> create if doesn't exists
+
+
+			// oldJConfig[oldObjConfig.configBackupDateField] = DateTime.Now.ToString();
+
+			// string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
+			// string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}",
+			// 							"old_configs",
+			// 							oldJConfig.ToString());
+
+			// try
+			// {
+
+			// 	configCollection.UpdateOne(matchQuery, updateQuery, new UpdateOptions { IsUpsert = true });
+			// 	// upsert true -> create document if doesn't exists
+			// 	Console.WriteLine("Configuration backup done ... ");
+
+			// }
+			// catch (FormatException e)
+			// {
+			// 	Console.WriteLine(e.StackTrace);
+			// }
 
 		}
 
@@ -98,6 +119,34 @@ namespace ServiceObserver.Data
 
 			dbCollection.InsertOne(newRecord);
 
+		}
+
+		public ConfigBackupRecord getConfigs()
+		{
+			if (!this.createConnection())
+			{
+				// if connection fails 
+				return null;
+			}
+
+			String serviceAddr = NetworkInterface.
+					GetAllNetworkInterfaces()
+					.Where(nic => nic.OperationalStatus == OperationalStatus.Up
+								&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+					.Select(nic => nic.GetPhysicalAddress()
+					.ToString())
+					.FirstOrDefault();
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
+
+			IMongoCollection<ConfigBackupRecord> collection =
+							database.GetCollection<ConfigBackupRecord>(config.configBackupCollection);
+			FilterDefinition<ConfigBackupRecord> filter = Builders<ConfigBackupRecord>
+											.Filter.Eq(r => r.serviceId, serviceAddr);
+
+			ConfigBackupRecord match = collection.Find(filter).First();
+
+			return match;
 		}
 	}
 }

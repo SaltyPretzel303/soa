@@ -1,3 +1,4 @@
+using CollectorService.Data;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.RuleEngine;
 
@@ -9,6 +10,8 @@ namespace ServiceObserver.Data
 		void BackupConfiguration(JObject rawConfig);
 
 		void SaveUnstableRecord(UnstableRecord newRecord);
+
+		ConfigBackupRecord getConfigs();
 
 	}
 }

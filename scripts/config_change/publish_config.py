@@ -23,7 +23,7 @@ parser.add_argument("--topic",
 parser.add_argument("--route",
                     dest="route",
                     required=True,
-                    help="SensorService route - reader; RegistryService route - registry; CollectorService route - collector")
+                    help="SensorService route - reader; RegistryService route - registry; CollectorService route - collector; ServicObserver - service_observer")
 parser.add_argument("--file",
                     dest="file",
                     required=True,

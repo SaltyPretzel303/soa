@@ -89,15 +89,16 @@ namespace CollectorService.Data
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			IMongoCollection<BsonDocument> sensorsCollection = this.database.GetCollection<BsonDocument>(config.sensorsCollection);
-			List<BsonDocument> temp_cache = sensorsCollection.FindSync(_ => true).ToList();
+			IMongoCollection<BsonDocument> sensorsCollection =
+							 this.database.GetCollection<BsonDocument>(config.sensorsCollection);
+			List<BsonDocument> tempCache = sensorsCollection.FindSync(_ => true).ToList();
 
-			JsonWriterSettings json_settings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+			JsonWriterSettings jsonSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
 			// use this settings to deal with bson document specific "objects"
 
-			foreach (BsonDocument bson_sample in temp_cache)
+			foreach (BsonDocument bsonSample in tempCache)
 			{
-				JObject json_sample = JObject.Parse(bson_sample.ToJson<BsonDocument>(json_settings));
+				JObject json_sample = JObject.Parse(bsonSample.ToJson<BsonDocument>(jsonSettings));
 
 				ret_list.Add(json_sample);
 			}

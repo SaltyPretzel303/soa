@@ -22,7 +22,7 @@ namespace ServiceObserver.Configuration
 		public string dbAddress { get; set; }
 		public string dbName { get; set; }
 		public string observerReportsCollection { get; set; }
-		public string configurationBackupCollection { get; set; }
+		public string configBackupCollection { get; set; }
 		public string configBackupDateField { get; set; }
 
 		// rule engine records

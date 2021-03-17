@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using CollectorService.Data;
+using CommunicationModel.RestModels;
 using Microsoft.AspNetCore.Mvc;
 using ServiceObserver.Data;
 
@@ -31,11 +35,30 @@ namespace ServiceObserver.Controller
 		}
 
 		[HttpGet]
-		[Route("fromDate")]
-		public IActionResult getFromDate([FromQuery] )
+		[Route("getConfig")]
+		public IActionResult getConfigs()
 		{
+			ConfigBackupRecord record = db.getConfigs();
 
-			return StatusCode(500);
+			if (record != null)
+			{
+
+				Console.WriteLine("Record is not null ... ");
+				List<ConfigRecord> resultList = new List<ConfigRecord>();
+
+				foreach (DatedConfigRecord singleConfRec in record.oldConfigs)
+				{
+					resultList.Add(new ConfigRecord(singleConfRec.AsJsonConfig().ToString(),
+													singleConfRec.backupDate));
+				}
+
+				return new OkObjectResult(resultList);
+			}
+			else
+			{
+				Console.WriteLine("Record is null ... ");
+				return StatusCode(500);
+			}
 		}
 
 		[HttpGet]
