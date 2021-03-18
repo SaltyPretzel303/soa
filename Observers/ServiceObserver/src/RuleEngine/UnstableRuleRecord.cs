@@ -4,7 +4,7 @@ using CommunicationModel.BrokerModels;
 
 namespace ServiceObserver.RuleEngine
 {
-	public class UnstableRecord
+	public class UnstableRuleRecord
 	{
 
 		public DateTime time { get; set; }
@@ -14,18 +14,17 @@ namespace ServiceObserver.RuleEngine
 
 		public List<ServiceLifetimeEvent> downEvents;
 
-		public UnstableRecord(string serviceId, int downCount, List<ServiceLifetimeEvent> downEvents)
+		public UnstableRuleRecord(string serviceId,
+						int downCount,
+						List<ServiceLifetimeEvent> downEvents,
+						DateTime time)
 		{
 			this.serviceId = serviceId;
 			this.downCount = downCount;
 			this.downEvents = downEvents;
 
-			this.time = DateTime.Now;
+			this.time = time;
 		}
 
-		public UnstableRecord()
-		{
-			downEvents = new List<ServiceLifetimeEvent>();
-		}
 	}
 }

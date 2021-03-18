@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using CollectorService.Data;
+using CommunicationModel.RestModels;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.RuleEngine;
 
@@ -9,9 +11,15 @@ namespace ServiceObserver.Data
 
 		void BackupConfiguration(JObject rawConfig);
 
-		void SaveUnstableRecord(UnstableRecord newRecord);
+		void SaveUnstableRecord(UnstableRuleRecord newRecord);
 
-		ConfigBackupRecord getConfigs();
+		ConfigBackupRecord GetConfigs();
+
+		List<UnstableServiceDbRecord> GetAllUnstableRecords();
+
+		List<UnstableServiceDbRecord> GetUnstableRecordsForService(string serviceId);
+
+		UnstableServiceDbRecord GetLatestRecord();
 
 	}
 }

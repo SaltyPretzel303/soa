@@ -9,7 +9,7 @@
 			"To": 2
 		},
 		"readInterval": 10000,
-		"listeningPort": 5005,
+		"listeningPort": 5001,
 		"sensorNamePrefix": "sensor_",
 		"registerSensorDelay": 2000,
 		"registryAddress": "localhost",

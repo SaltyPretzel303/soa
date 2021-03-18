@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using CollectorService.Data;
+using CommunicationModel.RestModels;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
@@ -16,14 +18,15 @@ namespace ServiceObserver.Data
 		public MongoClient client { get; private set; }
 		public IMongoDatabase database { get; private set; }
 
+		public ServiceConfiguration config;
+
 		public MongoStorage()
 		{
+			this.config = ServiceConfiguration.Instance;
 		}
 
 		private bool createConnection()
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
 			this.client = new MongoClient(config.dbAddress);
 
 			if (this.client != null)
@@ -58,13 +61,10 @@ namespace ServiceObserver.Data
 								.ToString())
 								.FirstOrDefault();
 
-			ServiceConfiguration oldObjConfig = ServiceConfiguration.Instance;
-
-			// IMongoCollection<BsonDocument> configCollection = database.GetCollection<BsonDocument>(oldObjConfig.configurationBackupCollection);
+			// at this point this.config still contains the old config. 
 			IMongoCollection<ConfigBackupRecord> configCollection =
-								 database.GetCollection<ConfigBackupRecord>(oldObjConfig.configBackupCollection);
-
-			// string oldTxtConfig = oldJConfig.ToString();
+								 database.GetCollection<ConfigBackupRecord>(
+									 			config.configBackupCollection);
 
 			DatedConfigRecord newRecord = new DatedConfigRecord(oldJConfig, DateTime.Now);
 
@@ -76,35 +76,13 @@ namespace ServiceObserver.Data
 											.Push<DatedConfigRecord>(r => r.oldConfigs,
 																	newRecord);
 
-			configCollection.UpdateOne(filter,
-									update,
+			configCollection.UpdateOne(filter, update,
 									new UpdateOptions { IsUpsert = true });
 			// upsert -> create if doesn't exists
 
-
-			// oldJConfig[oldObjConfig.configBackupDateField] = DateTime.Now.ToString();
-
-			// string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
-			// string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}",
-			// 							"old_configs",
-			// 							oldJConfig.ToString());
-
-			// try
-			// {
-
-			// 	configCollection.UpdateOne(matchQuery, updateQuery, new UpdateOptions { IsUpsert = true });
-			// 	// upsert true -> create document if doesn't exists
-			// 	Console.WriteLine("Configuration backup done ... ");
-
-			// }
-			// catch (FormatException e)
-			// {
-			// 	Console.WriteLine(e.StackTrace);
-			// }
-
 		}
 
-		public void SaveUnstableRecord(UnstableRecord newRecord)
+		public void SaveUnstableRecord(UnstableRuleRecord newRecord)
 		{
 			if (!this.createConnection())
 			{
@@ -112,16 +90,20 @@ namespace ServiceObserver.Data
 				return;
 			}
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			UnstableServiceDbRecord dbRecord = new UnstableServiceDbRecord(
+															newRecord.serviceId,
+															newRecord.downCount,
+															newRecord.downEvents,
+															newRecord.time);
 
-			IMongoCollection<UnstableRecord> dbCollection =
-						database.GetCollection<UnstableRecord>(config.unstableRecordCollection);
+			IMongoCollection<UnstableServiceDbRecord> dbCollection =
+						database.GetCollection<UnstableServiceDbRecord>(
+												config.unstableRecordCollection);
 
-			dbCollection.InsertOne(newRecord);
-
+			dbCollection.InsertOne(dbRecord);
 		}
 
-		public ConfigBackupRecord getConfigs()
+		public ConfigBackupRecord GetConfigs()
 		{
 			if (!this.createConnection())
 			{
@@ -147,6 +129,66 @@ namespace ServiceObserver.Data
 			ConfigBackupRecord match = collection.Find(filter).First();
 
 			return match;
+		}
+
+		public List<UnstableServiceDbRecord> GetAllUnstableRecords()
+		{
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
+			IMongoCollection<UnstableServiceDbRecord> dbCollection =
+						database.GetCollection<UnstableServiceDbRecord>(
+												config.unstableRecordCollection);
+
+			return dbCollection.Find<UnstableServiceDbRecord>(new BsonDocument())
+							.ToList<UnstableServiceDbRecord>();
+		}
+
+		public List<UnstableServiceDbRecord> GetUnstableRecordsForService(string serviceId)
+		{
+
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
+			IMongoCollection<UnstableServiceDbRecord> dbCollection =
+						database.GetCollection<UnstableServiceDbRecord>(
+									config.unstableRecordCollection);
+
+			FilterDefinition<UnstableServiceDbRecord> filter =
+								Builders<UnstableServiceDbRecord>
+								.Filter.Eq(r => r.serviceId, serviceId);
+
+			List<UnstableServiceDbRecord> result = dbCollection
+										.Find<UnstableServiceDbRecord>(filter)
+										.ToList<UnstableServiceDbRecord>();
+
+
+			return result;
+		}
+
+		public UnstableServiceDbRecord GetLatestRecord()
+		{
+			if (!this.createConnection())
+			{
+				return null;
+			}
+
+			IMongoCollection<UnstableServiceDbRecord> dbCollection =
+						database.GetCollection<UnstableServiceDbRecord>(
+									config.unstableRecordCollection);
+
+			BsonDocument allFilter = new BsonDocument();
+
+			UnstableServiceDbRecord dbRecord = dbCollection
+							.Find<UnstableServiceDbRecord>(allFilter)
+							.SortByDescending(r => r.recordedTime)
+							.First<UnstableServiceDbRecord>();
+
+			return dbRecord;
 		}
 	}
 }

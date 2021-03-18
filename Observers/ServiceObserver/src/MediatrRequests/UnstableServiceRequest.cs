@@ -9,9 +9,9 @@ namespace ServiceObserver.MediatrRequests
 {
 	public class UnstableServiceRequest : IRequest
 	{
-		public UnstableRecord record;
+		public UnstableRuleRecord record;
 
-		public UnstableServiceRequest(UnstableRecord record)
+		public UnstableServiceRequest(UnstableRuleRecord record)
 		{
 			this.record = record;
 		}
@@ -37,9 +37,6 @@ namespace ServiceObserver.MediatrRequests
 
 			db.SaveUnstableRecord(request.record);
 
-			// broker.PublishUnstableEvent(new UnstableServiceEvent(request.record.serviceId,
-			// 										request.record.downCount,
-			// 										request.record.downEvents));
 		}
 	}
 

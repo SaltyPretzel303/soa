@@ -27,22 +27,89 @@ namespace ServiceObserver.Controller
 		}
 
 		[HttpGet]
-		[Route("all")]
-		public IActionResult getAllEvents()
+		[Route("getAll")]
+		public IActionResult getAllUnstableEvents()
 		{
+			List<UnstableServiceDbRecord> dbRecords = db.GetAllUnstableRecords();
 
-			return StatusCode(500);
+			if (dbRecords != null)
+			{
+				List<UnstableServiceRecord> resList = new List<UnstableServiceRecord>();
+
+				foreach (UnstableServiceDbRecord dbRecord in dbRecords)
+				{
+					resList.Add(new UnstableServiceRecord(dbRecord.serviceId,
+													dbRecord.downCount,
+													dbRecord.downEvents,
+													dbRecord.recordedTime));
+				}
+
+				return new OkObjectResult(resList);
+			}
+			else
+			{
+				return StatusCode(500);
+			}
 		}
 
 		[HttpGet]
-		[Route("getConfig")]
+		[Route("getForService")]
+		public IActionResult getUnstableEventsForService([FromQuery] string serviceId)
+		{
+			List<UnstableServiceDbRecord> dbRecords = db.GetUnstableRecordsForService(serviceId);
+
+			if (dbRecords != null)
+			{
+				List<UnstableServiceRecord> resList = new List<UnstableServiceRecord>();
+
+				foreach (UnstableServiceDbRecord dbRecord in dbRecords)
+				{
+					resList.Add(new UnstableServiceRecord(dbRecord.serviceId,
+													dbRecord.downCount,
+													dbRecord.downEvents,
+													dbRecord.recordedTime));
+				}
+
+				return new OkObjectResult(resList);
+			}
+			else
+			{
+				return StatusCode(500);
+			}
+		}
+
+		[HttpGet]
+		[Route("getLatest")]
+		public IActionResult getLatestUnstableEvent()
+		{
+
+			UnstableServiceDbRecord dbRecord = db.GetLatestRecord();
+
+			if (dbRecord != null)
+			{
+
+				UnstableServiceRecord resRecord = new UnstableServiceRecord(
+													dbRecord.serviceId,
+													dbRecord.downCount,
+													dbRecord.downEvents,
+													dbRecord.recordedTime);
+				return new OkObjectResult(resRecord);
+			}
+			else
+			{
+				return StatusCode(500);
+			}
+
+		}
+
+		[HttpGet]
+		[Route("getOldConfig")]
 		public IActionResult getConfigs()
 		{
-			ConfigBackupRecord record = db.getConfigs();
+			ConfigBackupRecord record = db.GetConfigs();
 
 			if (record != null)
 			{
-
 				Console.WriteLine("Record is not null ... ");
 				List<ConfigRecord> resultList = new List<ConfigRecord>();
 
@@ -60,15 +127,6 @@ namespace ServiceObserver.Controller
 				return StatusCode(500);
 			}
 		}
-
-		[HttpGet]
-		[Route("latest")]
-		public IActionResult getLatest()
-		{
-
-			return StatusCode(500);
-		}
-
 
 	}
 }

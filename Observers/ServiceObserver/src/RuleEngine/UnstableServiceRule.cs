@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CommunicationModel.BrokerModels;
 using MediatR;
-using Newtonsoft.Json;
 using NRules.Fluent.Dsl;
 using ServiceObserver.Configuration;
 using ServiceObserver.MediatrRequests;
@@ -13,29 +12,11 @@ namespace ServiceObserver.RuleEngine
 	public class UnstableServiceRule : Rule
 	{
 
-		// original template
-		// When()
-		// 	.Match<ServiceLifetimeEvent>(
-		// 		() => newEvent,
-		// 		e => e.lifeStage == LifetimeStages.Shutdown)
-		// 	.Query(
-		// 		() => oldEvents,
-		// 		singleEvent => singleEvent.Match<ServiceLifetimeEvent>(
-		// 			e => e.lifeStage == LifetimeStages.Shutdown,
-		// 			e => e.source == newEvent.source,
-		// 			e => e != newEvent
-		// 		)
-		// 		.Collect()
-		// 	);
-
-		// Then()
-		// 	.Do(ctx => MultiPrint(newEvent, oldEvents));
-
 		public override void Define()
 		{
 			ServiceLifetimeEvent singleEvent = null;
 			IEnumerable<ServiceLifetimeEvent> oldDownEvents = null;
-			IEnumerable<UnstableRecord> oldDownRecords = null;
+			IEnumerable<UnstableRuleRecord> oldDownRecords = null;
 
 			IMediator mediator = null;
 
@@ -58,7 +39,7 @@ namespace ServiceObserver.RuleEngine
 				)
 				.Query(
 					() => oldDownRecords,
-					recordItem => recordItem.Match<UnstableRecord>(
+					recordItem => recordItem.Match<UnstableRuleRecord>(
 						r => r.serviceId == singleEvent.sourceId
 					)
 					.Collect()
@@ -101,7 +82,7 @@ namespace ServiceObserver.RuleEngine
 
 		}
 
-		private static void ProcessUnstableRecords(IEnumerable<UnstableRecord> oldRecords,
+		private static void ProcessUnstableRecords(IEnumerable<UnstableRuleRecord> oldRecords,
 										IEnumerable<ServiceLifetimeEvent> oldEvents,
 										NRules.RuleModel.IContext ctx,
 										IMediator mediator)
@@ -125,9 +106,10 @@ namespace ServiceObserver.RuleEngine
 				}
 			}
 
-			UnstableRecord newRecord = new UnstableRecord(oldEvents.First().sourceId,
+			UnstableRuleRecord newRecord = new UnstableRuleRecord(oldEvents.First().sourceId,
 													oldEvents.Count(),
-													oldEvents.ToList());
+													oldEvents.ToList(),
+													DateTime.Now);
 			ctx.Insert(newRecord);
 			Console.WriteLine("\tRecord update: "
 							+ $"s.ID:{newRecord.serviceId} been down "

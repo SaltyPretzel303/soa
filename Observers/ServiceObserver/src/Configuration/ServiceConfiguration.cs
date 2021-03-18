@@ -111,8 +111,6 @@ namespace ServiceObserver.Configuration
 
 		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
 		{
-
-			// backup old configuration
 			if (backupDatabase != null)
 			{
 				backupDatabase.BackupConfiguration(ServiceConfiguration.Instance.rawJConfig);
@@ -125,7 +123,6 @@ namespace ServiceObserver.Configuration
 			{
 				target.reload(ServiceConfiguration.Instance);
 			}
-
 		}
 
 		public static void subscribeForReload(IReloadable reloadableTarget)

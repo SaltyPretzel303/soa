@@ -12,11 +12,6 @@ namespace CommunicationModel.BrokerModels
 	{
 		public LifetimeStages lifeStage;
 
-		public ServiceLifetimeEvent()
-		{
-
-		}
-
 		public ServiceLifetimeEvent(LifetimeStages eventStage,
 								ServiceType type,
 								string customMessage = "") :
