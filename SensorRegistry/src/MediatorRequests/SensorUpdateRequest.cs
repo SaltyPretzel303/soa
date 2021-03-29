@@ -17,24 +17,32 @@ namespace SensorRegistry.MediatorRequests
 	public class SensorUpdateRequestHandler : RequestHandler<SensorUpdateRequest>
 	{
 
-		private ISensorRegistry localRegistry;
+		private ISensorRegistry LocalRegistry;
 
 		public SensorUpdateRequestHandler(ISensorRegistry localRegistry)
 		{
-			this.localRegistry = localRegistry;
+			this.LocalRegistry = localRegistry;
 		}
 
 		protected override void Handle(SensorUpdateRequest request)
 		{
-			RegistryResponse regResponse = this.localRegistry.getSensorRecord(request.NewEvent.SensorName);
+			RegistryResponse regResponse = this.LocalRegistry
+					.getSensorRecord(request.NewEvent.SensorName);
 
 			if (regResponse.status == RegistryStatus.ok)
 			{
 				regResponse.singleData.AvailableRecords = request.NewEvent.LastReadIndex;
-				this.localRegistry.updateSensorRecord(regResponse.singleData.Name,
-													regResponse.singleData.Address,
-													regResponse.singleData.Port,
-													regResponse.singleData.AvailableRecords);
+				this.LocalRegistry.updateSensorRecord(regResponse.singleData.Name,
+										regResponse.singleData.Address,
+										regResponse.singleData.Port,
+										regResponse.singleData.AvailableRecords);
+			}
+			else if (regResponse.status == RegistryStatus.noSuchRecord)
+			{
+				this.LocalRegistry.addSensorRecord(request.NewEvent.SensorName,
+										request.NewEvent.IpAddress,
+										request.NewEvent.ListeningPort,
+										request.NewEvent.LastReadIndex);
 			}
 		}
 

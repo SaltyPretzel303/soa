@@ -39,7 +39,10 @@ namespace SensorService.Configuration
 		public string sampleExtension { get; set; }
 		public FromTo sensorsRange { get; set; }
 		public int readInterval { get; set; }
+
 		public int listeningPort { get; set; }
+		public string hostIP { get; set; }
+
 		public string sensorNamePrefix { get; set; }
 		public int registerSensorDelay { get; set; }
 		public string registryAddress { get; set; }
@@ -48,9 +51,6 @@ namespace SensorService.Configuration
 		public string unregisterSensorPath { get; set; }
 		public string updateSensorPath { get; set; }
 		public string sensorNameField { get; set; }
-		public string sensorAddrField { get; set; }
-		public string portNumField { get; set; }
-		public string readIndexField { get; set; }
 
 		public string consoleLogLevel { get; set; }
 		public string logErrorLevel { get; set; }

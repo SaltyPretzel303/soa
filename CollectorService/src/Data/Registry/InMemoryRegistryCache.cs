@@ -48,7 +48,7 @@ namespace CollectorService.Data.Registry
 				Console.WriteLine($"Exception occured while pulling active sensors records: {e.Message}");
 			}
 
-			if (responseMessage != null 
+			if (responseMessage != null
 			&& responseMessage.IsSuccessStatusCode)
 			{
 				string txtContent = responseMessage.Content.ReadAsStringAsync().Result;

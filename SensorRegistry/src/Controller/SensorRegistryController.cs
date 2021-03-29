@@ -16,69 +16,53 @@ namespace SensorRegistry.Controller
 	public class SensorRegistryController
 	{
 
-		// used to get ip and port of request source
-		private IHttpContextAccessor httpContext;
-
 		private ISensorRegistry sensorRegistry;
 		private IMessageBroker broker;
 
-		public SensorRegistryController(IHttpContextAccessor httpContext,
-									ISensorRegistry sensorRegistry,
+		public SensorRegistryController(ISensorRegistry sensorRegistry,
 									IMessageBroker broker)
 		{
-			this.httpContext = httpContext;
 			this.sensorRegistry = sensorRegistry;
-
 			this.broker = broker;
 		}
 
-		// TODO should be post
-		// problem, extract 2 arguments (1 is ok ... ) 
-		[HttpGet]
-		[Route("registerSensor")]
-		public IActionResult registerSensor([FromQuery] string sensorName,
-										[FromQuery] int portNum,
-										[FromQuery] int lastReadIndex)
+		[HttpPost]
+		[Route("addSensor")]
+		public IActionResult postSensor([FromBody] SensorDataArg reqArg)
 		{
 
-			// sensor ip is extracted from request
-			string sensorIp = this.httpContext.
-								HttpContext.
-								Connection.
-								RemoteIpAddress.
-								MapToIPv4().
-								ToString();
+			Console.WriteLine("Sensor registration trough post request ... ");
+			Console.WriteLine("Data: "
+						+ $"Name: {reqArg.SensorName}"
+						+ $"PortNum: {reqArg.PortNum}"
+						+ $"Ip: {reqArg.IpAddress}");
 
-			Console.WriteLine($"Request to register sensor: {sensorName}, with: {sensorIp}:{portNum}");
+			RegistryResponse response = sensorRegistry.addSensorRecord(reqArg.SensorName,
+														reqArg.IpAddress,
+														reqArg.PortNum,
+														reqArg.LastReadIndex);
 
-			RegistryResponse response = this.sensorRegistry.addSensorRecord(sensorName,
-																		sensorIp,
-																		portNum,
-																		lastReadIndex);
 			if (response.status == RegistryStatus.ok)
 			{
 				return new OkObjectResult(response.singleData);
 			}
 
 			return new BadRequestObjectResult("Registry response: " + response.status.ToString());
+
 		}
 
-		// TODO should be post
-		// problem, same as with registerSenosor
-		[HttpGet]
+		[HttpPost]
 		[Route("updateSensor")]
-		public IActionResult updateSensor([FromQuery] string sensorName,
-										[FromQuery] string sensorAddr,
-										[FromQuery] int portNum,
-										[FromQuery] int lastReadIndex)
+		public IActionResult updateSensor([FromBody] SensorDataArg reqArg)
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
-			RegistryResponse response = this.sensorRegistry.updateSensorRecord(sensorName,
-																			sensorAddr,
-																			portNum,
-																			lastReadIndex);
+			RegistryResponse response = sensorRegistry.updateSensorRecord(reqArg.SensorName,
+															reqArg.IpAddress,
+															reqArg.PortNum,
+															reqArg.LastReadIndex);
+
 			if (response.status == RegistryStatus.ok)
 			{
 				return new OkObjectResult(response.singleData);
@@ -88,14 +72,12 @@ namespace SensorRegistry.Controller
 
 		}
 
-		[HttpGet]
-		[Route("unregisterSensor")]
-		public IActionResult unregisterSensor([FromQuery] string sensorName)
+		[HttpDelete]
+		[Route("deleteSensor")]
+		public IActionResult delete([FromQuery] string sensorName)
 		{
 
-			string sensorIp = this.httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-			Console.WriteLine($"Request to unregister sensor: {sensorName}, with {sensorIp}");
+			Console.WriteLine($"Request to delete sensor: {sensorName} ... ");
 			RegistryResponse response = this.sensorRegistry.removeSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{

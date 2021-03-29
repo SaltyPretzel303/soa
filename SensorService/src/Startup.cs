@@ -28,11 +28,14 @@ namespace SensorService
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 
-			services.AddHostedService<RegistrationService>();
+			// sensor is gonna be registered once registry recives SensorLifetimeEvent
+			// or any other sensorReader update
+			// trying to register sensor using restApi is not necessary
+			// services.AddHostedService<RegistrationService>();
+
 			services.AddHostedService<SensorReader>();
 		}
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app,
 							IWebHostEnvironment env,
 							IHostApplicationLifetime lifetime)
@@ -58,35 +61,60 @@ namespace SensorService
 
 		private void onStarted()
 		{
+
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
-			if (broker != null)
+
+			for (int sensorIndex = config.sensorsRange.From;
+					sensorIndex < config.sensorsRange.To;
+					sensorIndex++)
 			{
-				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Startup,
-												ServiceType.SensorReader);
+				string sensorName = config.sensorNamePrefix + sensorIndex;
+				var newEvent = new SensorLifetimeEvent(LifetimeStages.Startup,
+											sensorName,
+											config.hostIP,
+											config.listeningPort,
+											0);
 
 				broker.PublishLifetimeEvent(newEvent);
 			}
+
 		}
 
 		private void onShutDown()
 		{
-			this.serviceProvider.GetService<ILogger>()?.logMessage("Sensor is going down ... ");
+			this.serviceProvider.GetService<ILogger>()
+								?.logMessage("Sensor is going down ... ");
 
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
-			if (broker != null)
+			IDataCacheManager cache = serviceProvider.GetService<IDataCacheManager>();
+
+			for (int sensorIndex = config.sensorsRange.From;
+					sensorIndex < config.sensorsRange.To;
+					sensorIndex++)
 			{
-				var newEvent = new ServiceLifetimeEvent(LifetimeStages.Shutdown,
-												ServiceType.SensorReader);
+				string sensorName = config.sensorNamePrefix + sensorIndex;
+				var newEvent = new SensorLifetimeEvent(LifetimeStages.Shutdown,
+											sensorName,
+											config.hostIP,
+											config.listeningPort,
+											cache.GetLastReadIndex(sensorName));
+
 				broker.PublishLifetimeEvent(newEvent);
 			}
 
+
+			// next line will unregister this sensor using sensorRegistry restAPI
+			// it is not necessary because sensor is gonna be unregistered once 
+			// registry receives it's lifetime event with shutdown 'flag'
+
 			// result is not used (potential exception is handled inside the method)
-			bool unregResult = this.unregisterSensors();
+			// bool unregResult = this.unregisterSensors();
 		}
 
 		private bool unregisterSensors()
 		{
-
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			for (int sensorIndex = conf.sensorsRange.From;
@@ -101,8 +129,7 @@ namespace SensorService
 				}
 				catch (Exception e)
 				{
-					this.serviceProvider
-						.GetService<ILogger>()
+					this.serviceProvider.GetService<ILogger>()
 						?.logError($"EXCEPTION in sensor: {sensorName} unregistration: {e.Message}\n");
 				}
 
@@ -118,18 +145,20 @@ namespace SensorService
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 
 			// e.g. http://localhost/sensor/registry/unregisterSensor?sensorName="sensor_1"
-			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.unregisterSensorPath}?{conf.sensorNameField}={sensorName}";
+			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/"
+								+ $"{conf.unregisterSensorPath}?"
+								+ $"{conf.sensorNameField}={sensorName}";
 
 			HttpClient httpClient = new HttpClient();
 
-			Console.WriteLine("Unregister request sent ... ");
-			HttpResponseMessage responseMessage = httpClient.GetAsync(addr).Result; // .Result is going to force blocking execution
-			Console.WriteLine("Sensor successfully unregistered ...  ");
+			HttpResponseMessage responseMessage = httpClient.DeleteAsync(addr).Result;
+			// .Result is going to force blocking/sync execution	
 
 			bool retValue = false;
 			if (responseMessage != null
 				&& responseMessage.IsSuccessStatusCode)
 			{
+				Console.WriteLine("Sensor successfully unregistered ...  ");
 				retValue = true;
 			}
 			else
@@ -147,7 +176,8 @@ namespace SensorService
 					// status code is not success
 					this.serviceProvider
 						.GetService<ILogger>()
-						?.logError("Http response for sensorUnregister filed: " + responseMessage.ReasonPhrase);
+						?.logError("Http response for sensorUnregister filed: "
+							+ responseMessage.ReasonPhrase);
 				}
 
 			}

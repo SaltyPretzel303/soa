@@ -5,8 +5,12 @@ num_of_instances="2"
 proc_per_instance="3"
 data_path="/home/nemanja/workspace/soa/SensorService/data"
 
+NETWORK="soa_default"
+IP_SUBNET="172.19.1"
+
 sensor_name_prefix="soa-sensor-"
 
+# validate cli arguments
 if [ "$#" -eq "0" ]
 then 
 	echo "Taking default values for arguments ... "
@@ -74,12 +78,14 @@ do
 	last_data_ind=$(($data_index+$proc_per_instance-1))
 	echo "Starting container $sensor_name_prefix$container_ind with data: $data_index - $last_data_ind" 
 
-				# --rm \ 
+	container_ip="$IP_SUBNET.$container_ind"
+
 	docker run -d \
 				--name "$sensor_name_prefix$container_ind" \
-				--volume "$data_path":/data \
-				--network soa_default \
-				 soa/sensor-service "$proc_per_instance" "$data_index"
+				--volume "$data_path:/data" \
+				--network "$NETWORK" \
+				--ip "$container_ip" \
+				 soa/sensor-service "$proc_per_instance" "$data_index" "$container_ip"
 
 	data_index=$(($data_index+$proc_per_instance))
 

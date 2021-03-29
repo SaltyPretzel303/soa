@@ -29,16 +29,12 @@ COPY SensorService/DistributionProgram ./
 COPY SensorService/service_config.json ./config_template.json
 
 # data is going to be accessed from mounted volume
-# used to speed up build process
+# used to speed up a build process
 # COPY SensorService/data /data
 
 # generate specific config for each sensor program instance
 # RUN /DistributionProgram/DistributionScript.sh
 
 EXPOSE 5000
-
-# ENTRYPOINT [ "/bin/bash" ]
-# ENTRYPOINT ["bash", "/DistributionProgram/DistributionScript.sh"]
-# ENTRYPOINT ["dotnet","/sensors/sensor_0/SensorService.dll"]
 
 ENTRYPOINT ["bash", "/DistributionProgram/StartSensors.sh"]

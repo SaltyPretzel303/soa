@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using CommunicationModel.RestModels;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using SensorService.Configuration;
 using SensorService.Logger;
 
@@ -44,10 +47,12 @@ namespace SensorService
 
 			this.httpClient = new HttpClient();
 
+			this.TryToRegister(null, null);
+
 			if (this.waitingSensors.Count > 0)
 			{
 				this.timer = new System.Timers.Timer();
-				this.timer.Elapsed += this.TimerEvent;
+				this.timer.Elapsed += this.TryToRegister;
 				this.timer.Interval = conf.registerSensorDelay;
 				this.timer.AutoReset = true;
 				this.timer.Start();
@@ -57,7 +62,7 @@ namespace SensorService
 		}
 
 		// this will be executed repeatedly until all of the "sensors" are registered
-		private void TimerEvent(Object source, ElapsedEventArgs args)
+		private void TryToRegister(Object source, ElapsedEventArgs args)
 		{
 
 			bool regResult = false;
@@ -74,11 +79,18 @@ namespace SensorService
 					this.waitingSensors.Remove(currentSensor);
 					i--;
 				}
+				else
+				{
+					this.logger.logError($"Failed to register {currentSensor} ... ");
+				}
 			}
 
 			if (this.waitingSensors.Count == 0)
 			{
-				this.timer.Stop();
+				if (this.timer != null)
+				{
+					this.timer.Stop();
+				}
 			}
 
 		}
@@ -89,19 +101,32 @@ namespace SensorService
 
 			int lastReadIndex = this.dataCache.GetLastReadIndex(sensorName);
 
-			// e.g. http://localhost/sensor/registry/registerSensor?sensorName="sensor_1"&portNum=5050&lastReadIndex=12
-			string addr = $"http://{conf.registryAddress}:{conf.registryPort}/{conf.registerSensorPath}?{conf.sensorNameField}={sensorName}&{conf.portNumField}={conf.listeningPort}&{conf.readIndexField}={lastReadIndex}";
+			// e.g. http://localhost/sensor/registry/addSensor
+			string postAddr = $"http://{conf.registryAddress}:{conf.registryPort}/"
+					+ $"{conf.registerSensorPath}";
+
+			SensorDataArg reqArg = new SensorDataArg(sensorName,
+													conf.hostIP,
+													conf.listeningPort,
+													lastReadIndex);
+			string stringReqArg = JsonConvert.SerializeObject(reqArg);
+			Console.WriteLine($"Trying to register with: {stringReqArg} on: {postAddr} ... ");
 
 			// this method could possibly throw exception 
 			HttpResponseMessage responseMessage = null;
 			try
 			{
-				responseMessage = this.httpClient.GetAsync(addr).Result;
-				// .Result is going to force blocking execution
+
+				responseMessage = httpClient
+						.PostAsync(postAddr, new StringContent(stringReqArg,
+														Encoding.UTF8,
+														"application/json"))
+						.Result; // .Result is going to force blocking execution
 			}
 			catch (Exception e)
 			{
-				this.logger.logError($"Failed to register sensor on: {addr}, reason: {e.Message}");
+				this.logger.logError($"Exception in sensor registration  on: {postAddr}, "
+						+ $" reason: {e.Message}");
 				return false;
 			}
 
@@ -112,7 +137,6 @@ namespace SensorService
 			}
 			else
 			{
-
 				if (responseMessage == null)
 				{
 					// no response ... just failure 
@@ -121,8 +145,10 @@ namespace SensorService
 				else
 				{
 					// status code is not success
-					this.logger.logError("Http response for registration failed: " + responseMessage.ReasonPhrase);
+					this.logger.logError("Http response for registration failed: "
+								+ responseMessage.ReasonPhrase);
 				}
+
 				return false;
 			}
 

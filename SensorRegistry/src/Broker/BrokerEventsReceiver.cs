@@ -75,7 +75,7 @@ namespace SensorRegistry.Broker
 
 			this.setupConfigConsumer();
 			this.setupSensorReaderConsumer();
-
+			this.setupSensorLifetimeConsumer();
 		}
 
 		private Task establishConnection(CancellationToken token)
@@ -191,10 +191,38 @@ namespace SensorRegistry.Broker
 
 		}
 
-		private void setupSensorReaderConsumer()
+		private void setupSensorLifetimeConsumer()
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
+			string rcvQueue = this.channel.QueueDeclare().QueueName;
+
+			EventingBasicConsumer eventConsumer = new EventingBasicConsumer(this.channel);
+			eventConsumer.Received += (srcChannel, eventArg) =>
+			{
+				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
+				SensorLifetimeEvent sensorEvent = JsonConvert
+						.DeserializeObject<SensorLifetimeEvent>(txtContent);
+
+				Console.WriteLine("Received ... : " + txtContent);
+
+				this.mediator.Send(new SensorLifetimeRequest(sensorEvent));
+			};
+
+			this.channel.QueueBind(rcvQueue,
+							config.serviceLifetimeTopic,
+							config.sensorLifetimeFilter,
+							null);
+
+			this.channel.BasicConsume(rcvQueue,
+									true,
+									eventConsumer);
+
+		}
+
+		private void setupSensorReaderConsumer()
+		{
+			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string sensorReadEventQueue = this.channel.QueueDeclare().QueueName;
 

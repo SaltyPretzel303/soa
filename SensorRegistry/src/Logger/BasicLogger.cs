@@ -18,7 +18,9 @@ namespace SensorRegistry.Logger
 
 		public string LogError(string error)
 		{
-			ServiceLog log = new ServiceLog(error, LogLevel.Error);
+			ServiceLog log = new ServiceLog(ServiceType.SensorRegistry,
+											error,
+											LogLevel.Error);
 			this.broker.publishLog(log);
 
 			return JsonConvert.SerializeObject(log, Formatting.Indented);
@@ -26,7 +28,9 @@ namespace SensorRegistry.Logger
 
 		public string LogMessage(string message)
 		{
-			ServiceLog log = new ServiceLog(message, LogLevel.Message);
+			ServiceLog log = new ServiceLog(ServiceType.SensorRegistry,
+											message,
+											LogLevel.Message);
 			this.broker.publishLog(log);
 
 			return JsonConvert.SerializeObject(log, Formatting.Indented);

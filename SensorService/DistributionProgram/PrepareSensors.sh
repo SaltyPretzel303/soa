@@ -7,11 +7,13 @@ sensor_program="/sensor_program"
 
 first_sensor="0"
 last_sensor="10"
+host_ip="127.0.0.1"
 
-if [ "$#" -eq "2" ]
+if [ "$#" -eq "3" ]
 then 
 	first_sensor=$1
 	last_sensor=$2
+	host_ip=$3
 fi
 
 for (( index=$first_sensor; index<=$last_sensor; index++ ))
@@ -28,7 +30,7 @@ do
 
 	config_dest=$sensor_dest/"service_config.json"
 
-	python3 ./generate_config.py $index $config_dest
+	python3 ./generate_config.py $index $config_dest $host_ip
 
 	echo # new line
 

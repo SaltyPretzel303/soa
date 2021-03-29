@@ -75,6 +75,8 @@ namespace DataCollector.Controller
 			return new BadRequestResult();
 		}
 
+		// TODO add config update method maybe 
+
 	}
 
 }

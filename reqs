@@ -29,28 +29,33 @@ REQUESTED:
 	DODATNO: 
 	
 	1) sensor registry 
+	2) neka rest specifikacija OpenApi - Swagger	
 
 DONE: 
 
 	FAZA: I
 		1)
-		- sensorService cita podatke 
-		- api za pristup podacima od odredjenog indeksa (redni broj citanja)
+			- sensorService cita podatke 
+			- api za pristup podacima od odredjenog indeksa (redni broj citanja)
 		2)
-		- collectorService cita podatke sa sensorService-a
-		- smesta podatke u mongoDb bazu
-		- obezbedjuje CRUD restApi
+			- collectorService cita podatke sa sensorService-a
+			- smesta podatke u mongoDb bazu
+			- obezbedjuje CRUD restApi
 
 	FAZA: II
 		+ in progress
-		- Observers project
-		- DataObserver NodeJS & ServiceObserver AspNetCore
+
+		- Observers dir
+		- ServiceObserver in AspNetCore -> DONE
+		- DataObserver in NodeJS in progress
 
 	FAZA: III
 		1) 
-		+ - vecina servisa salje event-e preko messageBroker-a
+		* - vecina servisa salje event-e preko messageBroker-a
 		- collector preko event-a pribavlja info. o novim sensorima
 		- servisi iz druge faze primaju i obradjuju event-e sa messageBroker-a
+		
+		- dashBoard service -> thingsBoard -> in pogress
 		
 
 POSSIBLE:

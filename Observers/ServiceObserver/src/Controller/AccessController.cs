@@ -103,7 +103,7 @@ namespace ServiceObserver.Controller
 		}
 
 		[HttpGet]
-		[Route("getOldConfig")]
+		[Route("getOldConfigs")]
 		public IActionResult getConfigs()
 		{
 			ConfigBackupRecord record = db.GetConfigs();

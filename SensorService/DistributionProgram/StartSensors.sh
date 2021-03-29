@@ -1,26 +1,30 @@
 #!/bin/bash
 
-# this script requires two arguments:
+# this script accepts three arguments:
 # 1. number of sensorReader processes 
-#    that is going to be started in this container
-# 2. index of first sensorReader 
+#    that are going to be started in this container
+# 2. index of the first sensorReader 
 #	 (index defines sensor name and processing data file)
+# 3. static ip address of host/container
+
 
 # default values
 sensor_count="60"
 first_sensor_index="0"
+host_ip="127.0.0.1"
 
 # overwrite default values with the ones passed from cli
-if [ "$#" -eq "2" ]
+if [ "$#" -eq "3" ]
 then
 	sensor_count="$1"
 	first_sensor_index="$2"
+	host_ip="$3"
 fi
 
 last_sensor_index=$(($first_sensor_index+$sensor_count-1))
 
 # generate configs and copy bins for each sensor
-./PrepareSensors.sh "$first_sensor_index" "$last_sensor_index"
+./PrepareSensors.sh "$first_sensor_index" "$last_sensor_index" "$host_ip"
 
 if [ $? -ne 0 ]
 then

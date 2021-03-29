@@ -3535,3 +3535,33 @@
 {"Content":"Read event sensorRange(0, 2), rowCounter: 1","source":"B42E99C14DDA","time":"2020-10-08T10:12:10.0556527+02:00"}
 {"Content":"Read event sensorRange(0, 2), rowCounter: 2","source":"B42E99C14DDA","time":"2020-10-08T10:12:20.0593522+02:00"}
 {"Content":"Sensor is going down ... ","source":"B42E99C14DDA","time":"2020-10-08T10:12:25.0461978+02:00"}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-27T19:05:20.0958084+01:00","customMessage":"Sensor is going down ... "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-27T19:05:45.7189912+01:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-27T19:06:12.2312921+01:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-27T19:06:12.2473969+01:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-27T19:06:19.6485367+01:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:10:31.7841104+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:10:31.8004855+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:10:36.5453639+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:16.6138186+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:16.6287996+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:19.6224472+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:55.9933791+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:56.0088365+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:15:58.9671607+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:31.4563902+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:31.4719502+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor sensor_0 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:33.3691167+02:00","customMessage":"Sensor sensor_0 successfully registered ... "}
+{"Content":"Sensor sensor_2 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:33.4010846+02:00","customMessage":"Sensor sensor_2 successfully registered ... "}
+{"Content":"Sensor sensor_3 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:33.4169821+02:00","customMessage":"Sensor sensor_3 successfully registered ... "}
+{"Content":"Sensor sensor_4 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:33.4311777+02:00","customMessage":"Sensor sensor_4 successfully registered ... "}
+{"Content":"Read event sensorRange(0, 5), rowCounter: 1","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:41.4722703+02:00","customMessage":"Read event sensorRange(0, 5), rowCounter: 1"}
+{"Content":"Read event sensorRange(0, 5), rowCounter: 2","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:51.4727556+02:00","customMessage":"Read event sensorRange(0, 5), rowCounter: 2"}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:57:56.2047268+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:16.4420244+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:16.4575935+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor sensor_0 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:18.5106143+02:00","customMessage":"Sensor sensor_0 successfully registered ... "}
+{"Content":"Sensor sensor_1 successfully registered ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:18.5374434+02:00","customMessage":"Sensor sensor_1 successfully registered ... "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:26.4633487+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 1"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 2","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:36.463805+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 2"}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:37.7681925+02:00","customMessage":"Sensor is going down ... "}

@@ -25,6 +25,8 @@ namespace SensorRegistry
 		{
 			services.AddControllers();
 
+			// TODO sensor's ip address is now passed inside SensorDataArg
+			// REMOVE after testing
 			// used for accessing address and port of http req. src
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -34,8 +36,13 @@ namespace SensorRegistry
 
 			services.AddMediatR(typeof(Startup));
 
-			services.AddTransient<RequestHandler<ConfigUpdateRequest>, ConfigUpdateRequestHandler>();
-			services.AddTransient<RequestHandler<SensorUpdateRequest>, SensorUpdateRequestHandler>();
+			services.AddTransient<RequestHandler<ConfigUpdateRequest>,
+					ConfigUpdateRequestHandler>();
+			services.AddTransient<RequestHandler<SensorUpdateRequest>,
+					SensorUpdateRequestHandler>();
+			services.AddTransient<RequestHandler<SensorLifetimeRequest>,
+					SensorLifetimeRequestHandler>();
+
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 			services.AddHostedService<BrokerEventsReceiver>();

@@ -3,9 +3,7 @@ namespace CommunicationModel.BrokerModels
 	public enum LifetimeStages
 	{
 		Startup,
-		Shutdown,
-		SensorRegistration,
-		SensorUnregistration
+		Shutdown
 	}
 
 	public class ServiceLifetimeEvent : ServiceEvent

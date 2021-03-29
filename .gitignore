@@ -205,3 +205,5 @@ EdgexFoundary/*
 
 # will contain output of various shell commands (e.g. curl, mongo ... )
 output
+SensorService/msg_log
+SensorService/error_log

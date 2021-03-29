@@ -78,9 +78,12 @@ namespace SensorService.Data
 										sensorRow);
 
 
-					this.broker.PublishSensorEvent(new SensorReaderEvent(conf.sensorNamePrefix + realIndex,
-																		this.lineCounter),
-													conf.sensorReadEventFilter);
+					string sensorName = conf.sensorNamePrefix + realIndex;
+					this.broker.PublishSensorEvent(new SensorReaderEvent(sensorName,
+															this.lineCounter,
+															conf.hostIP,
+															conf.listeningPort),
+										conf.sensorReadEventFilter);
 
 				}
 
@@ -136,7 +139,6 @@ namespace SensorService.Data
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
 
-			Console.WriteLine("Sensor reader is going down ... ");
 			if (this.timer != null)
 			{
 				this.timer.Stop();

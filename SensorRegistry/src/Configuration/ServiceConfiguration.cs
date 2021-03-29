@@ -56,22 +56,23 @@ namespace SensorRegistry.Configuration
 
 		public string sensorEventTopic { get; set; }
 		public string sensorReadEventFilter { get; set; }
+		public string sensorLifetimeFilter { get; set; }
 
 		#endregion
 
 		private static ServiceConfiguration read()
 		{
 
-			string s_config = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
-			JObject json_config = JObject.Parse(s_config);
-			string stage = json_config.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
+			string strConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
+			JObject jsonConfig = JObject.Parse(strConfig);
+			string stage = jsonConfig.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
 
-			JObject conf_stage = (JObject)json_config.GetValue(stage);
+			JObject confStage = (JObject)jsonConfig.GetValue(stage);
 
-			ServiceConfiguration config_o = conf_stage.ToObject<ServiceConfiguration>();
-			config_o.stage = stage;
+			ServiceConfiguration objConfig = confStage.ToObject<ServiceConfiguration>();
+			objConfig.stage = stage;
 
-			return config_o;
+			return objConfig;
 		}
 
 		public void UpdateConfig(JObject newConfig)
