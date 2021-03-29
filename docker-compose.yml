@@ -45,8 +45,8 @@ services:
     image: soa/collector-service
     # depends_on:
     #   - soa-broker
-    #   - soa-mongo-db
     #   - soa-registry
+    #   - soa-mongo-db
     ports:
     - "5003:5000"
 

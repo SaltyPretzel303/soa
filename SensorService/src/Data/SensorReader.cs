@@ -10,27 +10,31 @@ using System.Threading.Tasks;
 using System.Threading;
 using SensorService.Broker;
 using CommunicationModel.BrokerModels;
+using MediatR;
+using SensorService.MediatorRequests;
 
 namespace SensorService.Data
 {
 	public class SensorReader : IHostedService
 	{
 
-		private IMessageBroker broker;
+		private IMediator Mediator;
 
 		private System.Timers.Timer timer;
 		private int lineCounter;
 		private List<int> rowsCount;
 
 		// injected services
-		private ILogger logger;
+		private ILogger Logger;
 		private IDataCacheManager DataCache;
 
-		public SensorReader(ILogger logger, IDataCacheManager dataCache, IMessageBroker broker)
+		public SensorReader(ILogger logger,
+					IDataCacheManager dataCache,
+					IMediator mediator)
 		{
-			this.logger = logger;
+			this.Logger = logger;
 			this.DataCache = dataCache;
-			this.broker = broker;
+			this.Mediator = mediator;
 		}
 
 		private void ReadEvent(Object source, ElapsedEventArgs args)
@@ -39,7 +43,7 @@ namespace SensorService.Data
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
 			// read one more line for evey sensor
 			// read this.line_counter. row
-			this.logger.logMessage(string.Join("",
+			this.Logger.logMessage(string.Join("",
 							$"Read event sensorRange",
 							$"({conf.sensorsRange.From}, ",
 							$"{conf.sensorsRange.To})",
@@ -52,10 +56,9 @@ namespace SensorService.Data
 				// in memory samples index
 				logicIndex = realIndex - conf.sensorsRange.From;
 
-				string samplePath = conf.dataPath +
-								conf.samplePrefix +
-								realIndex +
-								conf.sampleExtension;
+				string samplePath = conf.dataPath
+								+ conf.samplePrefix + realIndex
+								+ conf.sampleExtension;
 
 				List<string> header = File.ReadLines(samplePath).
 												Take(1).
@@ -73,17 +76,24 @@ namespace SensorService.Data
 													Take(1).
 													First();
 
-					this.DataCache.AddData(conf.sensorNamePrefix + realIndex,
-										header,
-										sensorRow);
-
-
 					string sensorName = conf.sensorNamePrefix + realIndex;
-					this.broker.PublishSensorEvent(new SensorReaderEvent(sensorName,
-															this.lineCounter,
-															conf.hostIP,
-															conf.listeningPort),
-										conf.sensorReadEventFilter);
+					this.Mediator.Send(new NewDataReadRequest(sensorName,
+												header,
+												this.lineCounter,
+												sensorRow));
+
+					// this.DataCache.AddData(conf.sensorNamePrefix + realIndex,
+					// 					header,
+					// 					sensorRow);
+
+
+					// this.broker.PublishSensorEvent(new SensorReaderEvent(sensorName,
+					// 										header,
+					// 										this.lineCounter,
+					// 										sensorRow,
+					// 										conf.hostIP,
+					// 										conf.listeningPort),
+					// 					conf.sensorReadEventFilter);
 
 				}
 
@@ -123,7 +133,7 @@ namespace SensorService.Data
 			// ignore first line - header row
 			this.lineCounter = 1;
 
-			this.logger.logMessage("Reading interval: " + config.readInterval);
+			this.Logger.logMessage("Reading interval: " + config.readInterval);
 
 			this.timer = new System.Timers.Timer();
 			this.timer.Elapsed += this.ReadEvent;
@@ -131,7 +141,7 @@ namespace SensorService.Data
 			this.timer.AutoReset = true;
 			this.timer.Start();
 
-			this.logger.logMessage("Reader is running ...  ");
+			this.Logger.logMessage("Reader is running ...  ");
 
 			return Task.CompletedTask;
 		}

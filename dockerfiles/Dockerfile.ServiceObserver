@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+
+# copy and build CommunicationModel
+WORKDIR /CommunicationModel
+
+COPY ./CommunicationModel/CommunicationModel.csproj ./
+RUN dotnet restore
+COPY ./CommunicationModel/src ./src
+RUN dotnet publish
+
+# copy and build ServiceObserver
+WORKDIR /observer
+
+COPY ./Observer/ServiceObserver/ServiceObserver.csproj
+RUN dotnet restore
+
+COPY ./Observer/ServiceObserver/

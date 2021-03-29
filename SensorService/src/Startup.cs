@@ -9,6 +9,8 @@ using SensorService.Logger;
 using Microsoft.Extensions.Hosting;
 using SensorService.Broker;
 using CommunicationModel.BrokerModels;
+using MediatR;
+using SensorService.MediatorRequests;
 
 namespace SensorService
 {
@@ -27,6 +29,11 @@ namespace SensorService
 			services.AddSingleton<IDataCacheManager, InMemoryCache>();
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
+
+			services.AddMediatR(typeof(Startup));
+
+			services.AddTransient<RequestHandler<NewDataReadRequest>,
+						NewDataReadRequestHandler>();
 
 			// sensor is gonna be registered once registry recives SensorLifetimeEvent
 			// or any other sensorReader update

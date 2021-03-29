@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace CommunicationModel.BrokerModels
 {
 
@@ -9,8 +11,13 @@ namespace CommunicationModel.BrokerModels
 		public string IpAddress { get; set; }
 		public int ListeningPort { get; set; }
 
+		public List<string> DataHeader { get; set; }
+		public string NewData { get; set; }
+
 		public SensorReaderEvent(string sensorName,
+							List<string> dataHeader,
 							int lastReadIndex,
+							string newData,
 							string ipAddress,
 							int listeningPort,
 							string customMessage = "") :
@@ -21,6 +28,8 @@ namespace CommunicationModel.BrokerModels
 
 			IpAddress = ipAddress;
 			ListeningPort = listeningPort;
+			DataHeader = dataHeader;
+			NewData = newData;
 		}
 	}
 

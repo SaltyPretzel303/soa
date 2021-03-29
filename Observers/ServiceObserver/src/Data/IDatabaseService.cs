@@ -9,17 +9,17 @@ namespace ServiceObserver.Data
 	public interface IDatabaseService
 	{
 
-		void BackupConfiguration(JObject rawConfig);
-
 		void SaveUnstableRecord(UnstableRuleRecord newRecord);
-
-		ConfigBackupRecord GetConfigs();
 
 		List<UnstableServiceDbRecord> GetAllUnstableRecords();
 
 		List<UnstableServiceDbRecord> GetUnstableRecordsForService(string serviceId);
 
 		UnstableServiceDbRecord GetLatestRecord();
+
+		void BackupConfiguration(JObject rawConfig);
+
+		ConfigBackupRecord GetConfigs();
 
 	}
 }
