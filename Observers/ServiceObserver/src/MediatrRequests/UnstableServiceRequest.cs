@@ -36,7 +36,6 @@ namespace ServiceObserver.MediatrRequests
 			Console.WriteLine($"Handling {request.record.serviceId} unstable record ... ");
 
 			db.SaveUnstableRecord(request.record);
-
 		}
 	}
 

@@ -50,3 +50,14 @@ services:
     ports:
     - "5003:5000"
 
+  soa-service-observer:
+    container_name: soa-service-observer
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.ServiceObserver
+    image: soa/service-observer
+    # depends_on:
+    #   - soa-broker 
+    #   - soa-mongo-db      
+    ports:
+    - "5004:5000"

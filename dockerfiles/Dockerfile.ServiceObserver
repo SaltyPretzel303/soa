@@ -3,15 +3,22 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 # copy and build CommunicationModel
 WORKDIR /CommunicationModel
 
-COPY ./CommunicationModel/CommunicationModel.csproj ./
+COPY CommunicationModel/CommunicationModel.csproj ./
 RUN dotnet restore
-COPY ./CommunicationModel/src ./src
+COPY CommunicationModel/src ./src
 RUN dotnet publish
 
 # copy and build ServiceObserver
 WORKDIR /observer
 
-COPY ./Observer/ServiceObserver/ServiceObserver.csproj
+COPY Observers/ServiceObserver/ServiceObserver.csproj ./ServiceObserver.csproj
 RUN dotnet restore
 
-COPY ./Observer/ServiceObserver/
+COPY Observers/ServiceObserver/src ./src
+COPY Observers/ServiceObserver/appsettings.json ./appsettings.json
+COPY Observers/ServiceObserver/service_config.json ./service_config.json
+
+RUN dotnet publish --output /observer_program
+
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "/observer_program/ServiceObserver.dll"]

@@ -80,10 +80,10 @@ namespace ServiceObserver.RuleEngine
 			{
 				Console.WriteLine($"Rule engine started with {cacheContent.Count} new items ... ");
 			}
-			else
-			{
-				Console.WriteLine(". ");
-			}
+			// else
+			// {
+			// 	Console.WriteLine(". ");
+			// }
 
 			engineSession.Fire();
 		}
