@@ -1,7 +1,7 @@
 {
 	"stage": "Production",
 	"Development": {
-		"dataPath": "/home/nemanja/soa_data/",
+		"dataPath": "/home/nemanja/soa_data_new",
 		"samplePrefix": "user_",
 		"sampleExtension": ".csv",
 		"sensorsRange": {

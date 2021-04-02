@@ -4,17 +4,17 @@ namespace CommunicationModel.RestModels.CollectorCRUDRequest
 	{
 
 		public string sensorName { get; set; }
-		public string recordTimestamp { get; set; }
+		public long timestamp { get; set; }
 
 		public DeleteRecordArg()
 		{
 
 		}
 
-		public DeleteRecordArg(string sensorName, string recordTimestamp)
+		public DeleteRecordArg(string sensorName, long timestamp)
 		{
 			this.sensorName = sensorName;
-			this.recordTimestamp = recordTimestamp;
+			this.timestamp = timestamp;
 
 		}
 

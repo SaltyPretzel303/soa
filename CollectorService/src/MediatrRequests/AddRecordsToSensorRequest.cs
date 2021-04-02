@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using CollectorService.Data;
+using CommunicationModel;
 using MediatR;
-using Newtonsoft.Json.Linq;
 
 namespace CollectorService.MediatrRequests
 {
 	public class AddRecordsToSensorRequest : IRequest
 	{
 		public String SensorName { get; private set; }
-		public JArray Values { get; private set; }
+		public List<SensorValues> Values { get; private set; }
 
-		public AddRecordsToSensorRequest(string sensorName, JArray values)
+		public AddRecordsToSensorRequest(string sensorName, List<SensorValues> values)
 		{
 			SensorName = sensorName;
 			Values = values;
@@ -30,7 +31,7 @@ namespace CollectorService.MediatrRequests
 
 		protected override void Handle(AddRecordsToSensorRequest request)
 		{
-			this.database.pushToSensor(request.SensorName, request.Values);
+			this.database.addToSensor(request.SensorName, request.Values);
 		}
 	}
 }

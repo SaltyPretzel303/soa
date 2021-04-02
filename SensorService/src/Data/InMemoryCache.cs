@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using CommunicationModel;
 using SensorService.Configuration;
 using SensorService.Logger;
 
@@ -20,20 +21,20 @@ public class InMemoryCache : IDataCacheManager
 		this.DataMap = new ConcurrentDictionary<string, CacheRecord>();
 	}
 
-	public void AddData(string sensor, List<string> header, string newRecord)
+	public void AddData(string sensorName, List<string> header, SensorValues newRecord)
 	{
 		CacheRecord sensorRecord = null;
-		if (this.DataMap.TryGetValue(sensor, out sensorRecord))
+		if (this.DataMap.TryGetValue(sensorName, out sensorRecord))
 		{
 			sensorRecord.Records.Add(newRecord);
 		}
 		else
 		{
 			sensorRecord = new CacheRecord(header, newRecord);
-			if (!DataMap.TryAdd(sensor, sensorRecord))
+			if (!DataMap.TryAdd(sensorName, sensorRecord))
 			{
 				// if failed to add new sensor data
-				logger.logError("Failed to add new sensor row to the existing InMemoryCache ... ");
+				logger.logError("Failed to add records to the cache ... ");
 			}
 		}
 	}

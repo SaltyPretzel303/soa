@@ -53,13 +53,13 @@ namespace ServiceObserver.Data
 				return;
 			}
 
-			String serviceAddr = NetworkInterface.
-								GetAllNetworkInterfaces()
-								.Where(nic => nic.OperationalStatus == OperationalStatus.Up
-											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-								.Select(nic => nic.GetPhysicalAddress()
-								.ToString())
-								.FirstOrDefault();
+			String serviceAddr = NetworkInterface
+					.GetAllNetworkInterfaces()
+					.Where(nic => nic.OperationalStatus == OperationalStatus.Up
+								&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+					.Select(nic => nic.GetPhysicalAddress()
+					.ToString())
+					.FirstOrDefault();
 
 			// at this point this.config still contains the old config. 
 			IMongoCollection<ConfigBackupRecord> configCollection =

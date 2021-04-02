@@ -41,20 +41,25 @@ namespace CollectorService.Controller
 			if (this.database != null)
 			{
 
-				List<JObject> dbJsonResponse = this.database.getAllSamples();
-				List<string> dbTxtResponse = new List<string>();
+				List<SensorModel> dbResponse = this.database.getAllSamples();
 
-				if (dbJsonResponse == null)
+				if (dbResponse == null)
 				{
 					return StatusCode(500);
 				}
 
-				foreach (JObject jsonValue in dbJsonResponse)
+				List<SensorDataRecords> retData = new List<SensorDataRecords>();
+				foreach (SensorModel model in dbResponse)
 				{
-					dbTxtResponse.Add(jsonValue.ToString());
+					SensorDataRecords newRecord = new SensorDataRecords(
+							model.sensorName,
+							model.records.Count,
+							model.records);
+
+					retData.Add(newRecord);
 				}
 
-				return Ok(dbTxtResponse);
+				return Ok(retData);
 			}
 
 			return StatusCode(500);
@@ -69,16 +74,29 @@ namespace CollectorService.Controller
 
 			if (fromTimestamp >= toTimestamp)
 			{
-				string message = $"Invalid timestamps:\nFromTimestamp: {fromTimestamp}\nToTimestamp: {toTimestamp}";
-				Console.WriteLine("Bad request, invalid timestamps ... \n" + message);
+
+				string message = "Bad request, invalid timestamps: "
+						+ $"FromTimestamp: {fromTimestamp} "
+						+ $"ToTimestamp: {toTimestamp}";
+
+				Console.WriteLine(message);
+
 				return BadRequest(message);
 			}
 
-			SensorDataRecords records = this.database.getRecordRange(sensorName, fromTimestamp, toTimestamp);
+			SensorModel records = this.database.getRecordRange(
+				sensorName,
+				fromTimestamp,
+				toTimestamp);
 
 			if (records != null)
 			{
-				return Ok(records);
+				SensorDataRecords retData = new SensorDataRecords(
+					records.sensorName,
+					records.records.Count,
+					records.records);
+
+				return Ok(retData);
 			}
 
 			return StatusCode(500);
@@ -88,32 +106,43 @@ namespace CollectorService.Controller
 		[Route("recordsList")]
 		public IActionResult getRecordsList([FromBody] GetListOfRecordsArg reqArg)
 		{
-			SensorDataRecords results = this.database.getRecordsList(reqArg.sensorName, reqArg.timestamps);
 
-			return new OkObjectResult(results);
+			SensorModel dbResult = this.database.getRecordsList(
+				reqArg.sensorName,
+				reqArg.timestamps);
+
+			if (dbResult != null)
+			{
+				SensorDataRecords retData = new SensorDataRecords(
+					dbResult.sensorName,
+					dbResult.records.Count,
+					dbResult.records);
+
+				return new OkObjectResult(retData);
+			}
+
+			return StatusCode(500);
 		}
 
 		[HttpPost]
 		[Route("addRecords")]
 		public IActionResult addRecords([FromBody] AddRecordsArg reqArg)
 		{
-			JArray dataArray = new JArray();
-			foreach (string txtData in reqArg.newRecords)
-			{
-				JObject tempData = JObject.Parse(txtData);
-				dataArray.Add(tempData);
-			}
-
-			this.database.pushToSensor(reqArg.sensorName, dataArray);
+			this.database.addToSensor(reqArg.sensorName, reqArg.newRecords);
 
 			return new OkResult();
 		}
 
+		// TODO this is not refactored to use SensorModel
 		[HttpPost]
 		[Route("updateRecord")]
 		public IActionResult updateRecord([FromBody] UpdateRecordArg reqArg)
 		{
-			Console.WriteLine($"Request to update record:\nSensor name: {reqArg.sensorName}\nRecord timestamp: {reqArg.timestamp}\nField: {reqArg.field}\nNew value: {reqArg.value}");
+			Console.WriteLine($"Request to update record:"
+				+ $"\nSensor name: {reqArg.sensorName}"
+				+ $"\nRecord timestamp: {reqArg.timestamp}"
+				+ $"\nField: {reqArg.field}"
+				+ $"\nNew value: {reqArg.value}");
 
 			bool updateRes = this.database.updateRecord(reqArg.sensorName,
 									reqArg.timestamp,
@@ -134,7 +163,9 @@ namespace CollectorService.Controller
 		public IActionResult deleteRecord([FromBody] DeleteRecordArg reqArg)
 		{
 
-			bool delResult = this.database.deleteRecord(reqArg.sensorName, reqArg.recordTimestamp);
+			bool delResult = this.database.deleteRecord(
+				reqArg.sensorName,
+				reqArg.timestamp);
 
 			if (delResult == true)
 			{

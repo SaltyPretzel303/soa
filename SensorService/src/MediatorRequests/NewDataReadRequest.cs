@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CommunicationModel;
 using CommunicationModel.BrokerModels;
 using MediatR;
 using SensorService.Broker;
@@ -7,18 +8,18 @@ using SensorService.Configuration;
 
 namespace SensorService.MediatorRequests
 {
-	public class NewDataReadRequest : IRequest
+	public class StoreSensorDataRequest : IRequest
 	{
 		public string SensorName { get; set; }
 
 		public List<string> Header { get; set; }
 		public int ReadIndex { get; set; }
-		public string NewData { get; set; }
+		public SensorValues NewData { get; set; }
 
-		public NewDataReadRequest(string sensorName,
+		public StoreSensorDataRequest(string sensorName,
 					List<string> header,
 					int readIndex,
-					string newData)
+					SensorValues newData)
 		{
 			SensorName = sensorName;
 			Header = header;
@@ -27,7 +28,7 @@ namespace SensorService.MediatorRequests
 		}
 	}
 
-	public class NewDataReadRequestHandler : RequestHandler<NewDataReadRequest>
+	public class StoreSensorDataRequestHandler : RequestHandler<StoreSensorDataRequest>
 	{
 
 		private IDataCacheManager cache;
@@ -35,7 +36,7 @@ namespace SensorService.MediatorRequests
 
 		private ServiceConfiguration config;
 
-		public NewDataReadRequestHandler(IDataCacheManager cache, IMessageBroker broker)
+		public StoreSensorDataRequestHandler(IDataCacheManager cache, IMessageBroker broker)
 		{
 			this.cache = cache;
 			this.broker = broker;
@@ -43,7 +44,7 @@ namespace SensorService.MediatorRequests
 			this.config = ServiceConfiguration.Instance;
 		}
 
-		protected override void Handle(NewDataReadRequest request)
+		protected override void Handle(StoreSensorDataRequest request)
 		{
 
 			this.cache.AddData(request.SensorName,

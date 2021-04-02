@@ -3,9 +3,8 @@
 mongo soa_collector_dev --eval '
 	db.Sensors.aggregate(
 		[
-			{$match: {sensor_name:"sensor_0"}},
-			{
-				$project: {
+			{$match: {sensorName:"sensor_0"}},
+			{$project: {
 					_id:0,
 					records: 
 					{
@@ -13,13 +12,13 @@ mongo soa_collector_dev --eval '
 						{
 							input:"$records",
 							as:"record",
-							cond:{$in:["$$record.timestamp",["1444079281","1444079341"]]}
+							cond:{$in:["$$record.timestamp",[1444079161,1444079341]]}
 						}
 					}
 				}
 			}
 		]
-	)
+	).pretty()
 '
 
 #["1444079281","1444079341"]

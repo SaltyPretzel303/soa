@@ -1,11 +1,11 @@
 #!/bin/bash
 
-mongo soa_collector --eval '
+mongo soa_collector_dev --eval '
 
 	db.Sensors.aggregate(
 		[
 			{ 
-				$match: {sensor_name:"sensor_0"}
+				$match: {sensorName:"sensor_0"}
 			},
 			{
 				$project: {

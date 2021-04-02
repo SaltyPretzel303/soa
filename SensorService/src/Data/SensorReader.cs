@@ -8,10 +8,10 @@ using SensorService.Logger;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using System.Threading;
-using SensorService.Broker;
-using CommunicationModel.BrokerModels;
 using MediatR;
 using SensorService.MediatorRequests;
+using CommunicationModel;
+using Newtonsoft.Json.Linq;
 
 namespace SensorService.Data
 {
@@ -20,13 +20,12 @@ namespace SensorService.Data
 
 		private IMediator Mediator;
 
+		private ILogger Logger;
+		private IDataCacheManager DataCache;
+
 		private System.Timers.Timer timer;
 		private int lineCounter;
 		private List<int> rowsCount;
-
-		// injected services
-		private ILogger Logger;
-		private IDataCacheManager DataCache;
 
 		public SensorReader(ILogger logger,
 					IDataCacheManager dataCache,
@@ -41,7 +40,7 @@ namespace SensorService.Data
 		{
 
 			ServiceConfiguration conf = ServiceConfiguration.Instance;
-			// read one more line for evey sensor
+			// read one more line for every sensor
 			// read this.line_counter. row
 			this.Logger.logMessage(string.Join("",
 							$"Read event sensorRange",
@@ -50,7 +49,9 @@ namespace SensorService.Data
 							$", rowCounter: {this.lineCounter}"));
 
 			int logicIndex = 0;
-			for (int realIndex = conf.sensorsRange.From; realIndex < conf.sensorsRange.To; realIndex++)
+			for (int realIndex = conf.sensorsRange.From;
+					realIndex < conf.sensorsRange.To;
+					realIndex++)
 			{
 
 				// in memory samples index
@@ -77,10 +78,11 @@ namespace SensorService.Data
 													First();
 
 					string sensorName = conf.sensorNamePrefix + realIndex;
-					this.Mediator.Send(new NewDataReadRequest(sensorName,
+
+					this.Mediator.Send(new StoreSensorDataRequest(sensorName,
 												header,
 												this.lineCounter,
-												sensorRow));
+												fromCsv(header, sensorRow)));
 
 					// this.DataCache.AddData(conf.sensorNamePrefix + realIndex,
 					// 					header,
@@ -104,6 +106,22 @@ namespace SensorService.Data
 
 		}
 
+		private SensorValues fromCsv(List<string> header, string row)
+		{
+			string[] values = row.Split(",");
+
+			JObject jObj = new JObject();
+			int index = 0;
+
+			foreach (string field in header)
+			{
+				jObj[field] = values[index];
+				index++;
+			}
+
+			return jObj.ToObject<SensorValues>();
+		}
+
 		#region IHostedService methods
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -111,7 +129,7 @@ namespace SensorService.Data
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			// read first row (identify comlumns)
+			// read first row (identify columns)
 			string samplePath = config.dataPath +
 								config.samplePrefix +
 								config.sensorsRange.From +

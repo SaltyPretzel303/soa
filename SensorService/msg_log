@@ -3565,3 +3565,31 @@
 {"Content":"Read event sensorRange(0, 2), rowCounter: 1","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:26.4633487+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 1"}
 {"Content":"Read event sensorRange(0, 2), rowCounter: 2","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:36.463805+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 2"}
 {"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-28T18:59:37.7681925+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:15:10.9012631+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:15:10.9141591+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:15:16.6155172+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Reading interval: 10000","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:15:59.7718272+02:00","customMessage":"Reading interval: 10000"}
+{"Content":"Reader is running ...  ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:15:59.7888196+02:00","customMessage":"Reader is running ...  "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 1","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:09.794446+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 1"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 2","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:19.7972133+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 2"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 3","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:29.794485+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 3"}
+{"Content":"Data range request \u003E sensor:  index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:35.3782533+02:00","customMessage":"Data range request \u003E sensor:  index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 4","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:39.7931769+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 4"}
+{"Content":"Data range request \u003E sensor:  index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:41.1853035+02:00","customMessage":"Data range request \u003E sensor:  index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 5","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:49.7936278+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 5"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 6","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:16:59.7935777+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 6"}
+{"Content":"Data range request \u003E sensor:  index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:08.5150265+02:00","customMessage":"Data range request \u003E sensor:  index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 7","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:09.7914256+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 7"}
+{"Content":"Data range request \u003E sensor: sensor_0 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:16.9316582+02:00","customMessage":"Data range request \u003E sensor: sensor_0 index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 8","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:19.7927044+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 8"}
+{"Content":"Data range request \u003E sensor: sensor_0 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:27.0774175+02:00","customMessage":"Data range request \u003E sensor: sensor_0 index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 9","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:29.7936579+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 9"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 10","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:39.7960814+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 10"}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 11","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:49.7903423+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 11"}
+{"Content":"Data range request \u003E sensor: \u0022sensor_0\u0022 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:56.2357892+02:00","customMessage":"Data range request \u003E sensor: \u0022sensor_0\u0022 index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 12","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:17:59.7927213+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 12"}
+{"Content":"Data range request \u003E sensor: sensor_0\u0022 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:05.0974578+02:00","customMessage":"Data range request \u003E sensor: sensor_0\u0022 index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 13","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:09.7929276+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 13"}
+{"Content":"Data range request \u003E sensor: sensor_0 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:13.1544387+02:00","customMessage":"Data range request \u003E sensor: sensor_0 index: 0 "}
+{"Content":"Read event sensorRange(0, 2), rowCounter: 14","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:19.7923077+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 14"}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:28.7811889+02:00","customMessage":"Sensor is going down ... "}

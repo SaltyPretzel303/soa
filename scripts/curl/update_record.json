@@ -1,6 +1,6 @@
 {
 	"sensorName": "sensor_0",
-	"timestamp": "1444079281",
-	"field": "raw_acc:magnitude_stats:mean",
-	"value": "2.5461"
+	"timestamp": 1444079281,
+	"field": "raw_acc_magnitude_stats_mean",
+	"value": "new_value"
 }

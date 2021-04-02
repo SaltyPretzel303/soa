@@ -81,15 +81,21 @@ namespace CollectorService.Data
 			{
 
 				int sensorLastReadIndex = 0;
-				if (!this.lastReadIndex.TryGetValue(singleSensor.Name, out sensorLastReadIndex))
+				if (!this.lastReadIndex.TryGetValue(
+						singleSensor.Name,
+						out sensorLastReadIndex))
 				{
 					// initialize lastReadIndex if it doesn't exists for this sensor
-					sensorLastReadIndex = this.mediator.Send(new GetRecordsCountRequest(singleSensor.Name)).Result;
+					sensorLastReadIndex = this.mediator.Send(
+						new GetRecordsCountRequest(singleSensor.Name)).Result;
+
 					this.lastReadIndex.Add(singleSensor.Name, sensorLastReadIndex);
 				}
 
 				string sensorAddr = $"http://{singleSensor.Address}:{singleSensor.Port}";
-				string api_url = $"{sensorAddr}/{config.dataRangeUrl}?sensorName={singleSensor.Name}&index={sensorLastReadIndex}";
+				string api_url = $"{sensorAddr}/{config.dataRangeUrl}?"
+					+ $"sensorName={singleSensor.Name}&"
+					+ $"index={sensorLastReadIndex}";
 
 				Uri sensorUri = new Uri(api_url);
 				Console.WriteLine("Pulling from: " + api_url);
@@ -128,8 +134,8 @@ namespace CollectorService.Data
 					Console.WriteLine($"Sensor ({sensorUri.ToString()}) returned bad response ... ");
 
 					CollectorPullEvent newEvent = new CollectorPullEvent(sensorUri.ToString(),
-																	false,
-																	"Sensor returned bad response.");
+															false,
+															"Sensor returned bad response.");
 
 					this.mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
@@ -141,19 +147,25 @@ namespace CollectorService.Data
 				// newtonsoft serializes properties to camelCase so when they get pulled from sensor
 				// system.text.json can't deserialize it because class properties are actually in PascalCase 
 				// that is the reason to use newtonsoft - easier than forcing it to serialize in PascalCase
-				SensorDataRecords dataRecords = JsonConvert.DeserializeObject<SensorDataRecords>(txtResponseContent);
-				Console.WriteLine($"Sensor {singleSensor.Name} returned {dataRecords.RecordsCount} rows ... ");
 
-				// deserialize all records from response
-				// ListdataRecords.Records -> list of strings each representing one row from csv
-				JArray dataArray = new JArray();
-				foreach (string txtData in dataRecords.Records)
-				{
-					JObject tempData = JObject.Parse(txtData);
-					dataArray.Add(tempData);
-				}
+				SensorDataRecords dataRecords = JsonConvert
+						.DeserializeObject<SensorDataRecords>(txtResponseContent);
 
-				this.mediator.Send(new AddRecordsToSensorRequest(singleSensor.Name, dataArray));
+				Console.WriteLine($"Sensor {singleSensor.Name}"
+						+ $" returned {dataRecords.RecordsCount} rows ... ");
+
+				// // deserialize all records from response
+				// // ListdataRecords.Records -> list of strings each representing one row from csv
+				// JArray dataArray = new JArray();
+				// foreach (string txtData in dataRecords.Records)
+				// {
+				// 	JObject tempData = JObject.Parse(txtData);
+				// 	dataArray.Add(tempData);
+				// }
+
+				this.mediator.Send(new AddRecordsToSensorRequest(
+											singleSensor.Name,
+											dataRecords.Records));
 
 				// update read index for every sensor
 				// at this point lastReadIndex[singleSensor.Name] has to exists (look at the beginning of this for loop)

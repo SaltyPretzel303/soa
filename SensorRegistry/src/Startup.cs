@@ -25,11 +25,6 @@ namespace SensorRegistry
 		{
 			services.AddControllers();
 
-			// TODO sensor's ip address is now passed inside SensorDataArg
-			// REMOVE after testing
-			// used for accessing address and port of http req. src
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 			services.AddTransient<ISensorRegistry, MapRegistry>();
 
 			services.AddTransient<ILogger, BasicLogger>();

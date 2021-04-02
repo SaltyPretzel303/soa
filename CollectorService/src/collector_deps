@@ -38,4 +38,4 @@ collector requests:
 	 - configChangeHandler	- set
 	 - registryUpdateHandler- set
 
-	 use mediatr to as a way to use transient services inside singleton
+	 use mediatr as a way to use transient services inside singleton

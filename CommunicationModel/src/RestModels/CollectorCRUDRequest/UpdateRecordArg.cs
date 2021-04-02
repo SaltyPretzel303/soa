@@ -3,7 +3,7 @@ namespace CommunicationModel.RestModels.CollectorCRUDRequest
 	public class UpdateRecordArg
 	{
 		public string sensorName { get; set; }
-		public string timestamp { get; set; }
+		public long timestamp { get; set; }
 		public string field { get; set; }
 		public string value { get; set; }
 
@@ -12,7 +12,10 @@ namespace CommunicationModel.RestModels.CollectorCRUDRequest
 
 		}
 
-		public UpdateRecordArg(string sensorName, string timestamp, string field, string value)
+		public UpdateRecordArg(string sensorName,
+			long timestamp,
+			string field,
+			string value)
 		{
 			this.sensorName = sensorName;
 			this.timestamp = timestamp;

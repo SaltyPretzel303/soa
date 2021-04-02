@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using CollectorService.Configuration;
 using CommunicationModel;
 using Newtonsoft.Json.Linq;
 
@@ -8,26 +6,26 @@ namespace CollectorService.Data
 {
 	public interface IDatabaseService
 	{
-		void pushToSensor(String sensorName, JArray values);
+		void addToSensor(string sensorName, SensorValues newValues);
 
-		List<JObject> getAllSamples();
+		void addToSensor(string sensorName, List<SensorValues> newRecords);
 
-		SensorDataRecords getRecordRange(string sensorName, long fromTimestamp = 0, long toTimestamp = -1);
+		List<SensorModel> getAllSamples();
 
-		SensorDataRecords getRecordsList(string sensorName, List<string> timestamps);
+		SensorModel getRecordRange(string sensorName,
+			long fromTimestamp = 0,
+			long toTimestamp = -1);
 
-		bool updateRecord(string sensorName, string timestamp, string field, string value);
+		SensorModel getRecordsList(string sensorName, List<long> timestamps);
 
-		bool deleteRecord(string sensorName, string timestamp);
+		bool updateRecord(string sensorName, long timestamp, string field, string value);
+
+		bool deleteRecord(string sensorName, long timestamp);
 
 		bool deleteSensorData(string sensorName);
 
 		int getRecordsCount(string sensorName);
 
 		void backupConfiguration(JObject oldConfig);
-
-		// used just for testing when accessing home url 
-		List<JObject> customQuery();
-
 	}
 }

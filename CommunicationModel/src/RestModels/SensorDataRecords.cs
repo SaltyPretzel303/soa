@@ -4,24 +4,23 @@ namespace CommunicationModel
 {
 	public class SensorDataRecords
 	{
-
 		public string SensorName { get; set; }
 		public int RecordsCount { get; set; }
 
-		// this strings should be serialized in JsonDocument
-		public List<string> Records { get; set; }
+		public List<SensorValues> Records { get; set; }
 
 		public SensorDataRecords()
 		{
-			Records = new List<string>();
+			Records = new List<SensorValues>();
 		}
 
-		public SensorDataRecords(string sensorName, int count, List<string> records)
+		public SensorDataRecords(string sensorName,
+				int count,
+				List<SensorValues> records)
 		{
 			this.SensorName = sensorName;
 			this.RecordsCount = count;
 			this.Records = records;
 		}
-
 	}
 }

@@ -19,8 +19,9 @@ namespace SensorRegistry.Controller
 		private ISensorRegistry sensorRegistry;
 		private IMessageBroker broker;
 
-		public SensorRegistryController(ISensorRegistry sensorRegistry,
-									IMessageBroker broker)
+		public SensorRegistryController(
+			ISensorRegistry sensorRegistry,
+			IMessageBroker broker)
 		{
 			this.sensorRegistry = sensorRegistry;
 			this.broker = broker;
@@ -92,16 +93,13 @@ namespace SensorRegistry.Controller
 		[Route("getAddress")]
 		public IActionResult getAddress([FromQuery] string sensorName)
 		{
-
 			RegistryResponse response = this.sensorRegistry.getSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{
-
-				return new OkObjectResult(response.singleData);
+				return new OkObjectResult(response.singleData.Address);
 			}
 
 			return new BadRequestObjectResult("Registry response: " + response.status.ToString());
-
 		}
 
 		[HttpGet]
@@ -117,6 +115,20 @@ namespace SensorRegistry.Controller
 
 			return new BadRequestObjectResult("Registry response: " + response.status.ToString());
 
+		}
+
+		[HttpGet]
+		[Route("getSensor")]
+		public IActionResult getSensors([FromQuery] string sensorName)
+		{
+			RegistryResponse response = this.sensorRegistry.getSensorRecord(sensorName);
+
+			if (response.status == RegistryStatus.ok)
+			{
+				return new OkObjectResult(response.singleData);
+			}
+
+			return new BadRequestResult();
 		}
 
 		[HttpPost]

@@ -12,12 +12,12 @@ namespace CommunicationModel.BrokerModels
 		public int ListeningPort { get; set; }
 
 		public List<string> DataHeader { get; set; }
-		public string NewData { get; set; }
+		public SensorValues NewData { get; set; }
 
 		public SensorReaderEvent(string sensorName,
 							List<string> dataHeader,
 							int lastReadIndex,
-							string newData,
+							SensorValues newData,
 							string ipAddress,
 							int listeningPort,
 							string customMessage = "") :

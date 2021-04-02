@@ -77,8 +77,7 @@ namespace ServiceObserver.Broker
 		// 	}
 		// 	catch (Exception e)
 		// 	{
-		// 		// what is @ sign for
-		// 		Console.WriteLine($@"Failed to establish connection with message broker: "
+		// 		Console.WriteLine($"Failed to establish connection with message broker: "
 		// 					+ $"address: {config.brokerAddress}:{config.brokerPort}, "
 		// 					+ $"reason: {e.Message} ");
 		// 	}
@@ -135,8 +134,7 @@ namespace ServiceObserver.Broker
 			}
 			catch (Exception e)
 			{
-				// what is @ sign for
-				Console.WriteLine($@"Failed to establish connection with message broker: "
+				Console.WriteLine($"Failed to establish connection with message broker: "
 							+ $"address: {config.brokerAddress}:{config.brokerPort}, "
 							+ $"reason: {e.Message} ");
 
