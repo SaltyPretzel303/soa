@@ -25,7 +25,7 @@ namespace SensorRegistry
 		{
 			services.AddControllers();
 
-			services.AddTransient<ISensorRegistry, MapRegistry>();
+			services.AddTransient<ISensorRegistry, InMemoryRegistry>();
 
 			services.AddTransient<ILogger, BasicLogger>();
 

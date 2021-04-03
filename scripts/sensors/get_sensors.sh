@@ -6,7 +6,7 @@ then
 	url=$1
 fi
 
-echo "Using url: $url"
+echo "Using ip: $url"
 
-curl "$url" | python -m json.tool; echo
+curl "$url/sensor/registry/getSensors" | python -m json.tool; echo
 

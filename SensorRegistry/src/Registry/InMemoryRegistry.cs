@@ -8,14 +8,14 @@ using SensorRegistry.Configuration;
 
 namespace SensorRegistry.Registry
 {
-	public class MapRegistry : ISensorRegistry
+	public class InMemoryRegistry : ISensorRegistry
 	{
 
 		private static ConcurrentDictionary<string, SensorRegistryRecord> Registry { get; set; }
 
 		private IMessageBroker broker;
 
-		public MapRegistry(IMessageBroker broker)
+		public InMemoryRegistry(IMessageBroker broker)
 		{
 			this.broker = broker;
 
