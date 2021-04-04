@@ -23,11 +23,15 @@ namespace ServiceObserver.RuleEngine
 
 		private IServiceProvider serviceProvider;
 
+		private ConfigFields config;
+
 		public PeriodicRuleEngine(IEventsCache eventsCache,
 							IServiceProvider provider)
 		{
 			this.eventsCache = eventsCache;
 			this.serviceProvider = provider;
+
+			this.config = ServiceConfiguration.Instance;
 
 			if (this.serviceProvider == null)
 			{
@@ -39,7 +43,6 @@ namespace ServiceObserver.RuleEngine
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 			ServiceConfiguration.subscribeForReload((IReloadable)this);
 
 			setupRuleEngine();
@@ -80,7 +83,7 @@ namespace ServiceObserver.RuleEngine
 			{
 				Console.WriteLine($"Rule engine started with {cacheContent.Count} new items ... ");
 			}
-			// else
+			// else // handy in development 
 			// {
 			// 	Console.WriteLine(". ");
 			// }
@@ -98,7 +101,7 @@ namespace ServiceObserver.RuleEngine
 			return Task.CompletedTask;
 		}
 
-		public void reload(ServiceConfiguration newConfig)
+		public void reload(ConfigFields newConfig)
 		{
 
 			if (timer != null)
@@ -111,7 +114,7 @@ namespace ServiceObserver.RuleEngine
 			// rules can't be changed (each rule is a single class)
 			// setupRuleEngine();
 
-			ServiceConfiguration config = newConfig;
+			this.config = newConfig;
 
 			timer = new System.Timers.Timer();
 			timer.Interval = config.ruleEngineTriggerInterval;

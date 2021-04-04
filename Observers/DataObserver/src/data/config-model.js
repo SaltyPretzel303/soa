@@ -1,28 +1,43 @@
 const mongoose = require('mongoose');
 
-const dataEventSchema = new mongoose.Schema({
-	time: String,
-	priority: Number,
-	description: String,
+const configSchema = new mongoose.Schema({
+	updateTime: String,
+	config: {
+		stage: String,
+		Development: {
+			listeningPort: Number,
+			dbAddress: String,
+			dbPort: Number,
+			dbName: String
+		},
+		Production: {
+			listeningPort: Number,
+			dbAddress: String,
+			dbPort: Number,
+			dbName: String
+		}
+	},
 });
 
-const dataEventModel = mongoose.model("DataEvent", dataEventSchema);
+const configDataModel = mongoose.model("Config", configSchema);
 
 module.exports.getAll = async () => {
 	const allQuery = {};
-	return dataEventModel
+	let filterQ = mongoose.
+	return configDataModel
 		.find(allQuery)
+		.updateOne()
 		.select(["-_id", "-__v"]); // remove these two fields from the final result
 	// return promise 
 };
 
 module.exports.getById = async (id) => {
-	return dataEventModel
+	return configDataModel
 		.findById(id)
 		.select(["-_id", "-__v"]);
 }
 
-module.exports.insertOne = async (dataEvent) => {
+module.exports.insertOne = async (newConfig) => {
 	const newDataModel = new dataEventModel(dataEvent);
 	return newDataModel.save(); // will return promise
 }

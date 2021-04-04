@@ -9,7 +9,7 @@ namespace CollectorService.Broker
 {
 	public class RabbitMqBroker : IMessageBroker
 	{
-		private ServiceConfiguration config;
+		private ConfigFields config;
 
 		public RabbitMqBroker()
 		{

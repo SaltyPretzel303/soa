@@ -28,6 +28,8 @@ namespace CollectorService.Broker
 		private CancellationTokenSource connectionRetryTokenSrc;
 		private Task connectionRetryTask;
 
+		private ConfigFields config;
+
 		// private CancellationToken connectionRetryToken;
 
 		public BrokerEventReceiver(IMediator mediator)
@@ -37,6 +39,8 @@ namespace CollectorService.Broker
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+
+			this.config = ServiceConfiguration.Instance;
 
 			this.masterToken = stoppingToken;
 			this.masterToken.Register(() =>
@@ -81,8 +85,6 @@ namespace CollectorService.Broker
 
 			return Task.Run(async () =>
 			{
-				ServiceConfiguration config = ServiceConfiguration.Instance;
-
 				bool connectionReady = false;
 				while (!connectionReady &&
 					!connectionRetryToken.IsCancellationRequested)
@@ -115,7 +117,7 @@ namespace CollectorService.Broker
 				}
 				else
 				{
-					Console.WriteLine("Conection established ... ");
+					Console.WriteLine("Connection established ... ");
 				}
 
 			});
@@ -124,8 +126,6 @@ namespace CollectorService.Broker
 
 		private bool ConfigureConnection()
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			ConnectionFactory connectionFactory = new ConnectionFactory
 			{
@@ -170,8 +170,6 @@ namespace CollectorService.Broker
 		private void SetupRegistryEventConsumer()
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
 			string sensorRegistryQueue = this.channel.QueueDeclare().QueueName;
 			channel.QueueBind(sensorRegistryQueue,
 							config.sensorRegistryTopic,
@@ -195,8 +193,6 @@ namespace CollectorService.Broker
 
 		private void SetupConfigEventConsumer()
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string configEventQueue = this.channel.QueueDeclare().QueueName;
 			this.channel.QueueBind(configEventQueue,
@@ -238,7 +234,7 @@ namespace CollectorService.Broker
 		}
 
 		// has to be async because of the connection retry 
-		public async void reload(ServiceConfiguration newConfig)
+		public async void reload(ConfigFields newConfig)
 		{
 
 			// TODO add check if this service has to be reloaded
@@ -247,13 +243,15 @@ namespace CollectorService.Broker
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)
 			{
-				// cancel previous conenction retries
+				// cancel previous connection retries
 				this.connectionRetryTokenSrc.Cancel();
 				if (this.connectionRetryTask != null)
 				{
 					await this.connectionRetryTask;
 				}
 			}
+
+			this.config = newConfig;
 
 			if (this.channel != null &&
 			this.channel.IsOpen)

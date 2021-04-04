@@ -29,6 +29,8 @@ namespace ServiceObserver.Broker
 		private CancellationTokenSource connectionRetryTokenSrc;
 		private Task connectionRetryTask;
 
+		private ConfigFields config;
+
 		// private CancellationToken connectionRetryToken;
 
 		public BrokerEventReceiver(IMediator mediator)
@@ -38,6 +40,8 @@ namespace ServiceObserver.Broker
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+
+			this.config = ServiceConfiguration.Instance;
 
 			this.masterToken = stoppingToken;
 			this.masterToken.Register(() =>
@@ -80,7 +84,6 @@ namespace ServiceObserver.Broker
 
 			return Task.Run(async () =>
 			{
-				ServiceConfiguration config = ServiceConfiguration.Instance;
 
 				bool connectionReady = false;
 				while (!connectionReady &&
@@ -123,8 +126,6 @@ namespace ServiceObserver.Broker
 
 		private bool ConfigureConnection()
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			ConnectionFactory connectionFactory = new ConnectionFactory
 			{
@@ -170,8 +171,6 @@ namespace ServiceObserver.Broker
 		private void SetupConfigEventConsumer()
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
 			string configEventQueue = this.channel.QueueDeclare().QueueName;
 			this.channel.QueueBind(configEventQueue,
 								config.configUpdateTopic,
@@ -197,8 +196,6 @@ namespace ServiceObserver.Broker
 
 		private void SetupLifetimeEventConsumer()
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string lifetimeQueue = this.channel.QueueDeclare().QueueName;
 			this.channel.QueueBind(lifetimeQueue,
@@ -243,7 +240,7 @@ namespace ServiceObserver.Broker
 		}
 
 		// has to be async because of the connection retry 
-		public async void reload(ServiceConfiguration newConfig)
+		public async void reload(ConfigFields newConfig)
 		{
 
 			// TODO add check if this service has to be reloaded
@@ -259,6 +256,8 @@ namespace ServiceObserver.Broker
 					await this.connectionRetryTask;
 				}
 			}
+
+			this.config = newConfig;
 
 			if (this.channel != null &&
 			this.channel.IsOpen)

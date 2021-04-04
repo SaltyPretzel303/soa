@@ -106,7 +106,8 @@ namespace ServiceObserver.RuleEngine
 				}
 			}
 
-			UnstableRuleRecord newRecord = new UnstableRuleRecord(oldEvents.First().sourceId,
+			UnstableRuleRecord newRecord = new UnstableRuleRecord(
+													oldEvents.First().sourceId,
 													oldEvents.Count(),
 													oldEvents.ToList(),
 													DateTime.Now);
@@ -116,7 +117,7 @@ namespace ServiceObserver.RuleEngine
 							+ $"{newRecord.downCount}x ... ");
 
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			ConfigFields config = ServiceConfiguration.Instance;
 			if (newRecord.downCount >= config.unstableRecordsLimit)
 			{
 				mediator.Send(new UnstableServiceRequest(newRecord));

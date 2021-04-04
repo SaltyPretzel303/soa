@@ -6,6 +6,7 @@ using CommunicationModel;
 using CommunicationModel.RestModels;
 using CommunicationModel.RestModels.CollectorCRUDRequest;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CollectorService.Controller
@@ -198,7 +199,9 @@ namespace CollectorService.Controller
 		[Route("updateConfig")]
 		public IActionResult updateConfiguration([FromBody] UpdateConfigArg configArg)
 		{
-			ServiceConfiguration.reload(JObject.Parse(configArg.TxtConfig), this.database);
+			ServiceConfiguration.reload(
+				JsonConvert.DeserializeObject<ServiceConfiguration>(configArg.TxtConfig),
+				this.database);
 
 			return StatusCode(200);
 		}

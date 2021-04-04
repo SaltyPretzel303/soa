@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CollectorService.Data;
 using CommunicationModel.RestModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceObserver.Data;
 
 namespace ServiceObserver.Controller
@@ -110,20 +111,20 @@ namespace ServiceObserver.Controller
 
 			if (record != null)
 			{
-				Console.WriteLine("Record is not null ... ");
 				List<ConfigRecord> resultList = new List<ConfigRecord>();
 
 				foreach (DatedConfigRecord singleConfRec in record.oldConfigs)
 				{
-					resultList.Add(new ConfigRecord(singleConfRec.AsJsonConfig().ToString(),
-													singleConfRec.backupDate));
+					string txtConfig = JsonConvert.SerializeObject(singleConfRec);
+					resultList.Add(new ConfigRecord(record.serviceId,
+										txtConfig,
+										singleConfRec.backupDate));
 				}
 
 				return new OkObjectResult(resultList);
 			}
 			else
 			{
-				Console.WriteLine("Record is null ... ");
 				return StatusCode(500);
 			}
 		}

@@ -3,125 +3,90 @@ using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using CollectorService.Data;
+using Newtonsoft.Json;
 
 namespace CollectorService.Configuration
 {
 	public class ServiceConfiguration
 	{
 
-		public JObject rawJConfig { get; private set; }
+		private static string CONFIGURATION_PATH = "./service_config.json";
+
+		private static string DEVELOPMENT_VALUE = "Development";
+		private static string PRODUCTION_VALUE = "Production";
+
 		public string stage { get; set; }
 
-		#region  mapped properties
-
-		public int port { get; set; }
-
-		public string dbAddress { get; set; }
-		public string dbName { get; set; }
-		public string sensorsCollection { get; set; }
-		public string fieldWithRecords { get; set; }
-		public string configurationBackupCollection { get; set; }
-		public string configBackupDateField { get; set; }
-
-		public string headerUrl { get; set; }
-		public string dataRangeUrl { get; set; }
-
-		public int readInterval { get; set; }
-
-		public string sensorRegistryAddr { get; set; }
-		public string sensorRegistryPort { get; set; }
-		public string sensorAddrResolutionPath { get; set; }
-		public string sensorListReqPath { get; set; }
-
-		public string brokerAddress { get; set; }
-		public int brokerPort { get; set; }
-		public int retryConnectionDelay { get; set; }
-
-		public string collectorTopic { get; set; }
-		public string accessEventFilter { get; set; }
-		public string pullEventFilter { get; set; }
-
-		public string serviceLogTopic { get; set; }
-		public string serviceLifetimeTopic { get; set; }
-
-		public string serviceTypeFilter { get; set; }
-		public string configurationTopic { get; set; }
-		public string targetConfiguration { get; set; }
-
-		public string allFilter { get; set; }
-
-		public string sensorRegistryTopic { get; set; }
-		public string newSensorFilter { get; set; }
-		public string sensorRemovedFilter { get; set; }
-
-		#endregion
-
-		private static string CONFIGURATION_PATH = "./service_config.json";
-		private static string STAGE_VAR_NAME = "stage";
+		public ConfigFields Production { get; set; }
+		public ConfigFields Development { get; set; }
 
 		#region  singleton specific
+
 		private static ServiceConfiguration instance;
-		public static ServiceConfiguration Instance
+		public static ConfigFields Instance
 		{
 			get
 			{
-				if (ServiceConfiguration.instance == null)
+				if (instance == null)
 				{
-					ServiceConfiguration.instance = ServiceConfiguration.readFromFile();
+					instance = ServiceConfiguration.readFromFile();
 				}
 
-				return ServiceConfiguration.instance;
+				if (instance.stage == DEVELOPMENT_VALUE)
+				{
+					return instance.Development;
+				}
+				else if (instance.stage == PRODUCTION_VALUE)
+				{
+					return instance.Production;
+				}
+				else
+				{
+					Console.WriteLine("Config. Stage field is in invalid format ... ");
+					return null;
+				}
+
 			}
-			private set { ServiceConfiguration.instance = value; }
 		}
 
 		#endregion
 
 		private static ServiceConfiguration readFromFile()
 		{
-
 			Console.WriteLine($"Reading configuration file {ServiceConfiguration.CONFIGURATION_PATH} ... ");
 
-			string rawConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
-			JObject json_config = JObject.Parse(rawConfig);
+			string txtConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
+			JObject jConfig = JObject.Parse(txtConfig);
 
-			return ServiceConfiguration.extractFromJson(json_config);
+			return jConfig.ToObject<ServiceConfiguration>();
 		}
 
-		private static ServiceConfiguration extractFromJson(JObject jConfig)
-		{
-			string stage = jConfig.GetValue(ServiceConfiguration.STAGE_VAR_NAME).ToString();
-			JObject conf_stage = (JObject)jConfig.GetValue(stage);
-
-			ServiceConfiguration config_o = conf_stage.ToObject<ServiceConfiguration>();
-			config_o.stage = stage;
-			config_o.rawJConfig = jConfig;
-
-			return config_o;
-		}
-
-		// write current active configuration to the config file
 		private void writeToFile()
 		{
-			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJConfig.ToString());
+			File.WriteAllText(
+				ServiceConfiguration.CONFIGURATION_PATH,
+				JsonConvert.SerializeObject(instance));
 		}
 
 		#region reload configuration specific
 
 		private static List<IReloadable> ReloadableTargets;
 
-		public static void reload(JObject newConfig, IDatabaseService backupDatabase = null)
+		public static void reload(
+			ServiceConfiguration newConfig,
+		 	IDatabaseService db = null)
 		{
-			Console.WriteLine("Configuration reload requestd  ... ");
+			Console.WriteLine("Configuration reload requested  ... ");
 
-			if (backupDatabase != null)
+			if (db != null)
 			{
-				backupDatabase.backupConfiguration(ServiceConfiguration.Instance.rawJConfig);
+				db.backupConfiguration(ServiceConfiguration.instance);
 			}
 
-			ServiceConfiguration.Instance = ServiceConfiguration.extractFromJson(newConfig);
+			ServiceConfiguration.instance = newConfig;
 
-			ServiceConfiguration.Instance.writeToFile();
+			// this is new config
+			ServiceConfiguration.instance.writeToFile();
 
 			foreach (IReloadable target in ServiceConfiguration.ReloadableTargets)
 			{

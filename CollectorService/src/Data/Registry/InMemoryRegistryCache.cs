@@ -17,11 +17,12 @@ namespace CollectorService.Data.Registry
 		// used to get last read index for specific sensor
 		private IDatabaseService database;
 
+		private ConfigFields config;
+
 		public InMemoryRegistryCache(IDatabaseService database)
 		{
 			this.database = database;
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			this.config = ServiceConfiguration.Instance;
 
 			if (Records == null)
 			{
@@ -33,9 +34,7 @@ namespace CollectorService.Data.Registry
 		private void pullRecords()
 		{
 
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
-			string addr = $"http://{conf.sensorRegistryAddr}:{conf.sensorRegistryPort}/{conf.sensorListReqPath}";
+			string addr = $"http://{config.sensorRegistryAddr}:{config.sensorRegistryPort}/{config.sensorListReqPath}";
 
 			HttpClient httpClient = new HttpClient();
 			HttpResponseMessage responseMessage = null;
@@ -45,7 +44,7 @@ namespace CollectorService.Data.Registry
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine($"Exception occured while pulling active sensors records: {e.Message}");
+				Console.WriteLine($"Exception occurred while pulling active sensors records: {e.Message}");
 			}
 
 			if (responseMessage != null

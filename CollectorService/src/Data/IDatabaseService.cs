@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CollectorService.Configuration;
 using CommunicationModel;
 using Newtonsoft.Json.Linq;
 
@@ -26,6 +27,6 @@ namespace CollectorService.Data
 
 		int getRecordsCount(string sensorName);
 
-		void backupConfiguration(JObject oldConfig);
+		void backupConfiguration(ServiceConfiguration oldConfig);
 	}
 }

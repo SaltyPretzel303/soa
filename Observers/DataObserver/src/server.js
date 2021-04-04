@@ -1,16 +1,16 @@
-// TODO require configuration
+const config = require('./config/config-manager.js').getConfig();
 
-const config = require('./config/config.js').getConfig();
-
-const server = require('express')()
-const bodyParser = require('body-parser')
+const express = require('express')
+const server = express()
 const database = require('./data/mongoose-service')
 
 const eventsCrudRouter = require('./routes/data-events-routes')
 
 database.createConnection();
 
-server.use(bodyParser.json()) // middleware for parsing json body 
+// don't know why is this here, someone on stackOvf suggested
+server.use(express.urlencoded({ extended: true }))
+server.use(express.json()) // middleware for parsing json requests
 
 server.get('/', function (req, res) {
 	console.log("Accessing home route ... ");

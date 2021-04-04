@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using CollectorService.Data;
-using CommunicationModel.RestModels;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
 using ServiceObserver.RuleEngine;
 
@@ -15,10 +13,10 @@ namespace ServiceObserver.Data
 	public class MongoStorage : IDatabaseService
 	{
 
-		public MongoClient client { get; private set; }
-		public IMongoDatabase database { get; private set; }
+		private MongoClient client;
+		private IMongoDatabase database;
 
-		public ServiceConfiguration config;
+		private ConfigFields config;
 
 		public MongoStorage()
 		{
@@ -45,7 +43,7 @@ namespace ServiceObserver.Data
 			return false;
 		}
 
-		public void BackupConfiguration(JObject oldJConfig)
+		public void BackupConfiguration(ServiceConfiguration oldConfig)
 		{
 			if (!this.createConnection())
 			{
@@ -53,7 +51,7 @@ namespace ServiceObserver.Data
 				return;
 			}
 
-			String serviceAddr = NetworkInterface
+			String serviceId = NetworkInterface
 					.GetAllNetworkInterfaces()
 					.Where(nic => nic.OperationalStatus == OperationalStatus.Up
 								&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
@@ -62,19 +60,19 @@ namespace ServiceObserver.Data
 					.FirstOrDefault();
 
 			// at this point this.config still contains the old config. 
+			string collectionName = config.configBackupCollection;
 			IMongoCollection<ConfigBackupRecord> configCollection =
-								 database.GetCollection<ConfigBackupRecord>(
-									 			config.configBackupCollection);
+				database.GetCollection<ConfigBackupRecord>(collectionName);
 
-			DatedConfigRecord newRecord = new DatedConfigRecord(oldJConfig, DateTime.Now);
+			DatedConfigRecord newRecord = new DatedConfigRecord(oldConfig, DateTime.Now);
 
-			FilterDefinition<ConfigBackupRecord> filter = Builders<ConfigBackupRecord>
-											.Filter.Eq(r => r.serviceId, serviceAddr);
+			var filter = Builders<ConfigBackupRecord>
+				.Filter
+				.Eq(r => r.serviceId, serviceId);
 
-			UpdateDefinition<ConfigBackupRecord> update = Builders<ConfigBackupRecord>
-											.Update
-											.Push<DatedConfigRecord>(r => r.oldConfigs,
-																	newRecord);
+			var update = Builders<ConfigBackupRecord>
+				.Update
+				.Push<DatedConfigRecord>(r => r.oldConfigs, newRecord);
 
 			configCollection.UpdateOne(filter, update,
 									new UpdateOptions { IsUpsert = true });
@@ -119,16 +117,18 @@ namespace ServiceObserver.Data
 					.ToString())
 					.FirstOrDefault();
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			IMongoCollection<ConfigBackupRecord> collection =
-							database.GetCollection<ConfigBackupRecord>(config.configBackupCollection);
-			FilterDefinition<ConfigBackupRecord> filter = Builders<ConfigBackupRecord>
-											.Filter.Eq(r => r.serviceId, serviceAddr);
+				database.GetCollection<ConfigBackupRecord>(config.configBackupCollection);
+			var filter = Builders<ConfigBackupRecord>
+				.Filter
+				.Eq(r => r.serviceId, serviceAddr);
 
-			ConfigBackupRecord match = collection.Find(filter).First();
+			ConfigBackupRecord dbResult = collection
+											.Find(filter)
+											.First();
 
-			return match;
+			return dbResult;
 		}
 
 		public List<UnstableServiceDbRecord> GetAllUnstableRecords()

@@ -1,6 +1,7 @@
 using CollectorService.Configuration;
 using CollectorService.Data;
 using MediatR;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CollectorService.MediatrRequests
@@ -27,7 +28,9 @@ namespace CollectorService.MediatrRequests
 
 		protected override void Handle(ConfigChangeRequest request)
 		{
-			ServiceConfiguration.reload(request.NewConfig, this.database);
+			ServiceConfiguration.reload(
+				request.NewConfig.ToObject<ServiceConfiguration>(),
+				this.database);
 		}
 	}
 }

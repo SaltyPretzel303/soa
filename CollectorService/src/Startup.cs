@@ -59,7 +59,7 @@ namespace CollectorService
 							IWebHostEnvironment env,
 							IHostApplicationLifetime lifetime)
 		{
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
+			ConfigFields conf = ServiceConfiguration.Instance;
 
 			// reference used for onShutDown/onStartup events
 			this.provider = app.ApplicationServices;

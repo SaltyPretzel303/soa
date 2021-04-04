@@ -13,7 +13,7 @@ read a # just wait for 'enter'
 source_file=$1
 
 sed 's/"/\\"/'g "$source_file" > "./temp_output" # replace each " with \"
-# g will enable replacing multiple characters from the same line
+# g will enable replacing multiple characters on the same line
 # without g only the first occurrence will be replaced 
 cat ./temp_output > $source_file # put commnad output back to the original file
 

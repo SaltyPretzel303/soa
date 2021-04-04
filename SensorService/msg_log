@@ -3593,3 +3593,4 @@
 {"Content":"Data range request \u003E sensor: sensor_0 index: 0 ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:13.1544387+02:00","customMessage":"Data range request \u003E sensor: sensor_0 index: 0 "}
 {"Content":"Read event sensorRange(0, 2), rowCounter: 14","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:19.7923077+02:00","customMessage":"Read event sensorRange(0, 2), rowCounter: 14"}
 {"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-03-31T17:18:28.7811889+02:00","customMessage":"Sensor is going down ... "}
+{"Content":"Sensor is going down ... ","sourceId":"B42E99C14DDA","sourceType":0,"time":"2021-04-04T17:00:17.0081723+02:00","customMessage":"Sensor is going down ... "}

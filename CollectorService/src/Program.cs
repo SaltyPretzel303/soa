@@ -14,7 +14,7 @@ namespace CollectorService
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			ConfigFields config = ServiceConfiguration.Instance;
 
 			return WebHost.CreateDefaultBuilder(args)
 				   .UseStartup<Startup>()

@@ -16,17 +16,18 @@ namespace CollectorService.Data
 	public class MongoDatabaseService : IDatabaseService
 	{
 
-		public MongoClient client { get; private set; }
-		public IMongoDatabase database { get; private set; }
+		private MongoClient client;
+		private IMongoDatabase database;
+
+		private ConfigFields config;
 
 		public MongoDatabaseService()
 		{
+			this.config = ServiceConfiguration.Instance;
 		}
 
 		private bool createConnection()
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
 			this.client = new MongoClient(config.dbAddress);
 
 			if (this.client != null)
@@ -54,7 +55,7 @@ namespace CollectorService.Data
 				return;
 			}
 
-			string collectionName = ServiceConfiguration.Instance.sensorsCollection;
+			string collectionName = config.sensorsCollection;
 
 			IMongoCollection<SensorModel> collection =
 				this.database.GetCollection<SensorModel>(collectionName);
@@ -81,7 +82,7 @@ namespace CollectorService.Data
 				return;
 			}
 
-			string collectionName = ServiceConfiguration.Instance.sensorsCollection;
+			string collectionName = config.sensorsCollection;
 
 			IMongoCollection<SensorModel> collection =
 					this.database.GetCollection<SensorModel>(collectionName);
@@ -107,7 +108,7 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			string collectionName = ServiceConfiguration.Instance.sensorsCollection;
+			string collectionName = config.sensorsCollection;
 			IMongoCollection<SensorModel> collection =
 					this.database.GetCollection<SensorModel>(collectionName);
 
@@ -128,7 +129,7 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			string collection = ServiceConfiguration.Instance.sensorsCollection;
+			string collection = config.sensorsCollection;
 			IMongoCollection<SensorModel> sensorsCollection =
 					this.database.GetCollection<SensorModel>(collection);
 
@@ -160,7 +161,6 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMongoCollection<SensorModel> collection =
 				this.database.GetCollection<SensorModel>(config.sensorsCollection);
 
@@ -196,7 +196,6 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMongoCollection<SensorModel> collection =
 					this.database.GetCollection<SensorModel>(config.sensorsCollection);
 
@@ -235,7 +234,7 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			string collectionName = ServiceConfiguration.Instance.sensorsCollection;
+			string collectionName = config.sensorsCollection;
 			IMongoCollection<SensorModel> collection =
 					this.database.GetCollection<SensorModel>(collectionName);
 
@@ -264,7 +263,6 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMongoCollection<SensorModel> collection =
 					this.database.GetCollection<SensorModel>(config.sensorsCollection);
 
@@ -277,46 +275,6 @@ namespace CollectorService.Data
 			return (result.DeletedCount == 1);
 		}
 
-		public void backupConfiguration(JObject oldJConfig)
-		{
-
-			if (!this.createConnection())
-			{
-				return;
-			}
-
-			string serviceAddr = NetworkInterface.
-								GetAllNetworkInterfaces().
-								Where(nic => nic.OperationalStatus == OperationalStatus.Up
-											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
-								Select(nic => nic.GetPhysicalAddress().ToString()).
-								FirstOrDefault();
-
-			ServiceConfiguration oldOConfig = ServiceConfiguration.Instance;
-
-			IMongoCollection<BsonDocument> configCollection =
-								database.GetCollection<BsonDocument>(oldOConfig.configurationBackupCollection);
-
-			oldJConfig[oldOConfig.configBackupDateField] = DateTime.Now.ToString();
-
-			string matchQuery = String.Format(@"{{service_name: '{0}'}}", serviceAddr);
-			string updateQuery = String.Format(@"{{$push: {{{0}: {1}}}}}", "old_configs", oldJConfig.ToString());
-
-			try
-			{
-
-				configCollection.UpdateOne(matchQuery, updateQuery, new UpdateOptions { IsUpsert = true });
-				// upsert true -> create document if doesn't exists
-				Console.WriteLine("Configuration backup done ... ");
-
-			}
-			catch (FormatException e)
-			{
-				Console.WriteLine(e.StackTrace);
-			}
-
-		}
-
 		public int getRecordsCount(string sensorName)
 		{
 
@@ -327,7 +285,6 @@ namespace CollectorService.Data
 
 			Console.WriteLine($"Gonna try to get last index for {sensorName}");
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMongoCollection<SensorModel> sensorsCollection = this.database.GetCollection<SensorModel>(config.sensorsCollection);
 
 
@@ -357,6 +314,45 @@ namespace CollectorService.Data
 			Console.WriteLine($"LastReadIndex: {count}");
 
 			return count;
+
+		}
+
+		public void backupConfiguration(ServiceConfiguration oldConfig)
+		{
+
+			if (!this.createConnection())
+			{
+				return;
+			}
+
+			// TODO maybe this id should be read from config ... 
+			string serviceId = NetworkInterface.
+								GetAllNetworkInterfaces().
+								Where(nic => nic.OperationalStatus == OperationalStatus.Up
+											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
+								Select(nic => nic.GetPhysicalAddress().ToString()).
+								FirstOrDefault();
+
+			ConfigFields config = ServiceConfiguration.Instance;
+
+			string collectionName = config.configurationBackupCollection;
+			IMongoCollection<ConfigBackupRecord> configCollection =
+				database.GetCollection<ConfigBackupRecord>(collectionName);
+
+			DatedConfigRecord newRecord = new DatedConfigRecord(
+				oldConfig,
+				DateTime.Now);
+
+			var filter = Builders<ConfigBackupRecord>
+				.Filter
+				.Eq(r => r.serviceId, serviceId);
+
+			var update = Builders<ConfigBackupRecord>
+				.Update
+				.Push(r => r.oldConfigs, newRecord);
+
+			configCollection
+				.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
 
 		}
 

@@ -72,7 +72,7 @@ namespace CollectorService.Data
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			ConfigFields config = ServiceConfiguration.Instance;
 
 			List<SensorRegistryRecord> availableSensors = this.mediator.Send(new GetAllSensorsRequest()).Result;
 
@@ -175,7 +175,7 @@ namespace CollectorService.Data
 
 		}
 
-		public void reload(ServiceConfiguration newConfig)
+		public void reload(ConfigFields newConfig)
 		{
 			// with every timerEvent configuration is read again
 			// only readInterval is kept from the initial service construction
@@ -187,7 +187,7 @@ namespace CollectorService.Data
 				this.timer.Start();
 			}
 
-			Console.WriteLine("Data puller reloaded ...  ");
+			// Console.WriteLine("Data puller reloaded ...  ");
 		}
 
 	}

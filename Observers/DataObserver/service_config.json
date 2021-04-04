@@ -1,0 +1,15 @@
+{
+	"stage": "Development",
+	"Development": {
+		"listeningPort": 5005,
+		"dbAddress": "localhost",
+		"dbPort": 27017,
+		"dbName": "soa_data_observer_dev"
+	},
+	"Production": {
+		"listeningPort": 5000,
+		"dbAddress": "soa-mongo-db",
+		"dbPort": 27017,
+		"dbName": "soa_data_observer"
+	}
+}

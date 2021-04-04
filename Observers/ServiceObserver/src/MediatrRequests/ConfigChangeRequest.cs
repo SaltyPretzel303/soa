@@ -27,7 +27,9 @@ namespace ServiceObserver.MediatrRequests
 
 		protected override void Handle(ConfigChangeRequest request)
 		{
-			ServiceConfiguration.reload(request.NewConfig, db);
+			ServiceConfiguration.reload(
+				request.NewConfig.ToObject<ServiceConfiguration>(),
+				db);
 		}
 	}
 

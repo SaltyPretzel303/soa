@@ -1,9 +1,14 @@
+const config = require('../config/config-manager.js').getConfig()
+
+const { Mongoose } = require('mongoose');
 const mognoose = require('mongoose')
 
-const url = "mongodb://localhost:27017";
-const dbName = "data_observer";
+const dbAddress = config.dbAddress;
+const dbPort = config.dbPort;
+const dbName = config.dbName;
+const dbEventsCollection = config.dbEventsCollection;
 
-const dbUrl = url + "/" + dbName;
+const dbUrl = dbAddress + ":" + dbPort + "/" + dbName;
 
 const options = {
 	useNewUrlParser: true,
@@ -33,6 +38,6 @@ const createConnection = () => {
 
 module.exports.createConnection = createConnection;
 
-process.on('exit',(code)=>{
+process.on('exit', (code) => {
 	mognoose.disconnect
 });
