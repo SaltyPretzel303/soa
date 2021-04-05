@@ -51,8 +51,6 @@ namespace SensorRegistry.Broker
 				string txtEvent = JsonConvert.SerializeObject(newEvent);
 				byte[] content = Encoding.UTF8.GetBytes(txtEvent);
 
-				Console.WriteLine("Publishing: " + txtEvent);
-
 				connection = connFactory.CreateConnection();
 				channel = connection.CreateModel();
 
@@ -71,7 +69,9 @@ namespace SensorRegistry.Broker
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine($@"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
+				Console.WriteLine($@"Failed to establish connection with broker: "
+					+ "address: {config.brokerAddress}:{config.brokerPort}, "
+					+ "reason: {e.Message}");
 			}
 			finally
 			{

@@ -81,13 +81,10 @@ namespace SensorRegistry.Configuration
 			Console.WriteLine("Configuration update requested ... ");
 
 			ServiceConfiguration.Instance = ServiceConfiguration.parseJson(newConfig);
-			Console.WriteLine("Json parsed ... ");
 			ServiceConfiguration.Instance.WriteToFile();
-			Console.WriteLine("Config written to the file ... ");
 
 			foreach (IReloadable singleListener in ChangeListeners)
 			{
-				Console.WriteLine("Updating some service ... ");
 				singleListener.reload(ServiceConfiguration.Instance);
 			}
 		}

@@ -33,8 +33,6 @@ namespace ServiceObserver.MediatrRequests
 
 		protected override void Handle(UnstableServiceRequest request)
 		{
-			Console.WriteLine($"Handling {request.record.serviceId} unstable record ... ");
-
 			db.SaveUnstableRecord(request.record);
 		}
 	}

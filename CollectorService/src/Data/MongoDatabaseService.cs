@@ -283,8 +283,6 @@ namespace CollectorService.Data
 				return 0;
 			}
 
-			Console.WriteLine($"Gonna try to get last index for {sensorName}");
-
 			IMongoCollection<SensorModel> sensorsCollection = this.database.GetCollection<SensorModel>(config.sensorsCollection);
 
 
@@ -311,7 +309,6 @@ namespace CollectorService.Data
 
 				count = 0;
 			}
-			Console.WriteLine($"LastReadIndex: {count}");
 
 			return count;
 

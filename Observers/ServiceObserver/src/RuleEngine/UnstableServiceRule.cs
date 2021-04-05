@@ -46,8 +46,8 @@ namespace ServiceObserver.RuleEngine
 				);
 
 			Then()
-				.Do(ctx => PrintSingleDownEvent(singleEvent))
-				.Do(ctx => ProcessAllDownEvents(oldDownEvents))
+				// .Do(ctx => PrintSingleDownEvent(singleEvent))
+				// .Do(ctx => PrintAllDownEvents(oldDownEvents))
 
 				.Do(ctx => ProcessUnstableRecords(oldDownRecords,
 											oldDownEvents,
@@ -67,7 +67,7 @@ namespace ServiceObserver.RuleEngine
 			Console.WriteLine("\t" + IdTimeFormat(singleEvent));
 		}
 
-		private static void ProcessAllDownEvents(IEnumerable<ServiceLifetimeEvent> eventsList)
+		private static void PrintAllDownEvents(IEnumerable<ServiceLifetimeEvent> eventsList)
 		{
 			if (eventsList == null || eventsList.Count() == 0)
 			{
@@ -99,11 +99,11 @@ namespace ServiceObserver.RuleEngine
 				{
 					ctx.Retract(oldRecords.First());
 				}
-				else
-				{
-					Console.WriteLine("Record is already up to date ... ");
-					return;
-				}
+				// else
+				// {
+				// 	Console.WriteLine("Record is already up to date ... ");
+				// 	return;
+				// }
 			}
 
 			UnstableRuleRecord newRecord = new UnstableRuleRecord(
@@ -112,14 +112,15 @@ namespace ServiceObserver.RuleEngine
 													oldEvents.ToList(),
 													DateTime.Now);
 			ctx.Insert(newRecord);
-			Console.WriteLine("\tRecord update: "
-							+ $"s.ID:{newRecord.serviceId} been down "
-							+ $"{newRecord.downCount}x ... ");
+			// Console.WriteLine("\tRecord update: "
+			// 				+ $"s.ID: {newRecord.serviceId} been down: "
+			// 				+ $"{newRecord.downCount}x ... ");
 
 
 			ConfigFields config = ServiceConfiguration.Instance;
 			if (newRecord.downCount >= config.unstableRecordsLimit)
 			{
+				Console.WriteLine($"Service: {newRecord.serviceId} is unstable ... ");
 				mediator.Send(new UnstableServiceRequest(newRecord));
 			}
 

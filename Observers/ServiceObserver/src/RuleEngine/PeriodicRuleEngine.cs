@@ -29,15 +29,11 @@ namespace ServiceObserver.RuleEngine
 							IServiceProvider provider)
 		{
 			this.eventsCache = eventsCache;
+
+			// used for rule engine dependencyResolver
 			this.serviceProvider = provider;
 
 			this.config = ServiceConfiguration.Instance;
-
-			if (this.serviceProvider == null)
-			{
-				Console.WriteLine("Provider is null ... :(");
-			}
-
 		}
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -81,9 +77,9 @@ namespace ServiceObserver.RuleEngine
 
 			if (cacheContent.Count > 0)
 			{
-				Console.WriteLine($"Rule engine started with {cacheContent.Count} new items ... ");
+				Console.WriteLine($"Injecting {cacheContent.Count} new facts ... ");
 			}
-			// else // handy in development 
+			// else // is handy in development 
 			// {
 			// 	Console.WriteLine(". ");
 			// }

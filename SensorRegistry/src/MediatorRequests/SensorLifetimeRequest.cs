@@ -44,7 +44,7 @@ namespace SensorRegistry.MediatorRequests
 				else
 				{
 					// TODO use logger
-					Console.WriteLine("Received startup event for already registered sensor ... ");
+					Console.WriteLine("Startup event for ALREADY registered sensor ... ");
 				}
 
 			}
@@ -59,7 +59,7 @@ namespace SensorRegistry.MediatorRequests
 				else
 				{
 					// TODO use logger
-					Console.WriteLine("Received shutdown event for not registered sensor ... ");
+					Console.WriteLine("Shutdown event for NOT registered sensor ... ");
 				}
 
 			}

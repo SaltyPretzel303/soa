@@ -204,7 +204,9 @@ namespace SensorRegistry.Broker
 				SensorLifetimeEvent sensorEvent = JsonConvert
 						.DeserializeObject<SensorLifetimeEvent>(txtContent);
 
-				Console.WriteLine("Received ... : " + txtContent);
+				Console.WriteLine($"event => Lifetime: {sensorEvent.lifeStage.ToString()}"
+					+ $"name: {sensorEvent.SensorName} "
+					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
 				this.mediator.Send(new SensorLifetimeRequest(sensorEvent));
 			};
@@ -232,7 +234,8 @@ namespace SensorRegistry.Broker
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 				SensorReaderEvent sensorEvent = JsonConvert.DeserializeObject<SensorReaderEvent>(txtContent);
 
-				Console.WriteLine("Received ... : " + txtContent);
+				Console.WriteLine($"event => Reader: {sensorEvent.SensorName} "
+					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
 				this.mediator.Send(new SensorUpdateRequest(sensorEvent));
 				// this.sensorEventHandler.HandleSensorEvent(sensorEvent);

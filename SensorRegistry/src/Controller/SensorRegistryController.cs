@@ -32,11 +32,7 @@ namespace SensorRegistry.Controller
 		public IActionResult postSensor([FromBody] SensorDataArg reqArg)
 		{
 
-			Console.WriteLine("Sensor registration trough post request ... ");
-			Console.WriteLine("Data: "
-						+ $"Name: {reqArg.SensorName}"
-						+ $"PortNum: {reqArg.PortNum}"
-						+ $"Ip: {reqArg.IpAddress}");
+			Console.WriteLine($"Sensor add trough post request: {reqArg.SensorName}");
 
 			RegistryResponse response = sensorRegistry.addSensorRecord(reqArg.SensorName,
 														reqArg.IpAddress,
@@ -78,7 +74,7 @@ namespace SensorRegistry.Controller
 		public IActionResult delete([FromQuery] string sensorName)
 		{
 
-			Console.WriteLine($"Request to delete sensor: {sensorName} ... ");
+			Console.WriteLine($"Sensor removed: {sensorName} ... ");
 			RegistryResponse response = this.sensorRegistry.removeSensorRecord(sensorName);
 			if (response.status == RegistryStatus.ok)
 			{

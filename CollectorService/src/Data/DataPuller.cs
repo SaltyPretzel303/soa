@@ -65,7 +65,7 @@ namespace CollectorService.Data
 
 		public void stopReading()
 		{
-			Console.WriteLine("Done with pulling data");
+			Console.WriteLine("Stopped pulling data ...");
 			this.timer.Stop();
 		}
 
@@ -76,7 +76,7 @@ namespace CollectorService.Data
 
 			List<SensorRegistryRecord> availableSensors = this.mediator.Send(new GetAllSensorsRequest()).Result;
 
-			Console.WriteLine($"Ready to pull from: {availableSensors.Count} sensors ... ");
+			Console.WriteLine($"Pulling data from: {availableSensors.Count} sensors ... ");
 			foreach (SensorRegistryRecord singleSensor in availableSensors)
 			{
 
@@ -187,7 +187,7 @@ namespace CollectorService.Data
 				this.timer.Start();
 			}
 
-			// Console.WriteLine("Data puller reloaded ...  ");
+			Console.WriteLine("Data puller reloaded ...  ");
 		}
 
 	}

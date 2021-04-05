@@ -77,8 +77,8 @@ namespace CollectorService.Controller
 			{
 
 				string message = "Bad request, invalid timestamps: "
-						+ $"FromTimestamp: {fromTimestamp} "
-						+ $"ToTimestamp: {toTimestamp}";
+					+ $"FromTimestamp: {fromTimestamp} "
+					+ $"ToTimestamp: {toTimestamp}";
 
 				Console.WriteLine(message);
 

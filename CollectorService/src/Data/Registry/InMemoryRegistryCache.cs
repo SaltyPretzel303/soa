@@ -54,7 +54,7 @@ namespace CollectorService.Data.Registry
 
 				List<SensorRegistryRecord> newRecords = JsonConvert.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
 
-				// Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
+				Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
 
 				foreach (SensorRegistryRecord newSensor in newRecords)
 				{
@@ -118,7 +118,6 @@ namespace CollectorService.Data.Registry
 			newRecord.AvailableRecords = this.database.getRecordsCount(newRecord.Name);
 			Records.TryAdd(newRecord.Name, newRecord);
 
-			Console.WriteLine("sensor: " + newRecord.Name + " last read index: " + newRecord.AvailableRecords);
 		}
 
 		public void UpdateRecord(SensorRegistryRecord newRecord)
