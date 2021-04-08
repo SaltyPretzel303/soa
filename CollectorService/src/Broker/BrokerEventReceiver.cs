@@ -180,9 +180,10 @@ namespace CollectorService.Broker
 			regEventConsumer.Received += (srcChannel, eventArg) =>
 			{
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-				SensorRegistryEvent eventData = JsonConvert.DeserializeObject<SensorRegistryEvent>(txtContent);
+				SensorRegistryEvent eventData =
+					JsonConvert.DeserializeObject<SensorRegistryEvent>(txtContent);
 
-				this.mediator.Send(new SensorRegistryUpdateRequest(eventData));
+				mediator.Send(new SensorRegistryUpdateRequest(eventData));
 			};
 
 			this.channel.BasicConsume(sensorRegistryQueue,
@@ -208,7 +209,7 @@ namespace CollectorService.Broker
 
 				JObject newConfig = JObject.Parse(txtContent);
 
-				this.mediator.Send(new ConfigChangeRequest(newConfig));
+				mediator.Send(new ConfigChangeRequest(newConfig));
 			};
 
 			this.channel.BasicConsume(configEventQueue,

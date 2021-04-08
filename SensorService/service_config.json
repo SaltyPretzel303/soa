@@ -43,7 +43,7 @@
 			"From": 55,
 			"To": 60
 		},
-		"readInterval": 5000,
+		"readInterval": 500,
 		"listeningPort": 5000,
 		"hostIP": "172.19.0.2",
 		"sensorNamePrefix": "sensor_",

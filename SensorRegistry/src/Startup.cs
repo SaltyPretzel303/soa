@@ -3,7 +3,6 @@ using CommunicationModel.BrokerModels;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SensorRegistry.Broker;
@@ -32,12 +31,14 @@ namespace SensorRegistry
 			services.AddMediatR(typeof(Startup));
 
 			services.AddTransient<RequestHandler<ConfigUpdateRequest>,
-					ConfigUpdateRequestHandler>();
-			services.AddTransient<RequestHandler<SensorUpdateRequest>,
-					SensorUpdateRequestHandler>();
-			services.AddTransient<RequestHandler<SensorLifetimeRequest>,
-					SensorLifetimeRequestHandler>();
+				ConfigUpdateRequestHandler>();
 
+			services.AddTransient<RequestHandler<SensorLifetimeRequest>,
+				SensorLifetimeRequestHandler>();
+			services.AddTransient<RequestHandler<SensorUpdateRequest>,
+				SensorUpdateRequestHandler>();
+			services.AddTransient<RequestHandler<CheckSensorInfoRequest>,
+				CheckSensorInfoRequestHandler>();
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 			services.AddHostedService<BrokerEventsReceiver>();

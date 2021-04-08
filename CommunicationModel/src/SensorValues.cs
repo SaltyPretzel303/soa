@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-
 namespace CommunicationModel
 {
-
 	// object representation of a single row of .csv file
 
 	public class SensorValues

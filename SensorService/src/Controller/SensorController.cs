@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SensorService.Configuration;
 using SensorService.Logger;
 using CommunicationModel;
+using CommunicationModel.RestModels;
 
 namespace DataCollector.Controller
 {
@@ -12,13 +13,17 @@ namespace DataCollector.Controller
 	public class SensorController : ControllerBase
 	{
 
-		public ILogger logger;
-		public IDataCacheManager dataCache;
+		private ILogger logger;
+		private IDataCacheManager dataCache;
+
+		private ServiceConfiguration config;
 
 		public SensorController(ILogger logger, IDataCacheManager dataCache)
 		{
 			this.logger = logger;
 			this.dataCache = dataCache;
+
+			this.config = ServiceConfiguration.Instance;
 		}
 
 		// ping request
@@ -35,8 +40,6 @@ namespace DataCollector.Controller
 
 			logger.logMessage($"Data range request - sensor: {sensorName} index: {index} ");
 
-			ServiceConfiguration conf = ServiceConfiguration.Instance;
-
 			CacheRecord cachedRecord = this.dataCache.GetSensorRecordsFrom(sensorName, index);
 			if (cachedRecord != null &&
 				cachedRecord.Records.Count > 0)
@@ -51,6 +54,20 @@ namespace DataCollector.Controller
 			}
 
 			return new BadRequestResult();
+		}
+
+		[HttpGet]
+		[Route("info")]
+		public IActionResult getInfo([FromQuery] string sensorName)
+		{
+
+			var info = new SensorReaderInfo(
+				sensorName,
+				config.hostIP,
+				config.listeningPort,
+				dataCache.GetLastReadIndex(sensorName));
+
+			return new ObjectResult(info);
 		}
 
 		// TODO add config update method maybe 

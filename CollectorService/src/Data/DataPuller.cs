@@ -74,36 +74,47 @@ namespace CollectorService.Data
 
 			ConfigFields config = ServiceConfiguration.Instance;
 
-			List<SensorRegistryRecord> availableSensors = this.mediator.Send(new GetAllSensorsRequest()).Result;
+			List<SensorRegistryRecord> availableSensors = mediator
+				.Send(new GetAllSensorsRequest())
+				.Result;
 
 			Console.WriteLine($"Pulling data from: {availableSensors.Count} sensors ... ");
 			foreach (SensorRegistryRecord singleSensor in availableSensors)
 			{
 
-				int sensorLastReadIndex = 0;
+				int alreadyReadCount = 0;
 				if (!this.lastReadIndex.TryGetValue(
 						singleSensor.Name,
-						out sensorLastReadIndex))
+						out alreadyReadCount))
 				{
 					// initialize lastReadIndex if it doesn't exists for this sensor
-					sensorLastReadIndex = this.mediator.Send(
-						new GetRecordsCountRequest(singleSensor.Name)).Result;
+					alreadyReadCount = mediator
+						.Send(new GetRecordsCountRequest(singleSensor.Name))
+						.Result;
 
-					this.lastReadIndex.Add(singleSensor.Name, sensorLastReadIndex);
+					this.lastReadIndex.Add(singleSensor.Name, alreadyReadCount);
+				}
+
+				if (alreadyReadCount >= singleSensor.AvailableRecords)
+				{
+					Console.WriteLine($"No new records in : {singleSensor.Name} ... ");
+					continue; // read from the next sensor 
 				}
 
 				string sensorAddr = $"http://{singleSensor.Address}:{singleSensor.Port}";
 				string api_url = $"{sensorAddr}/{config.dataRangeUrl}?"
 					+ $"sensorName={singleSensor.Name}&"
-					+ $"index={sensorLastReadIndex}";
+					+ $"index={alreadyReadCount}";
 
 				Uri sensorUri = new Uri(api_url);
-				Console.WriteLine("Pulling from: " + api_url);
+				Console.WriteLine($"Pulling from: {sensorAddr}, "
+					+ $"name: {singleSensor.Name}, "
+					+ $"index: {alreadyReadCount}");
 
-				HttpResponseMessage responseMessage = null;
+				HttpResponseMessage response = null;
 				try
 				{
-					responseMessage = this.httpClient.GetAsync(sensorUri).Result;
+					response = this.httpClient.GetAsync(sensorUri).Result;
 				}
 				catch (AggregateException e)
 				{
@@ -128,21 +139,22 @@ namespace CollectorService.Data
 					continue; // pull from the next sensor
 				}
 
-				if (responseMessage == null ||
-				!responseMessage.IsSuccessStatusCode)
+				if (response == null || !response.IsSuccessStatusCode)
 				{
-					Console.WriteLine($"Sensor ({sensorUri.ToString()}) returned bad response ... ");
+					Console.WriteLine($"Sensor (name: {singleSensor.Name})"
+						+ "returned bad response ... ");
 
-					CollectorPullEvent newEvent = new CollectorPullEvent(sensorUri.ToString(),
-															false,
-															"Sensor returned bad response.");
+					CollectorPullEvent newEvent = new CollectorPullEvent(
+														sensorUri.ToString(),
+														false,
+														"Sensor returned bad response.");
 
-					this.mediator.Send(new PublishCollectorPullEventRequest(newEvent));
+					mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
 					continue; // pull from the next sensor
 				}
 
-				string txtResponseContent = responseMessage.Content.ReadAsStringAsync().Result;
+				string txtResponseContent = response.Content.ReadAsStringAsync().Result;
 				// SensorDataRecords dataRecords = System.Text.Json.JsonSerializer.Deserialize<SensorDataRecords>(txtResponseContent);
 				// newtonsoft serializes properties to camelCase so when they get pulled from sensor
 				// system.text.json can't deserialize it because class properties are actually in PascalCase 
@@ -152,7 +164,7 @@ namespace CollectorService.Data
 						.DeserializeObject<SensorDataRecords>(txtResponseContent);
 
 				Console.WriteLine($"Sensor {singleSensor.Name}"
-						+ $" returned {dataRecords.RecordsCount} rows ... ");
+					+ $" returned {dataRecords.RecordsCount} rows ... ");
 
 				// // deserialize all records from response
 				// // ListdataRecords.Records -> list of strings each representing one row from csv
@@ -169,7 +181,7 @@ namespace CollectorService.Data
 
 				// update read index for every sensor
 				// at this point lastReadIndex[singleSensor.Name] has to exists (look at the beginning of this for loop)
-				this.lastReadIndex[singleSensor.Name] = sensorLastReadIndex + dataRecords.RecordsCount;
+				this.lastReadIndex[singleSensor.Name] = alreadyReadCount + dataRecords.RecordsCount;
 
 			}
 

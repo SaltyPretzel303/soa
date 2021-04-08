@@ -50,11 +50,55 @@ namespace ServiceObserver.RuleEngine
 				// .Do(ctx => PrintAllDownEvents(oldDownEvents))
 
 				.Do(ctx => ProcessUnstableRecords(oldDownRecords,
-											oldDownEvents,
-											ctx,
-											mediator));
+								oldDownEvents,
+								ctx,
+								mediator));
 		}
 
+		private static void ProcessUnstableRecords(IEnumerable<UnstableRuleRecord> oldRecords,
+								IEnumerable<ServiceLifetimeEvent> oldEvents,
+								NRules.RuleModel.IContext ctx,
+								IMediator mediator)
+		{
+			if (oldRecords == null)
+			{
+				Console.WriteLine("We got null for ListRecords ..");
+				return;
+			}
+
+			if (oldRecords.Count() > 0)
+			{
+				if (oldRecords.First().downCount < oldEvents.Count())
+				{
+					ctx.Retract(oldRecords.First());
+				}
+				else
+				{
+					// Console.WriteLine("Record is already up to date ... ");
+					return;
+				}
+			}
+
+			UnstableRuleRecord newRecord = new UnstableRuleRecord(
+													oldEvents.First().sourceId,
+													oldEvents.Count(),
+													oldEvents.ToList(),
+													DateTime.Now);
+			ctx.Insert(newRecord);
+			// Console.WriteLine("\tRecord update: "
+			// 				+ $"s.ID: {newRecord.serviceId} been down: "
+			// 				+ $"{newRecord.downCount}x ... ");
+
+
+			ConfigFields config = ServiceConfiguration.Instance;
+			if (newRecord.downCount >= config.unstableRecordsLimit)
+			{
+				Console.WriteLine($"Service: {newRecord.serviceId} IS UNSTABLE ... ");
+				mediator.Send(new UnstableServiceRequest(newRecord));
+			}
+
+			return;
+		}
 
 		private static void PrintSingleDownEvent(ServiceLifetimeEvent singleEvent)
 		{
@@ -80,51 +124,6 @@ namespace ServiceObserver.RuleEngine
 				Console.WriteLine(IdTimeFormat(eventItem));
 			}
 
-		}
-
-		private static void ProcessUnstableRecords(IEnumerable<UnstableRuleRecord> oldRecords,
-										IEnumerable<ServiceLifetimeEvent> oldEvents,
-										NRules.RuleModel.IContext ctx,
-										IMediator mediator)
-		{
-			if (oldRecords == null)
-			{
-				Console.WriteLine("We got null for ListRecords ..");
-				return;
-			}
-
-			if (oldRecords.Count() > 0)
-			{
-				if (oldRecords.First().downCount < oldEvents.Count())
-				{
-					ctx.Retract(oldRecords.First());
-				}
-				// else
-				// {
-				// 	Console.WriteLine("Record is already up to date ... ");
-				// 	return;
-				// }
-			}
-
-			UnstableRuleRecord newRecord = new UnstableRuleRecord(
-													oldEvents.First().sourceId,
-													oldEvents.Count(),
-													oldEvents.ToList(),
-													DateTime.Now);
-			ctx.Insert(newRecord);
-			// Console.WriteLine("\tRecord update: "
-			// 				+ $"s.ID: {newRecord.serviceId} been down: "
-			// 				+ $"{newRecord.downCount}x ... ");
-
-
-			ConfigFields config = ServiceConfiguration.Instance;
-			if (newRecord.downCount >= config.unstableRecordsLimit)
-			{
-				Console.WriteLine($"Service: {newRecord.serviceId} is unstable ... ");
-				mediator.Send(new UnstableServiceRequest(newRecord));
-			}
-
-			return;
 		}
 
 		private static void PrintSeparator()

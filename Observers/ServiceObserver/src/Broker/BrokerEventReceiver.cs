@@ -117,7 +117,7 @@ namespace ServiceObserver.Broker
 				}
 				else
 				{
-					Console.WriteLine("Connection established ... ");
+					Console.WriteLine("Broker connection established ... ");
 				}
 
 			});
@@ -209,10 +209,12 @@ namespace ServiceObserver.Broker
 
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 
-				Console.WriteLine($"Received: {txtContent} ");
-
 				ServiceLifetimeEvent newEvent = JsonConvert
 							.DeserializeObject<ServiceLifetimeEvent>(txtContent);
+
+				Console.WriteLine($"LifeEvent => {newEvent.lifeStage.ToString()}, "
+					+ $"s.Type: {newEvent.sourceType}, "
+					+ $"s.Name: {newEvent.sourceId}");
 
 				this.mediator.Send(new SaveEventRequest(newEvent));
 

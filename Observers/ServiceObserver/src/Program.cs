@@ -14,11 +14,11 @@ namespace ServiceObserver
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args)
 		{
 
-			int portToUse = ServiceConfiguration.Instance.port;
+			int port = ServiceConfiguration.Instance.port;
 
 			return WebHost.CreateDefaultBuilder(args)
 				  .UseStartup<Startup>()
-				  .UseUrls($"http://localhost:{portToUse}");
+				  .UseUrls($"http://+:{port}");
 		}
 	}
 }

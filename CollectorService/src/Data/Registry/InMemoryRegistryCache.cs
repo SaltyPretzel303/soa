@@ -27,14 +27,16 @@ namespace CollectorService.Data.Registry
 			if (Records == null)
 			{
 				Records = new ConcurrentDictionary<string, SensorRegistryRecord>();
-				this.pullRecords();
+				pullRecords();
 			}
 		}
 
 		private void pullRecords()
 		{
 
-			string addr = $"http://{config.sensorRegistryAddr}:{config.sensorRegistryPort}/{config.sensorListReqPath}";
+			string addr = $"http://{config.sensorRegistryAddr}"
+				+ $":{config.sensorRegistryPort}"
+				+ $"/{config.sensorListReqPath}";
 
 			HttpClient httpClient = new HttpClient();
 			HttpResponseMessage responseMessage = null;
@@ -74,7 +76,7 @@ namespace CollectorService.Data.Registry
 			if (Records == null ||
 			Records.Keys.Count == 0)
 			{
-				this.pullRecords();
+				pullRecords();
 			}
 
 			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();

@@ -74,8 +74,8 @@ namespace SensorRegistry.Broker
 			}
 
 			this.setupConfigConsumer();
-			this.setupSensorReaderConsumer();
 			this.setupSensorLifetimeConsumer();
+			this.setupSensorReaderConsumer();
 		}
 
 		private Task establishConnection(CancellationToken token)
@@ -204,7 +204,7 @@ namespace SensorRegistry.Broker
 				SensorLifetimeEvent sensorEvent = JsonConvert
 						.DeserializeObject<SensorLifetimeEvent>(txtContent);
 
-				Console.WriteLine($"event => Lifetime: {sensorEvent.lifeStage.ToString()}"
+				Console.WriteLine($"event => Lifetime: {sensorEvent.lifeStage.ToString()} "
 					+ $"name: {sensorEvent.SensorName} "
 					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
@@ -238,7 +238,6 @@ namespace SensorRegistry.Broker
 					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
 				this.mediator.Send(new SensorUpdateRequest(sensorEvent));
-				// this.sensorEventHandler.HandleSensorEvent(sensorEvent);
 			};
 
 			this.channel.QueueBind(sensorReadEventQueue,

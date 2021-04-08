@@ -58,6 +58,9 @@ namespace SensorRegistry.Configuration
 		public string sensorReadEventFilter { get; set; }
 		public string sensorLifetimeFilter { get; set; }
 
+		public string sensorInfoPath { get; set; }
+		public string sensorInfoNameArg { get; set; }
+
 		#endregion
 
 		private static ServiceConfiguration read()

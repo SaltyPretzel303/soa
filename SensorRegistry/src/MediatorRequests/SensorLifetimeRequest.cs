@@ -28,8 +28,8 @@ namespace SensorRegistry.MediatorRequests
 		protected override void Handle(SensorLifetimeRequest request)
 		{
 
-			RegistryResponse regResponse = this.LocalRegistry
-					.getSensorRecord(request.NewEvent.SensorName);
+			RegistryResponse regResponse = LocalRegistry
+				.getSensorRecord(request.NewEvent.SensorName);
 
 			if (request.NewEvent.lifeStage == LifetimeStages.Startup)
 			{

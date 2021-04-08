@@ -20,9 +20,9 @@ services:
     image: soa/sensor-service
     volumes: 
       - /home/nemanja/soa_data:/data
-    depends_on:
-      - soa-registry
-      - soa-broker
+    # depends_on:
+    #   - soa-registry
+    #   - soa-broker
     ports:
     - "5001:5000"
 
@@ -32,8 +32,8 @@ services:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.SensorRegistry
     image: soa/sensor-registry
-    depends_on:
-      - soa-broker
+    # depends_on:
+    #   - soa-broker
     ports:
     - "5002:5000"
 

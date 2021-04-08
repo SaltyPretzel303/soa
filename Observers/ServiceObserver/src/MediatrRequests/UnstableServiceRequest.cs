@@ -1,5 +1,3 @@
-using System;
-using CommunicationModel.BrokerModels;
 using MediatR;
 using ServiceObserver.Broker;
 using ServiceObserver.Data;
@@ -34,6 +32,7 @@ namespace ServiceObserver.MediatrRequests
 		protected override void Handle(UnstableServiceRequest request)
 		{
 			db.SaveUnstableRecord(request.record);
+			// TODO maybe also publish it on the broker
 		}
 	}
 

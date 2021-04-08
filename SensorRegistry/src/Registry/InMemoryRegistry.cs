@@ -79,10 +79,13 @@ namespace SensorRegistry.Registry
 			if (Registry.TryAdd(sensorName, newRecord))
 			{
 
-				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.NewSensor,
-																	newRecord);
-				this.broker.publishRegistryEvent(newEvent,
-												config.newSensorFilter);
+				var newEvent = new SensorRegistryEvent(
+					SensorRegEventType.NewSensor,
+					newRecord);
+
+				this.broker.publishRegistryEvent(
+					newEvent,
+					config.newSensorFilter);
 
 				return this.okResponse(newRecord);
 			}
@@ -93,8 +96,9 @@ namespace SensorRegistry.Registry
 
 		// ATTENTION this method may not be thread safe 
 		public RegistryResponse updateSensorRecord(string name,
-												string address,
-												int port, int readIndex)
+									string address,
+									int port,
+									int readIndex)
 
 		{
 			ServiceConfiguration config = ServiceConfiguration.Instance;
@@ -103,16 +107,20 @@ namespace SensorRegistry.Registry
 			if (Registry.TryRemove(name, out oldRecord))
 			{
 
-				SensorRegistryRecord newRecord = new SensorRegistryRecord(name,
-																		address,
-																		port,
-																		readIndex);
+				var newRecord = new SensorRegistryRecord(
+					name,
+					address,
+					port,
+					readIndex);
+
 				Registry.TryAdd(name, newRecord);
 
-				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorUpdated,
-																	newRecord);
+				SensorRegistryEvent newEvent = new SensorRegistryEvent(
+					SensorRegEventType.SensorUpdated,
+					newRecord);
+
 				this.broker.publishRegistryEvent(newEvent,
-												config.sensorUpdateFilter);
+					config.sensorUpdateFilter);
 
 				return this.okResponse(newRecord);
 			}
@@ -129,10 +137,13 @@ namespace SensorRegistry.Registry
 			if (Registry.TryRemove(sensorName, out record))
 			{
 
-				SensorRegistryEvent newEvent = new SensorRegistryEvent(SensorRegEventType.SensorRemoved,
-																	record);
-				this.broker.publishRegistryEvent(newEvent,
-												config.sensorRemovedFilter);
+				var newEvent = new SensorRegistryEvent(
+					SensorRegEventType.SensorRemoved,
+					record);
+
+				this.broker.publishRegistryEvent(
+					newEvent,
+					config.sensorRemovedFilter);
 
 				return this.okResponse(record);
 			}
