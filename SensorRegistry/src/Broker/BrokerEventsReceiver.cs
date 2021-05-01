@@ -89,7 +89,7 @@ namespace SensorRegistry.Broker
 					!token.IsCancellationRequested)
 				{
 
-					connectionReady = this.ConfigureConnection();
+					connectionReady = ConfigureConnection();
 
 					if (!connectionReady)
 					{
@@ -129,6 +129,7 @@ namespace SensorRegistry.Broker
 			{
 				HostName = config.brokerAddress,
 				Port = config.brokerPort
+				// DispatchConsumersAsync = true
 			};
 			try
 			{
@@ -167,27 +168,29 @@ namespace SensorRegistry.Broker
 
 		private void setupConfigConsumer()
 		{
-
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
 			string configQueue = this.channel.QueueDeclare().QueueName;
 			channel.QueueBind(configQueue,
-							config.configUpdateTopic,
-							config.configFilter,
-									null);
+				config.configUpdateTopic,
+				config.configFilter,
+				null);
 
-			EventingBasicConsumer newConfigEventConsumer = new EventingBasicConsumer(this.channel);
-			newConfigEventConsumer.Received += (srcChannel, eventArg) =>
-					{
-						string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-						JObject jsonContent = JObject.Parse(txtContent);
+			var configConsumer = new EventingBasicConsumer(this.channel);
+			configConsumer.Received += (srcChannel, eventArg) =>
+				{
+					string txtContent = Encoding
+						.UTF8
+						.GetString(eventArg.Body.ToArray());
+					JObject jsonContent = JObject.Parse(txtContent);
 
-						this.mediator.Send(new ConfigUpdateRequest(jsonContent));
-						// this.newConfigHandler.HandleNewConfig(jsonContent);
-					};
+					this.mediator.Send(new ConfigUpdateRequest(jsonContent));
+					// this.newConfigHandler.HandleNewConfig(jsonContent);
+				};
+
 			this.channel.BasicConsume(configQueue,
-									true,
-									newConfigEventConsumer);
+				true,
+				configConsumer);
 
 		}
 
@@ -200,15 +203,18 @@ namespace SensorRegistry.Broker
 			EventingBasicConsumer eventConsumer = new EventingBasicConsumer(this.channel);
 			eventConsumer.Received += (srcChannel, eventArg) =>
 			{
-				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-				SensorLifetimeEvent sensorEvent = JsonConvert
-						.DeserializeObject<SensorLifetimeEvent>(txtContent);
+				string txtContent = Encoding
+					.UTF8
+					.GetString(eventArg.Body.ToArray());
+
+				var sensorEvent = JsonConvert
+					.DeserializeObject<SensorLifetimeEvent>(txtContent);
 
 				Console.WriteLine($"event => Lifetime: {sensorEvent.lifeStage.ToString()} "
 					+ $"name: {sensorEvent.SensorName} "
 					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
-				this.mediator.Send(new SensorLifetimeRequest(sensorEvent));
+				mediator.Send(new SensorLifetimeRequest(sensorEvent));
 			};
 
 			this.channel.QueueBind(rcvQueue,
@@ -228,16 +234,19 @@ namespace SensorRegistry.Broker
 
 			string sensorReadEventQueue = this.channel.QueueDeclare().QueueName;
 
-			EventingBasicConsumer sensorEventConsumer = new EventingBasicConsumer(this.channel);
+			var sensorEventConsumer = new EventingBasicConsumer(this.channel);
 			sensorEventConsumer.Received += (srcChannel, eventArg) =>
 			{
-				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
-				SensorReaderEvent sensorEvent = JsonConvert.DeserializeObject<SensorReaderEvent>(txtContent);
+				string txtContent = Encoding
+					.UTF8
+					.GetString(eventArg.Body.ToArray());
+				var sensorEvent = JsonConvert
+					.DeserializeObject<SensorReaderEvent>(txtContent);
 
 				Console.WriteLine($"event => Reader: {sensorEvent.SensorName} "
 					+ $"readIndex: {sensorEvent.LastReadIndex}");
 
-				this.mediator.Send(new SensorUpdateRequest(sensorEvent));
+				mediator.Send(new SensorUpdateRequest(sensorEvent));
 			};
 
 			this.channel.QueueBind(sensorReadEventQueue,
@@ -296,7 +305,9 @@ namespace SensorRegistry.Broker
 			}
 
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
-			this.connectionRetryTask = this.establishConnection(this.connectionRetryTokenSrc.Token);
+			this.connectionRetryTask = 
+				this.establishConnection(this.connectionRetryTokenSrc.Token);
+			
 			await this.connectionRetryTask;
 
 			this.connectionRetryTokenSrc = null;

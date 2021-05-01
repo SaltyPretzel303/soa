@@ -19,7 +19,8 @@ namespace CollectorService.MediatrRequests
 
 	}
 
-	public class AddRecordsToSensorRequestHandler : RequestHandler<AddRecordsToSensorRequest>
+	public class AddRecordsToSensorRequestHandler
+		: RequestHandler<AddRecordsToSensorRequest>
 	{
 
 		private IDatabaseService database;

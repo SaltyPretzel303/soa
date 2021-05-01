@@ -275,6 +275,7 @@ namespace CollectorService.Data
 			return (result.DeletedCount == 1);
 		}
 
+		// TODO make this async
 		public int getRecordsCount(string sensorName)
 		{
 
@@ -283,13 +284,14 @@ namespace CollectorService.Data
 				return 0;
 			}
 
-			IMongoCollection<SensorModel> sensorsCollection = this.database.GetCollection<SensorModel>(config.sensorsCollection);
+			IMongoCollection<SensorModel> sensorsCollection =
+				database.GetCollection<SensorModel>(config.sensorsCollection);
 
 
-			FilterDefinition<SensorModel> nameFilter = Builders<SensorModel>
+			var nameFilter = Builders<SensorModel>
 					.Filter.Eq(rec => rec.sensorName, sensorName);
 
-			ProjectionDefinition<SensorModel, int> countQuery = Builders<SensorModel>
+			var countQuery = Builders<SensorModel>
 					.Projection.Expression(rec => rec.records.Count);
 
 			int count = 0;
@@ -297,9 +299,9 @@ namespace CollectorService.Data
 			{
 
 				count = sensorsCollection
-						.Find<SensorModel>(nameFilter)
-						.Project<int>(countQuery)
-						.Single<int>();
+					.Find<SensorModel>(nameFilter)
+					.Project<int>(countQuery)
+					.Single<int>();
 			}
 			catch (InvalidOperationException)
 			{

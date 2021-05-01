@@ -35,7 +35,9 @@ namespace DataCollector.Controller
 
 		[HttpGet("{index}")]
 		[Route("range")]
-		public IActionResult getRowsFrom([FromQuery] string sensorName, [FromQuery] int index)
+		public IActionResult getRowsFrom(
+			[FromQuery] string sensorName,
+			[FromQuery] int index)
 		{
 
 			logger.logMessage($"Data range request - sensor: {sensorName} index: {index} ");

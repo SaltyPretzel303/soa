@@ -23,19 +23,20 @@ namespace CollectorService.Data
 		private System.Timers.Timer timer;
 		private HttpClient httpClient;
 
-		private Dictionary<string, int> lastReadIndex;
+		private Dictionary<string, int> lastReadIndexes;
 
 		public DataPuller(IMediator mediator)
 		{
 			this.mediator = mediator;
 
-			this.timer = new System.Timers.Timer();
-			this.timer.Elapsed += new ElapsedEventHandler(this.timerEvent);
-			this.timer.Interval = ServiceConfiguration.Instance.readInterval;
+			timer = new System.Timers.Timer();
+			timer.Elapsed += new ElapsedEventHandler(this.timerEvent);
+			timer.Interval = ServiceConfiguration.Instance.readInterval;
+			timer.AutoReset = false;
 
-			this.httpClient = new HttpClient();
+			httpClient = new HttpClient();
 
-			this.lastReadIndex = new Dictionary<string, int>();
+			lastReadIndexes = new Dictionary<string, int>();
 		}
 
 		#region IHostedService methods
@@ -60,44 +61,48 @@ namespace CollectorService.Data
 		public void startReading()
 		{
 			Console.WriteLine("Started pulling data with interval: " + this.timer.Interval + "ms");
-			this.timer.Start();
+			timer.Start();
 		}
 
 		public void stopReading()
 		{
 			Console.WriteLine("Stopped pulling data ...");
-			this.timer.Stop();
+			if (timer != null)
+			{
+				timer.Stop();
+			}
 		}
 
-		private void timerEvent(Object source, ElapsedEventArgs arg)
+		private async void timerEvent(Object source, ElapsedEventArgs arg)
 		{
+			// prevent calling this method again until the current execution is done
+			// in case timer.Interval is shorter than the time required to pull data
+			// from all the sensors
+			timer.Stop();
 
 			ConfigFields config = ServiceConfiguration.Instance;
 
-			List<SensorRegistryRecord> availableSensors = mediator
-				.Send(new GetAllSensorsRequest())
-				.Result;
+			List<SensorRegistryRecord> availableSensors =
+				await mediator.Send(new GetAllSensorsRequest());
 
 			Console.WriteLine($"Pulling data from: {availableSensors.Count} sensors ... ");
-			foreach (SensorRegistryRecord singleSensor in availableSensors)
+			foreach (var singleSensor in availableSensors)
 			{
-
 				int alreadyReadCount = 0;
-				if (!this.lastReadIndex.TryGetValue(
+				if (!lastReadIndexes.TryGetValue(
 						singleSensor.Name,
 						out alreadyReadCount))
 				{
 					// initialize lastReadIndex if it doesn't exists for this sensor
-					alreadyReadCount = mediator
-						.Send(new GetRecordsCountRequest(singleSensor.Name))
-						.Result;
+					alreadyReadCount = await mediator
+						.Send(new GetRecordsCountRequest(singleSensor.Name));
 
-					this.lastReadIndex.Add(singleSensor.Name, alreadyReadCount);
+					lastReadIndexes.Add(singleSensor.Name, alreadyReadCount);
 				}
 
 				if (alreadyReadCount >= singleSensor.AvailableRecords)
 				{
-					Console.WriteLine($"No new records in : {singleSensor.Name} ... ");
+					Console.WriteLine($"{singleSensor.Name} -> no new records ... ");
 					continue; // read from the next sensor 
 				}
 
@@ -107,28 +112,34 @@ namespace CollectorService.Data
 					+ $"index={alreadyReadCount}";
 
 				Uri sensorUri = new Uri(api_url);
-				Console.WriteLine($"Pulling from: {sensorAddr}, "
-					+ $"name: {singleSensor.Name}, "
-					+ $"index: {alreadyReadCount}");
+				Console.Write($"{singleSensor.Name}@{sensorAddr} "
+					+ $" | from: {alreadyReadCount} -> ");
 
 				HttpResponseMessage response = null;
 				try
 				{
-					response = this.httpClient.GetAsync(sensorUri).Result;
+					response = await this.httpClient.GetAsync(sensorUri);
 				}
 				catch (AggregateException e)
 				{
 					if (e.InnerException is HttpRequestException)
 					{
-						string message = ((HttpRequestException)e.InnerException).Message;
+						string message =
+							((HttpRequestException)e.InnerException).Message;
 
-						Console.WriteLine($"Http req. exception, message: {message} ... sensor may be down.\nSensor addr. : {sensorUri.ToString()}\n");
+						Console.WriteLine(
+							$"\nHttp req. exception, message: {message} ... "
+							+ $"sensor may be down.\n"
+							+ $"Sensor addr. : {sensorUri.ToString()}\n");
 
-						CollectorPullEvent newEvent = new CollectorPullEvent(sensorUri.ToString(),
-																		false,
-																		e.Message);
+						var newEvent = new CollectorPullEvent(
+							sensorUri.ToString(),
+							false,
+							e.Message);
 
-						this.mediator.Send(new PublishCollectorPullEventRequest(newEvent));
+						// this request is not async 
+						// but i guess it is a good idea to await it anyway 
+						await mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
 						continue; // pull from the next sensor
 					}
@@ -141,50 +152,51 @@ namespace CollectorService.Data
 
 				if (response == null || !response.IsSuccessStatusCode)
 				{
-					Console.WriteLine($"Sensor (name: {singleSensor.Name})"
-						+ "returned bad response ... ");
+					// this will continue prevous Console.Write( ... );
+					Console.WriteLine($" bad response ... ");
 
-					CollectorPullEvent newEvent = new CollectorPullEvent(
-														sensorUri.ToString(),
-														false,
-														"Sensor returned bad response.");
+					var newEvent = new CollectorPullEvent(
+						sensorUri.ToString(),
+						false,
+						"Sensor returned bad response.");
 
-					mediator.Send(new PublishCollectorPullEventRequest(newEvent));
+					// this request is not async 
+					// but i guess it is a good idea to await it anyway 
+					await mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
 					continue; // pull from the next sensor
 				}
 
-				string txtResponseContent = response.Content.ReadAsStringAsync().Result;
-				// SensorDataRecords dataRecords = System.Text.Json.JsonSerializer.Deserialize<SensorDataRecords>(txtResponseContent);
-				// newtonsoft serializes properties to camelCase so when they get pulled from sensor
-				// system.text.json can't deserialize it because class properties are actually in PascalCase 
-				// that is the reason to use newtonsoft - easier than forcing it to serialize in PascalCase
+				string txtContent = await response.Content.ReadAsStringAsync();
+				// var dataRecords = System
+				// 		.Text
+				// 		.Json
+				// 		.JsonSerializer
+				// 		.Deserialize<SensorDataRecords>(txtResponseContent);
+				// newtonsoft serializes properties to camelCase so when they get
+				// pulled from sensor system.text.json can't deserialize it because
+				// class properties are actually in PascalCase, that is the reason 
+				// to use newtonsoft - easier than forcing it to serialize in PascalCase
 
-				SensorDataRecords dataRecords = JsonConvert
-						.DeserializeObject<SensorDataRecords>(txtResponseContent);
+				var dataRecords = JsonConvert
+						.DeserializeObject<SensorDataRecords>(txtContent);
 
-				Console.WriteLine($"Sensor {singleSensor.Name}"
-					+ $" returned {dataRecords.RecordsCount} rows ... ");
+				Console.WriteLine($"returned {dataRecords.RecordsCount} rows ... ");
 
-				// // deserialize all records from response
-				// // ListdataRecords.Records -> list of strings each representing one row from csv
-				// JArray dataArray = new JArray();
-				// foreach (string txtData in dataRecords.Records)
-				// {
-				// 	JObject tempData = JObject.Parse(txtData);
-				// 	dataArray.Add(tempData);
-				// }
-
-				this.mediator.Send(new AddRecordsToSensorRequest(
+				await mediator.Send(new AddRecordsToSensorRequest(
 											singleSensor.Name,
 											dataRecords.Records));
 
 				// update read index for every sensor
-				// at this point lastReadIndex[singleSensor.Name] has to exists (look at the beginning of this for loop)
-				this.lastReadIndex[singleSensor.Name] = alreadyReadCount + dataRecords.RecordsCount;
+				// at this point lastReadIndex[singleSensor.Name] has to exists 
+				// (look at the beginning of this for loop)
+				lastReadIndexes[singleSensor.Name] =
+					alreadyReadCount + dataRecords.RecordsCount;
 
 			}
 
+			// 'schedule' the next data pulling
+			timer.Start();
 		}
 
 		public void reload(ConfigFields newConfig)
@@ -192,11 +204,18 @@ namespace CollectorService.Data
 			// with every timerEvent configuration is read again
 			// only readInterval is kept from the initial service construction
 
-			if (this.timer.Interval != newConfig.readInterval)
+			if (timer.Interval != newConfig.readInterval)
 			{
-				this.timer.Stop();
-				this.timer.Interval = newConfig.readInterval;
-				this.timer.Start();
+				bool timerWasEnabled = timer.Enabled;
+				timer.Stop();
+
+				timer.Interval = newConfig.readInterval;
+
+				if (timerWasEnabled)
+				{
+					timer.Start();
+				}
+
 			}
 
 			Console.WriteLine("Data puller reloaded ...  ");

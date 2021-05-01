@@ -14,7 +14,8 @@ namespace CollectorService.MediatrRequests
 		}
 	}
 
-	public class PublishCollectorPullEventRequestHandler : RequestHandler<PublishCollectorPullEventRequest>
+	public class PublishCollectorPullEventRequestHandler
+		: RequestHandler<PublishCollectorPullEventRequest>
 	{
 
 		private IMessageBroker broker;
@@ -26,7 +27,7 @@ namespace CollectorService.MediatrRequests
 
 		protected override void Handle(PublishCollectorPullEventRequest request)
 		{
-			this.broker.PublishCollectorPullEvent(request.pullEvent);
+			broker.PublishCollectorPullEvent(request.pullEvent);
 		}
 	}
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mongo soa_collector --eval '
+mongo 172.19.0.2/soa_collector --eval '
 
 	db.Sensors.aggregate(
 		[

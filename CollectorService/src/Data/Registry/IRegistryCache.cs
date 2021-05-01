@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunicationModel;
 
 public interface IRegistryCache
 {
-	List<SensorRegistryRecord> GetAllSensors();
+	Task<List<SensorRegistryRecord>> GetAllRecords();
 
-	SensorRegistryRecord GetSingleSensor(string sensorName);
+	SensorRegistryRecord GetRecord(string sensorName);
 
 	void RemoveRecord(SensorRegistryRecord oldRecord);
 

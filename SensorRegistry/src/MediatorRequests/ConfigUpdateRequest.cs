@@ -14,7 +14,8 @@ namespace SensorRegistry.MediatorRequests
 		}
 	}
 
-	public class ConfigUpdateRequestHandler : RequestHandler<ConfigUpdateRequest>
+	public class ConfigUpdateRequestHandler
+		: RequestHandler<ConfigUpdateRequest>
 	{
 		protected override void Handle(ConfigUpdateRequest request)
 		{

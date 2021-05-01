@@ -13,7 +13,9 @@ namespace CollectorService.MediatrRequests
 		}
 	}
 
-	public class GetRecordsCountRequestHandler : RequestHandler<GetRecordsCountRequest, int>
+	// TODO make this async
+	public class GetRecordsCountRequestHandler
+		: RequestHandler<GetRecordsCountRequest, int>
 	{
 
 		private IDatabaseService database;
@@ -25,7 +27,7 @@ namespace CollectorService.MediatrRequests
 
 		protected override int Handle(GetRecordsCountRequest request)
 		{
-			return this.database.getRecordsCount(request.SensorName);
+			return database.getRecordsCount(request.SensorName);
 		}
 	}
 

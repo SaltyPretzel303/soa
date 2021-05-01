@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunicationModel;
 using MediatR;
 
@@ -9,7 +11,8 @@ namespace CollectorService.MediatrRequests
 
 	}
 
-	public class GetAllSensorsRequestHandler : RequestHandler<GetAllSensorsRequest, List<SensorRegistryRecord>>
+	public class GetAllSensorsRequestHandler
+		: IRequestHandler<GetAllSensorsRequest, List<SensorRegistryRecord>>
 	{
 
 		private IRegistryCache registryCache;
@@ -19,9 +22,11 @@ namespace CollectorService.MediatrRequests
 			this.registryCache = registryCache;
 		}
 
-		protected override List<SensorRegistryRecord> Handle(GetAllSensorsRequest request)
+		public async Task<List<SensorRegistryRecord>> Handle(
+			GetAllSensorsRequest request,
+			CancellationToken token)
 		{
-			return this.registryCache.GetAllSensors();
+			return await registryCache.GetAllRecords();
 		}
 	}
 

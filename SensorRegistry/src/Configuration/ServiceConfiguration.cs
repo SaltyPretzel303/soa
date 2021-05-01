@@ -117,7 +117,9 @@ namespace SensorRegistry.Configuration
 
 		private void WriteToFile()
 		{
-			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH, this.rawJsonConfig.ToString());
+			File.WriteAllText(
+				ServiceConfiguration.CONFIGURATION_PATH,
+				this.rawJsonConfig.ToString());
 		}
 
 	}

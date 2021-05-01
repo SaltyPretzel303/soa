@@ -27,7 +27,6 @@ namespace SensorRegistry.MediatorRequests
 
 		protected override void Handle(SensorLifetimeRequest request)
 		{
-
 			RegistryResponse regResponse = LocalRegistry
 				.getSensorRecord(request.NewEvent.SensorName);
 
@@ -36,10 +35,10 @@ namespace SensorRegistry.MediatorRequests
 
 				if (regResponse.status == RegistryStatus.noSuchRecord)
 				{
-					this.LocalRegistry.addSensorRecord(request.NewEvent.SensorName,
-										request.NewEvent.IpAddress,
-										request.NewEvent.ListeningPort,
-										request.NewEvent.LastReadIndex);
+					LocalRegistry.addSensorRecord(request.NewEvent.SensorName,
+						request.NewEvent.IpAddress,
+						request.NewEvent.ListeningPort,
+						request.NewEvent.LastReadIndex);
 				}
 				else
 				{
@@ -54,7 +53,7 @@ namespace SensorRegistry.MediatorRequests
 
 				if (regResponse.status == RegistryStatus.ok)
 				{
-					this.LocalRegistry.removeSensorRecord(request.NewEvent.SensorName);
+					LocalRegistry.removeSensorRecord(request.NewEvent.SensorName);
 				}
 				else
 				{

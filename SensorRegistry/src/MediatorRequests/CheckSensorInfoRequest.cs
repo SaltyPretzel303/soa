@@ -1,5 +1,7 @@
 using System;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunicationModel.RestModels;
 using MediatR;
 using Newtonsoft.Json;
@@ -8,7 +10,7 @@ using SensorRegistry.Registry;
 
 namespace SensorRegistry.MediatorRequests
 {
-	public class CheckSensorInfoRequest : IRequest
+	public class CheckSensorInfoRequest : IRequest<SensorReaderInfo>
 	{
 		public string SensorName { get; set; }
 		public string SensorIp { get; set; }
@@ -23,19 +25,20 @@ namespace SensorRegistry.MediatorRequests
 
 	}
 
-	public class CheckSensorInfoRequestHandler : RequestHandler<CheckSensorInfoRequest>
+	public class CheckSensorInfoRequestHandler
+		: IRequestHandler<CheckSensorInfoRequest, SensorReaderInfo>
 	{
 
-		private ISensorRegistry localRegistry;
 		private ServiceConfiguration config;
 
-		public CheckSensorInfoRequestHandler(ISensorRegistry localRegistry)
+		public CheckSensorInfoRequestHandler()
 		{
-			this.localRegistry = localRegistry;
 			this.config = ServiceConfiguration.Instance;
 		}
 
-		protected override void Handle(CheckSensorInfoRequest request)
+		public async Task<SensorReaderInfo> Handle(
+			CheckSensorInfoRequest request,
+			CancellationToken token)
 		{
 
 			string uri = $"http://{request.SensorIp}:{request.SensorPort}"
@@ -48,7 +51,7 @@ namespace SensorRegistry.MediatorRequests
 			HttpResponseMessage response = null;
 			try
 			{
-				response = httpClient.GetAsync(uri).Result;
+				response = await httpClient.GetAsync(uri);
 			}
 			catch (HttpRequestException)
 			// The request failed due to an underlying issue such as network connectivity, 
@@ -58,37 +61,32 @@ namespace SensorRegistry.MediatorRequests
 					+ $"({request.SensorName}@{request.SensorIp}:{request.SensorPort}) "
 					+ $"is actually dead ... ");
 
-				return;
+				return null;
 			}
 			catch (Exception)
 			{
 				Console.WriteLine("Exception while getting sensor info ... ");
-				return;
+				return null;
 			}
 
 			if (response == null || !response.IsSuccessStatusCode)
 			{
 				Console.WriteLine("We got empty or bad response as an sensorInfo ... ");
-				return;
+				return null;
 			}
 
 			Console.WriteLine("Checked sensor "
 				+ $"({request.SensorName}@{request.SensorIp}:{request.SensorPort}) "
 				+ "is actually live ... ");
 
-			string txtResponse = response
+			string txtResponse = await response
 				.Content
-				.ReadAsStringAsync()
-				.Result;
+				.ReadAsStringAsync();
 
-			SensorReaderInfo objResponse =
+			var objResponse =
 				JsonConvert.DeserializeObject<SensorReaderInfo>(txtResponse);
 
-			localRegistry.addSensorRecord(
-				objResponse.SensorName,
-				objResponse.IpAddress,
-				objResponse.ListeningPort,
-				objResponse.LastReadIndex);
+			return objResponse;
 
 		}
 

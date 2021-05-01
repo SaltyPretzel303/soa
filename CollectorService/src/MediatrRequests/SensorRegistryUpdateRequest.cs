@@ -14,7 +14,8 @@ namespace CollectorService.MediatrRequests
 		}
 	}
 
-	public class SensorRegistryUpdateRequestHandler : RequestHandler<SensorRegistryUpdateRequest>
+	public class SensorRegistryUpdateRequestHandler
+		: RequestHandler<SensorRegistryUpdateRequest>
 	{
 
 		private IRegistryCache localRegistry;
@@ -36,7 +37,7 @@ namespace CollectorService.MediatrRequests
 			}
 			else if (registryEvent.eventType == SensorRegEventType.SensorUpdated)
 			{
-				Console.WriteLine("Registry update: update");
+				// Console.WriteLine("Registry update: update");
 				this.localRegistry.UpdateRecord(registryEvent.sensorRecord);
 			}
 			else if (registryEvent.eventType == SensorRegEventType.SensorRemoved)

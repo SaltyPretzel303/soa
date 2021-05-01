@@ -5,6 +5,7 @@ using System;
 using CommunicationModel;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace CollectorService.Data.Registry
 {
@@ -27,13 +28,11 @@ namespace CollectorService.Data.Registry
 			if (Records == null)
 			{
 				Records = new ConcurrentDictionary<string, SensorRegistryRecord>();
-				pullRecords();
 			}
 		}
 
-		private void pullRecords()
+		private async Task pullRecords()
 		{
-
 			string addr = $"http://{config.sensorRegistryAddr}"
 				+ $":{config.sensorRegistryPort}"
 				+ $"/{config.sensorListReqPath}";
@@ -42,41 +41,44 @@ namespace CollectorService.Data.Registry
 			HttpResponseMessage responseMessage = null;
 			try
 			{
-				responseMessage = httpClient.GetAsync(addr).Result;
+				responseMessage = await httpClient.GetAsync(addr);
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine($"Exception occurred while pulling active sensors records: {e.Message}");
+				return;
 			}
 
 			if (responseMessage != null
-			&& responseMessage.IsSuccessStatusCode)
+				&& responseMessage.IsSuccessStatusCode)
 			{
-				string txtContent = responseMessage.Content.ReadAsStringAsync().Result;
+				var txtContent = await responseMessage
+					.Content
+					.ReadAsStringAsync();
 
-				List<SensorRegistryRecord> newRecords = JsonConvert.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
+				var newRecords = JsonConvert
+					.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
 
 				Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
 
 				foreach (SensorRegistryRecord newSensor in newRecords)
 				{
-					this.AddNewRecord(newSensor);
+					AddNewRecord(newSensor);
 				}
 			}
 			else
 			{
 				Console.WriteLine("Failed to pull sensorRegistryRecords ... ");
+				return;
 			}
-
 		}
 
-		public List<SensorRegistryRecord> GetAllSensors()
+		public async Task<List<SensorRegistryRecord>> GetAllRecords()
 		{
-
-			if (Records == null ||
-			Records.Keys.Count == 0)
+			if (Records == null
+				|| Records.Keys.Count == 0)
 			{
-				pullRecords();
+				await pullRecords();
 			}
 
 			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();
@@ -90,7 +92,7 @@ namespace CollectorService.Data.Registry
 			return retList;
 		}
 
-		public SensorRegistryRecord GetSingleSensor(string sensorName)
+		public SensorRegistryRecord GetRecord(string sensorName)
 		{
 			SensorRegistryRecord reqRecord = null;
 

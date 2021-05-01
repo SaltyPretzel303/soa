@@ -33,20 +33,20 @@ namespace CollectorService
 			services.AddMediatR(typeof(Startup));
 
 			// next services will be used by the mediatr
-			services.AddTransient<RequestHandler<ConfigChangeRequest>,
-					ConfigChangeRequestHandler>();
-			services.AddTransient<RequestHandler<SensorRegistryUpdateRequest>,
-					SensorRegistryUpdateRequestHandler>();
+			// services.AddTransient<RequestHandler<ConfigChangeRequest>,
+			// 		ConfigChangeRequestHandler>();
+			// services.AddTransient<RequestHandler<SensorRegistryUpdateRequest>,
+			// 		SensorRegistryUpdateRequestHandler>();
 
-			services.AddTransient<RequestHandler<GetRecordsCountRequest, int>,
-					GetRecordsCountRequestHandler>();
-			services.AddTransient<RequestHandler<AddRecordsToSensorRequest>,
-					AddRecordsToSensorRequestHandler>();
+			// services.AddTransient<RequestHandler<GetRecordsCountRequest, int>,
+			// 		GetRecordsCountRequestHandler>();
+			// services.AddTransient<RequestHandler<AddRecordsToSensorRequest>,
+			// 		AddRecordsToSensorRequestHandler>();
 
-			services.AddTransient<RequestHandler<GetAllSensorsRequest, List<SensorRegistryRecord>>,
-					GetAllSensorsRequestHandler>();
-			services.AddTransient<RequestHandler<PublishCollectorPullEventRequest>,
-					PublishCollectorPullEventRequestHandler>();
+			// services.AddTransient<RequestHandler<GetAllSensorsRequest, List<SensorRegistryRecord>>,
+			// 		GetAllSensorsRequestHandler>();
+			// services.AddTransient<RequestHandler<PublishCollectorPullEventRequest>,
+			// 		PublishCollectorPullEventRequestHandler>();
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 

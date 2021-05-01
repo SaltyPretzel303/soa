@@ -30,15 +30,14 @@ namespace SensorRegistry
 
 			services.AddMediatR(typeof(Startup));
 
-			services.AddTransient<RequestHandler<ConfigUpdateRequest>,
-				ConfigUpdateRequestHandler>();
-
-			services.AddTransient<RequestHandler<SensorLifetimeRequest>,
-				SensorLifetimeRequestHandler>();
-			services.AddTransient<RequestHandler<SensorUpdateRequest>,
-				SensorUpdateRequestHandler>();
-			services.AddTransient<RequestHandler<CheckSensorInfoRequest>,
-				CheckSensorInfoRequestHandler>();
+			// services.AddTransient<RequestHandler<ConfigUpdateRequest>,
+			// 	ConfigUpdateRequestHandler>();
+			// services.AddTransient<RequestHandler<SensorLifetimeRequest>,
+			// 	SensorLifetimeRequestHandler>();
+			// services.AddTransient<IRequestHandler<SensorUpdateRequest>,
+			// 	SensorUpdateRequestHandler>();
+			// services.AddTransient<IRequestHandler<CheckSensorInfoRequest>,
+			// 	CheckSensorInfoRequestHandler>();
 
 			services.AddTransient<IMessageBroker, RabbitMqBroker>();
 			services.AddHostedService<BrokerEventsReceiver>();
