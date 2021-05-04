@@ -12,7 +12,10 @@ namespace CommunicationModel
 		{
 		}
 
-		public SensorRegistryRecord(string name, string address, int port, int availableRecords = 0)
+		public SensorRegistryRecord(string name,
+			string address,
+			int port,
+			int availableRecords = 0)
 		{
 			this.Name = name;
 			this.Address = address;

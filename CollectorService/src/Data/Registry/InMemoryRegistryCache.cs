@@ -11,7 +11,6 @@ namespace CollectorService.Data.Registry
 {
 	public class InMemoryRegistryCache : IRegistryCache
 	{
-
 		// static so it can be transient instead of singleton service
 		private static ConcurrentDictionary<string, SensorRegistryRecord> Records { get; set; }
 
@@ -29,6 +28,26 @@ namespace CollectorService.Data.Registry
 			{
 				Records = new ConcurrentDictionary<string, SensorRegistryRecord>();
 			}
+		}
+
+		public async Task<List<SensorRegistryRecord>> GetAllRecords()
+		{
+			if (Records == null || Records.Keys.Count == 0)
+			{
+				await pullRecords();
+			}
+
+			return new List<SensorRegistryRecord>(Records.Values);
+
+			// var retList = new List<SensorRegistryRecord>();
+			// foreach (string recordKey in Records.Keys)
+			// {
+			// 	SensorRegistryRecord tempRecord = null;
+			// 	Records.TryGetValue(recordKey, out tempRecord);
+			// 	retList.Add(tempRecord);
+			// }
+
+			// return retList;
 		}
 
 		private async Task pullRecords()
@@ -49,8 +68,7 @@ namespace CollectorService.Data.Registry
 				return;
 			}
 
-			if (responseMessage != null
-				&& responseMessage.IsSuccessStatusCode)
+			if (responseMessage != null && responseMessage.IsSuccessStatusCode)
 			{
 				var txtContent = await responseMessage
 					.Content
@@ -59,11 +77,14 @@ namespace CollectorService.Data.Registry
 				var newRecords = JsonConvert
 					.DeserializeObject<List<SensorRegistryRecord>>(txtContent);
 
-				Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
+				if (newRecords.Count > 0)
+				{
+					Console.WriteLine($"Registry returned {newRecords.Count} sensor records ... ");
+				}
 
 				foreach (SensorRegistryRecord newSensor in newRecords)
 				{
-					AddNewRecord(newSensor);
+					await AddNewRecord(newSensor);
 				}
 			}
 			else
@@ -71,25 +92,6 @@ namespace CollectorService.Data.Registry
 				Console.WriteLine("Failed to pull sensorRegistryRecords ... ");
 				return;
 			}
-		}
-
-		public async Task<List<SensorRegistryRecord>> GetAllRecords()
-		{
-			if (Records == null
-				|| Records.Keys.Count == 0)
-			{
-				await pullRecords();
-			}
-
-			List<SensorRegistryRecord> retList = new List<SensorRegistryRecord>();
-			foreach (string recordKey in Records.Keys)
-			{
-				SensorRegistryRecord tempRecord = null;
-				Records.TryGetValue(recordKey, out tempRecord);
-				retList.Add(tempRecord);
-			}
-
-			return retList;
 		}
 
 		public SensorRegistryRecord GetRecord(string sensorName)
@@ -111,7 +113,7 @@ namespace CollectorService.Data.Registry
 			}
 		}
 
-		public void AddNewRecord(SensorRegistryRecord newRecord)
+		public async Task AddNewRecord(SensorRegistryRecord newRecord)
 		{
 			SensorRegistryRecord outRecord = new SensorRegistryRecord();
 			if (Records.ContainsKey(newRecord.Name))
@@ -119,9 +121,9 @@ namespace CollectorService.Data.Registry
 				Records.TryRemove(newRecord.Name, out outRecord);
 			}
 
-			newRecord.AvailableRecords = this.database.getRecordsCount(newRecord.Name);
-			Records.TryAdd(newRecord.Name, newRecord);
+			newRecord.AvailableRecords = await database.getRecordsCount(newRecord.Name);
 
+			Records.TryAdd(newRecord.Name, newRecord);
 		}
 
 		public void UpdateRecord(SensorRegistryRecord newRecord)
@@ -134,6 +136,5 @@ namespace CollectorService.Data.Registry
 
 			Records.TryAdd(newRecord.Name, newRecord);
 		}
-
 	}
 }

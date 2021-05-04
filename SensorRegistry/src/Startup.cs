@@ -50,8 +50,8 @@ namespace SensorRegistry
 		{
 			this.provider = app.ApplicationServices;
 
-			lifetime.ApplicationStopping.Register(this.onShutDown);
-			lifetime.ApplicationStarted.Register(this.onStart);
+			lifetime.ApplicationStarted.Register(onStart);
+			lifetime.ApplicationStopping.Register(onShutDown);
 
 			if (env.IsDevelopment())
 			{
@@ -68,23 +68,27 @@ namespace SensorRegistry
 
 		private void onStart()
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
+			var config = ServiceConfiguration.Instance;
+			var broker = this.provider.GetService<IMessageBroker>();
+
 			if (broker != null)
 			{
-				broker.publishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup,
-															ServiceType.SensorRegistry));
+				broker.publishLifetimeEvent(
+					new ServiceLifetimeEvent(LifetimeStages.Startup,
+							ServiceType.SensorRegistry));
 			}
 		}
 
 		private void onShutDown()
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
+			var config = ServiceConfiguration.Instance;
+			var broker = provider.GetService<IMessageBroker>();
+
 			if (broker != null)
 			{
-				broker.publishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Shutdown,
-															ServiceType.SensorRegistry));
+				broker.publishLifetimeEvent(
+					 new ServiceLifetimeEvent(LifetimeStages.Shutdown,
+							ServiceType.SensorRegistry));
 			}
 		}
 

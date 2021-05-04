@@ -32,8 +32,8 @@ namespace SensorService
 
 			services.AddMediatR(typeof(Startup));
 
-			services.AddTransient<RequestHandler<StoreSensorDataRequest>,
-						StoreSensorDataRequestHandler>();
+			// services.AddTransient<RequestHandler<StoreSensorDataRequest>,
+			// 			StoreSensorDataRequestHandler>();
 
 			// sensor is gonna be registered once registry recives SensorLifetimeEvent
 			// or any other sensorReader event

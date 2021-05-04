@@ -1,7 +1,5 @@
-using System;
 using CommunicationModel.BrokerModels;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SensorRegistry.Broker;
 
 namespace SensorRegistry.Logger
@@ -18,20 +16,20 @@ namespace SensorRegistry.Logger
 
 		public string LogError(string error)
 		{
-			ServiceLog log = new ServiceLog(ServiceType.SensorRegistry,
-											error,
-											LogLevel.Error);
-			this.broker.publishLog(log);
+			var log = new ServiceLog(ServiceType.SensorRegistry,
+							error,
+							LogLevel.Error);
+			broker.publishLog(log);
 
 			return JsonConvert.SerializeObject(log, Formatting.Indented);
 		}
 
 		public string LogMessage(string message)
 		{
-			ServiceLog log = new ServiceLog(ServiceType.SensorRegistry,
+			var log = new ServiceLog(ServiceType.SensorRegistry,
 											message,
 											LogLevel.Message);
-			this.broker.publishLog(log);
+			broker.publishLog(log);
 
 			return JsonConvert.SerializeObject(log, Formatting.Indented);
 		}

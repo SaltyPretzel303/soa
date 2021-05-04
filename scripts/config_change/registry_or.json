@@ -16,7 +16,10 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event"
+		"sensorReadEventFilter": "read_event",
+		"sensorLifetimeFilter": "sensor",
+		"sensorInfoPath": "sensor/data/info",
+		"sensorInfoNameArg": "sensorName"
 	},
 	"Production": {
 		"listeningPort": 5000,
@@ -34,6 +37,9 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event"
+		"sensorReadEventFilter": "read_event",
+		"sensorLifetimeFilter": "sensor",
+		"sensorInfoPath": "sensor/data/info",
+		"sensorInfoNameArg": "sensorName"
 	}
 }

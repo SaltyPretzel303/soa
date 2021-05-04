@@ -1,8 +1,10 @@
 
+using System.Threading.Tasks;
+
 namespace CollectorService.Configuration
 {
 	public interface IReloadable
 	{
-		void reload(ConfigFields newConfiguration);
+		Task reload(ConfigFields newConfiguration);
 	}
 }

@@ -3,7 +3,7 @@
 	"Development": {
 		"listeningPort": 5002,
 		"brokerAddress": "localhost",
-		"brokerPort": 5677,
+		"brokerPort": 5672,
 		"connectionRetryDelay": 2000,
 		"sensorRegistryTopic": "sensor_registry",
 		"configUpdateTopic": "config",
@@ -16,12 +16,15 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event"
+		"sensorReadEventFilter": "read_event",
+		"sensorLifetimeFilter": "sensor",
+		"sensorInfoPath": "sensor/data/info",
+		"sensorInfoNameArg": "sensorName"
 	},
 	"Production": {
 		"listeningPort": 5000,
-		"brokerAddress": "soa-broker",
-		"brokerPort": 5677,
+		"brokerAddress": "not-soa-broker",
+		"brokerPort": 5672,
 		"connectionRetryDelay": 3000,
 		"sensorRegistryTopic": "sensor_registry",
 		"configUpdateTopic": "config",
@@ -34,6 +37,9 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event"
+		"sensorReadEventFilter": "read_event",
+		"sensorLifetimeFilter": "sensor",
+		"sensorInfoPath": "sensor/data/info",
+		"sensorInfoNameArg": "sensorName"
 	}
 }

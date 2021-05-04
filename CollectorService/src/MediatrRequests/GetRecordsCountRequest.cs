@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using CollectorService.Data;
 using MediatR;
 
@@ -13,9 +15,8 @@ namespace CollectorService.MediatrRequests
 		}
 	}
 
-	// TODO make this async
 	public class GetRecordsCountRequestHandler
-		: RequestHandler<GetRecordsCountRequest, int>
+		: IRequestHandler<GetRecordsCountRequest, int>
 	{
 
 		private IDatabaseService database;
@@ -25,10 +26,12 @@ namespace CollectorService.MediatrRequests
 			this.database = database;
 		}
 
-		protected override int Handle(GetRecordsCountRequest request)
+		public async Task<int> Handle(GetRecordsCountRequest request,
+			CancellationToken cancellationToken)
 		{
-			return database.getRecordsCount(request.SensorName);
+			return await database.getRecordsCount(request.SensorName);
 		}
+
 	}
 
 }

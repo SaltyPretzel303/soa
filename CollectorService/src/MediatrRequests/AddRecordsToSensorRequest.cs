@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using CollectorService.Data;
 using CommunicationModel;
 using MediatR;
 
 namespace CollectorService.MediatrRequests
 {
-	public class AddRecordsToSensorRequest : IRequest
+	public class AddRecordsToSensorRequest : IRequest<bool>
 	{
 		public String SensorName { get; private set; }
 		public List<SensorValues> Values { get; private set; }
@@ -20,7 +22,7 @@ namespace CollectorService.MediatrRequests
 	}
 
 	public class AddRecordsToSensorRequestHandler
-		: RequestHandler<AddRecordsToSensorRequest>
+		: IRequestHandler<AddRecordsToSensorRequest, bool>
 	{
 
 		private IDatabaseService database;
@@ -30,9 +32,10 @@ namespace CollectorService.MediatrRequests
 			this.database = database;
 		}
 
-		protected override void Handle(AddRecordsToSensorRequest request)
+		public async Task<bool> Handle(AddRecordsToSensorRequest request,
+			CancellationToken token)
 		{
-			this.database.addToSensor(request.SensorName, request.Values);
+			return await database.AddToSensor(request.SensorName, request.Values);
 		}
 	}
 }

@@ -14,8 +14,8 @@ prev_timestamp=-1
 
 # this part will remove "timestamp" : and " at the end of each line
 # leaving only the timestamps as numbers at each line
-sed 's/"timestamp" : "/ /' "$timestamps_file" > "./temp_timestamp"
-sed 's/"/ /' "./temp_timestamp" > "$timestamps_file"
+sed 's/"timestamp" : NumberLong(/ /' "$timestamps_file" > "./temp_timestamp"
+sed 's/)/ /' "./temp_timestamp" > "$timestamps_file"
 rm "./temp_timestamp"
 # cat "$timestamps_file"
 

@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using MediatR;
@@ -17,7 +19,8 @@ namespace CollectorService.MediatrRequests
 		}
 	}
 
-	public class ConfigChangeRequestHandler : RequestHandler<ConfigChangeRequest>
+	public class ConfigChangeRequestHandler
+		: IRequestHandler<ConfigChangeRequest, Unit>
 	{
 		private IDatabaseService database;
 
@@ -26,11 +29,16 @@ namespace CollectorService.MediatrRequests
 			this.database = database;
 		}
 
-		protected override void Handle(ConfigChangeRequest request)
+		// MediatR doesn't accept only Task as a return type
+		public async Task<Unit> Handle(ConfigChangeRequest request,
+			CancellationToken token)
 		{
-			ServiceConfiguration.reload(
+			await ServiceConfiguration.reload(
 				request.NewConfig.ToObject<ServiceConfiguration>(),
 				this.database);
+
+			// 'void' value in MediatR 
+			return Unit.Value;
 		}
 	}
 }

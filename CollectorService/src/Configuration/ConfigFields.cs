@@ -5,6 +5,7 @@ namespace CollectorService.Configuration
 		public int port { get; set; }
 
 		public string dbAddress { get; set; }
+		public string dbPort { get; set; }
 		public string dbName { get; set; }
 		public string sensorsCollection { get; set; }
 		public string configurationBackupCollection { get; set; }

@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using CollectorService.Data;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace CollectorService.Configuration
 {
@@ -61,9 +62,9 @@ namespace CollectorService.Configuration
 			return jConfig.ToObject<ServiceConfiguration>();
 		}
 
-		private void writeToFile()
+		private async Task writeToFile()
 		{
-			File.WriteAllText(
+			await File.WriteAllTextAsync(
 				ServiceConfiguration.CONFIGURATION_PATH,
 				JsonConvert.SerializeObject(instance));
 		}
@@ -72,25 +73,25 @@ namespace CollectorService.Configuration
 
 		private static List<IReloadable> ReloadableTargets;
 
-		public static void reload(
-			ServiceConfiguration newConfig,
+		public static async Task reload(ServiceConfiguration newConfig,
 		 	IDatabaseService db = null)
 		{
 			Console.WriteLine("Configuration reload requested  ... ");
 
 			if (db != null)
 			{
-				db.backupConfiguration(ServiceConfiguration.instance);
+				await db.backupConfiguration(ServiceConfiguration.instance);
 			}
 
 			ServiceConfiguration.instance = newConfig;
 
 			// this is new config
-			ServiceConfiguration.instance.writeToFile();
+			await ServiceConfiguration.instance.writeToFile();
 
 			foreach (IReloadable target in ServiceConfiguration.ReloadableTargets)
 			{
-				target.reload(ServiceConfiguration.Instance);
+				// TODO reload method can also be 
+				await target.reload(ServiceConfiguration.Instance);
 			}
 		}
 

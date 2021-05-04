@@ -235,7 +235,7 @@ namespace CollectorService.Broker
 		}
 
 		// has to be async because of the connection retry 
-		public async void reload(ConfigFields newConfig)
+		public async Task reload(ConfigFields newConfig)
 		{
 
 			// TODO add check if this service has to be reloaded

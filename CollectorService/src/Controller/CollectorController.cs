@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using CommunicationModel;
@@ -36,47 +37,47 @@ namespace CollectorService.Controller
 		 */
 		[HttpGet]
 		[Route("all")]
-		public IActionResult getAllData()
+		public async Task<IActionResult> getAllData()
 		{
 
-			if (this.database != null)
+			if (database == null)
 			{
-
-				List<SensorModel> dbResponse = this.database.getAllSamples();
-
-				if (dbResponse == null)
-				{
-					return StatusCode(500);
-				}
-
-				List<SensorDataRecords> retData = new List<SensorDataRecords>();
-				foreach (SensorModel model in dbResponse)
-				{
-					SensorDataRecords newRecord = new SensorDataRecords(
-							model.sensorName,
-							model.records.Count,
-							model.records);
-
-					retData.Add(newRecord);
-				}
-
-				return Ok(retData);
+				return StatusCode(500);
 			}
 
-			return StatusCode(500);
+			List<SensorModel> dbResponse = await database.GetAllSamples();
+
+			if (dbResponse == null)
+			{
+				return StatusCode(500);
+			}
+
+			List<SensorDataRecords> retData = new List<SensorDataRecords>();
+			foreach (SensorModel model in dbResponse)
+			{
+				var newRecord = new SensorDataRecords(
+						model.sensorName,
+						model.records.Count,
+						model.records);
+
+				retData.Add(newRecord);
+			}
+
+			return Ok(retData);
 		}
 
 		[HttpGet]
 		[Route("recordsRange")]
-		public IActionResult getRecordsRange([FromQuery] string sensorName,
-										[FromQuery] long fromTimestamp,
-										[FromQuery] long toTimestamp)
+		public async Task<IActionResult> getRecordsRange(
+			[FromQuery] string sensorName,
+			[FromQuery] long fromTimestamp,
+			[FromQuery] long toTimestamp)
 		{
 
 			if (fromTimestamp >= toTimestamp)
 			{
 
-				string message = "Bad request, invalid timestamps: "
+				string message = "Requested invalid timestamps: "
 					+ $"FromTimestamp: {fromTimestamp} "
 					+ $"ToTimestamp: {toTimestamp}";
 
@@ -85,14 +86,14 @@ namespace CollectorService.Controller
 				return BadRequest(message);
 			}
 
-			SensorModel records = this.database.getRecordRange(
+			SensorModel records = await database.getRecordRange(
 				sensorName,
 				fromTimestamp,
 				toTimestamp);
 
 			if (records != null)
 			{
-				SensorDataRecords retData = new SensorDataRecords(
+				var retData = new SensorDataRecords(
 					records.sensorName,
 					records.records.Count,
 					records.records);
@@ -105,16 +106,17 @@ namespace CollectorService.Controller
 
 		[HttpGet]
 		[Route("recordsList")]
-		public IActionResult getRecordsList([FromBody] GetListOfRecordsArg reqArg)
+		public async Task<IActionResult> getRecordsList(
+			[FromBody] GetListOfRecordsArg reqArg)
 		{
 
-			SensorModel dbResult = this.database.getRecordsList(
+			SensorModel dbResult = await database.getRecordsList(
 				reqArg.sensorName,
 				reqArg.timestamps);
 
 			if (dbResult != null)
 			{
-				SensorDataRecords retData = new SensorDataRecords(
+				var retData = new SensorDataRecords(
 					dbResult.sensorName,
 					dbResult.records.Count,
 					dbResult.records);
@@ -127,9 +129,9 @@ namespace CollectorService.Controller
 
 		[HttpPost]
 		[Route("addRecords")]
-		public IActionResult addRecords([FromBody] AddRecordsArg reqArg)
+		public async Task<IActionResult> addRecords([FromBody] AddRecordsArg reqArg)
 		{
-			this.database.addToSensor(reqArg.sensorName, reqArg.newRecords);
+			await this.database.AddToSensor(reqArg.sensorName, reqArg.newRecords);
 
 			return new OkResult();
 		}
@@ -137,7 +139,7 @@ namespace CollectorService.Controller
 		// TODO this is not refactored to use SensorModel
 		[HttpPost]
 		[Route("updateRecord")]
-		public IActionResult updateRecord([FromBody] UpdateRecordArg reqArg)
+		public async Task<IActionResult> updateRecord([FromBody] UpdateRecordArg reqArg)
 		{
 			Console.WriteLine($"Request to update record:"
 				+ $"\nSensor name: {reqArg.sensorName}"
@@ -145,10 +147,12 @@ namespace CollectorService.Controller
 				+ $"\nField: {reqArg.field}"
 				+ $"\nNew value: {reqArg.value}");
 
-			bool updateRes = this.database.updateRecord(reqArg.sensorName,
-									reqArg.timestamp,
-									reqArg.field,
-									reqArg.value);
+			bool updateRes = await database.updateRecord(
+				reqArg.sensorName,
+				reqArg.timestamp,
+				reqArg.field,
+				reqArg.value);
+
 			if (updateRes == true)
 			{
 				return new OkResult();
@@ -161,10 +165,10 @@ namespace CollectorService.Controller
 
 		[HttpDelete]
 		[Route("deleteRecord")]
-		public IActionResult deleteRecord([FromBody] DeleteRecordArg reqArg)
+		public async Task<IActionResult> deleteRecord([FromBody] DeleteRecordArg reqArg)
 		{
 
-			bool delResult = this.database.deleteRecord(
+			bool delResult = await database.deleteRecord(
 				reqArg.sensorName,
 				reqArg.timestamp);
 
@@ -180,10 +184,10 @@ namespace CollectorService.Controller
 
 		[HttpDelete]
 		[Route("deleteSensorData")]
-		public IActionResult deleteSensorData([FromQuery] string sensorName)
+		public async Task<IActionResult> deleteSensorData([FromQuery] string sensorName)
 		{
 
-			bool delResult = this.database.deleteSensorData(sensorName);
+			bool delResult = await database.deleteSensorData(sensorName);
 
 			if (delResult == true)
 			{
@@ -197,9 +201,9 @@ namespace CollectorService.Controller
 
 		[HttpPost]
 		[Route("updateConfig")]
-		public IActionResult updateConfiguration([FromBody] UpdateConfigArg configArg)
+		public async Task<IActionResult> updateConfiguration([FromBody] UpdateConfigArg configArg)
 		{
-			ServiceConfiguration.reload(
+			await ServiceConfiguration.reload(
 				JsonConvert.DeserializeObject<ServiceConfiguration>(configArg.TxtConfig),
 				this.database);
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CommunicationModel;
 using Newtonsoft.Json.Linq;
@@ -7,26 +8,26 @@ namespace CollectorService.Data
 {
 	public interface IDatabaseService
 	{
-		void addToSensor(string sensorName, SensorValues newValues);
+		Task<bool> AddToSensor(string sensorName, SensorValues newValues);
 
-		void addToSensor(string sensorName, List<SensorValues> newRecords);
+		Task<bool> AddToSensor(string sensorName, List<SensorValues> newRecords);
 
-		List<SensorModel> getAllSamples();
+		Task<List<SensorModel>> GetAllSamples();
 
-		SensorModel getRecordRange(string sensorName,
+		Task<SensorModel> getRecordRange(string sensorName,
 			long fromTimestamp = 0,
 			long toTimestamp = -1);
 
-		SensorModel getRecordsList(string sensorName, List<long> timestamps);
+		Task<SensorModel> getRecordsList(string sensorName, List<long> timestamps);
 
-		bool updateRecord(string sensorName, long timestamp, string field, string value);
+		Task<bool> updateRecord(string sensorName, long timestamp, string field, string value);
 
-		bool deleteRecord(string sensorName, long timestamp);
+		Task<bool> deleteRecord(string sensorName, long timestamp);
 
-		bool deleteSensorData(string sensorName);
+		Task<bool> deleteSensorData(string sensorName);
 
-		int getRecordsCount(string sensorName);
+		Task<int> getRecordsCount(string sensorName);
 
-		void backupConfiguration(ServiceConfiguration oldConfig);
+		Task backupConfiguration(ServiceConfiguration oldConfig);
 	}
 }

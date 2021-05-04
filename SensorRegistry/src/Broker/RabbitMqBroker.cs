@@ -69,9 +69,9 @@ namespace SensorRegistry.Broker
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine($@"Failed to establish connection with broker: "
-					+ "address: {config.brokerAddress}:{config.brokerPort}, "
-					+ "reason: {e.Message}");
+				Console.WriteLine("Failed to establish connection with broker: "
+					+ $"address: {config.brokerAddress}:{config.brokerPort}, "
+					+ $"reason: {e.Message}");
 			}
 			finally
 			{

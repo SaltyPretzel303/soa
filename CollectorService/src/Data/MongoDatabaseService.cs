@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using CommunicationModel;
 using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Threading.Tasks;
 
 namespace CollectorService.Data
 {
@@ -26,39 +27,53 @@ namespace CollectorService.Data
 			this.config = ServiceConfiguration.Instance;
 		}
 
-		private bool createConnection()
+		// TODO this does not have to be async actually
+		// connection is gonna be established once query is run 
+		// new MongoClient and getDatabase are just ... offline I guess ...  
+		private Task<bool> createConnection()
 		{
-			this.client = new MongoClient(config.dbAddress);
-
-			if (this.client != null)
-			{
-
-				this.database = this.client.GetDatabase(config.dbName);
-
-				if (this.database != null)
+			return Task.Run(() =>
 				{
-					return true;
-				}
+					var settings = new MongoClientSettings()
+					{
+						Server = new MongoServerAddress(config.dbAddress),
+						ServerSelectionTimeout = new TimeSpan(0, 0, 10)
+					};
 
-			}
+					client = new MongoClient(settings);
 
-			Console.Write("Failed to establish connection with mongo ... ");
-			return false;
+					// not sure but his can't be null I think
+					// either exceptions is gonna be throwh
+					// or a valid object is gonna be created
+					// same with .GetDatabase ...  
+					if (client != null)
+					{
+						database = client.GetDatabase(config.dbName);
+
+						if (database != null)
+						{
+							return true;
+						}
+					}
+
+					Console.Write("Failed to establish connection with mongo ... ");
+					return false;
+				});
 		}
 
 		// interface implementation
 
-		public void addToSensor(string sensorName, SensorValues newValues)
+		public async Task<bool> AddToSensor(string sensorName,
+			SensorValues newValues)
 		{
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
-				return;
+				return false;
 			}
 
 			string collectionName = config.sensorsCollection;
 
-			IMongoCollection<SensorModel> collection =
-				this.database.GetCollection<SensorModel>(collectionName);
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
 			var sensorFilter = Builders<SensorModel>
 				.Filter
@@ -68,24 +83,37 @@ namespace CollectorService.Data
 				.Update
 				.Push<SensorValues>(s => s.records, newValues);
 
-			collection.UpdateOne(
-				sensorFilter,
-				update,
-				new UpdateOptions { IsUpsert = true });
+			UpdateResult addResult = null;
+			try
+			{
+				addResult = await collection.UpdateOneAsync(
+					sensorFilter,
+					update,
+					new UpdateOptions { IsUpsert = true });
+
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
+			}
+
+			return (addResult.ModifiedCount > 0);
 		}
 
-		public void addToSensor(String sensorName, List<SensorValues> newRecords)
+		public async Task<bool> AddToSensor(String sensorName,
+			List<SensorValues> newRecords)
 		{
-
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
-				return;
+				return false;
 			}
 
 			string collectionName = config.sensorsCollection;
 
-			IMongoCollection<SensorModel> collection =
-					this.database.GetCollection<SensorModel>(collectionName);
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
 			var sensorFilter = Builders<SensorModel>
 					.Filter
@@ -95,148 +123,216 @@ namespace CollectorService.Data
 					.Update
 					.PushEach<SensorValues>(s => s.records, newRecords);
 
-			collection.UpdateOne(sensorFilter,
-					update,
-					new UpdateOptions { IsUpsert = true });
+			UpdateResult addResult = null;
+			try
+			{
+				addResult = await collection.UpdateOneAsync(sensorFilter,
+						update,
+						new UpdateOptions { IsUpsert = true });
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
+			}
+
+			return (addResult.ModifiedCount > 0);
 		}
 
-		public List<SensorModel> getAllSamples()
+		public async Task<List<SensorModel>> GetAllSamples()
 		{
-
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return null;
 			}
 
 			string collectionName = config.sensorsCollection;
-			IMongoCollection<SensorModel> collection =
-					this.database.GetCollection<SensorModel>(collectionName);
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
-			List<SensorModel> dbResult = collection
-					.FindSync(_ => true)
-					.ToList();
+			IAsyncCursor<SensorModel> cursor = null;
+			try
+			{
+				cursor = await collection.FindAsync(_ => true);
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
 
-			return dbResult;
+				return null;
+			}
+
+			return await cursor.ToListAsync();
 		}
 
-		public SensorModel getRecordRange(string sensorName,
-					 long fromTimestamp,
-					 long toTimestamp = long.MaxValue)
+		public async Task<SensorModel> getRecordRange(string sensorName,
+			long fromTimestamp,
+			long toTimestamp = long.MaxValue)
 		{
 
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return null;
 			}
 
-			string collection = config.sensorsCollection;
-			IMongoCollection<SensorModel> sensorsCollection =
-					this.database.GetCollection<SensorModel>(collection);
+			string collectionName = config.sensorsCollection;
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
-			SensorModel dbResult = sensorsCollection
-				.AsQueryable<SensorModel>()
-				.Where(s => s.sensorName == sensorName)
-				.Select(r => new
-				{
-					sensorName = r.sensorName,
-					records = r.records.Where(sv =>
-										sv.timestamp >= fromTimestamp
-										&& sv.timestamp <= toTimestamp)
-				})
-				.AsEnumerable()
-				.Select(r => new SensorModel
-				{
-					sensorName = r.sensorName,
-					records = r.records.ToList()
-				})
-				.First();
+			try
+			{
+				var dbResult = await collection.Aggregate()
+					.Match(s => s.sensorName == sensorName)
+					.Project(s => new
+					{
+						sensorName = s.sensorName,
+						records = s.records
+							.Where(r =>
+								r.timestamp >= fromTimestamp
+								&& r.timestamp <= toTimestamp)
+					})
+					.FirstAsync();
 
-			return dbResult;
+				if (dbResult != null)
+				{
+					return new SensorModel(dbResult.sensorName,
+						dbResult.records.ToList()
+					);
+				}
+				else
+				{
+					return null;
+				}
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return null;
+			}
+
 		}
 
-		public SensorModel getRecordsList(string sensorName, List<long> timestamps)
+		public async Task<SensorModel> getRecordsList(string sensorName,
+			List<long> timestamps)
 		{
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return null;
 			}
 
-			IMongoCollection<SensorModel> collection =
-				this.database.GetCollection<SensorModel>(config.sensorsCollection);
+			var collection = database.GetCollection<SensorModel>(config.sensorsCollection);
 
-			SensorModel dbResult = collection
-				.AsQueryable<SensorModel>()
-				.Where(rec => rec.sensorName == sensorName)
-				.Select(rec => new
-				{
-					sensorName = rec.sensorName,
-					records = rec
-							.records
+			try
+			{
+				var dbResult = await collection
+					.Aggregate()
+					.Match(s => s.sensorName == sensorName)
+					.Project(s => new
+					{
+						sensorName = s.sensorName,
+						records = s.records
+							.AsQueryable()
 							.Where(r => timestamps.Contains(r.timestamp))
-				})
-				.AsEnumerable()
-				.Select(model => new SensorModel
-				{
-					sensorName = model.sensorName,
-					records = model.records.ToList()
-				})
-				.First();
+					})
+					.FirstAsync();
 
-			return dbResult;
+				if (dbResult != null)
+				{
+					return new SensorModel(
+						dbResult.sensorName,
+						dbResult.records.ToList()
+					);
+				}
+				else
+				{
+					return null;
+				}
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return null;
+			}
 		}
 
-		public bool updateRecord(string sensorName,
+		public async Task<bool> updateRecord(string sensorName,
 			long timestamp,
 			string field,
 			string newValue)
 		{
 
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return false;
 			}
 
-			IMongoCollection<SensorModel> collection =
-					this.database.GetCollection<SensorModel>(config.sensorsCollection);
+			var collection = database.GetCollection<SensorModel>(config.sensorsCollection);
 
-			SensorValues record = collection
-				.AsQueryable<SensorModel>()
-				.Where(s => s.sensorName == sensorName)
-				.Select(s => s.records.Where(r => r.timestamp == timestamp).First())
-				.First();
+			try
+			{
+				var findResult = await collection
+					.Aggregate()
+					.Match(s => s.sensorName == sensorName)
+					.Project(s => new
+					{
+						record = s.records
+							.Where(r => r.timestamp == timestamp)
+							.First()
+					})
+					.FirstAsync();
 
-			// I could also try to serialize obj to json/bson 
-			// then change field's value (it is accessed by string) 
-			// then deserialize it back to obj 
-			record.GetType().GetProperty(field).SetValue(record, newValue);
+				if (findResult == null)
+				{
+					// TODO log some message ... 
+					return false;
+				}
 
-			var nameFilter = Builders<SensorModel>
-				.Filter
-				.Where(s => s.sensorName == sensorName &&
-					s.records.Any(r => r.timestamp == timestamp));
+				SensorValues record = findResult.record;
 
-			var update = Builders<SensorModel>
-				.Update
-				.Set(s => s.records[-1], record);
-			// -1 means index of previously (from the last query) matched element
+				// I could also try to serialize obj to json/bson 
+				// then change field's value (accessed by string) 
+				// then deserialize it back to obj 
+				record.GetType().GetProperty(field).SetValue(record, newValue);
 
-			var result = collection.UpdateOne(nameFilter, update);
+				var nameFilter = Builders<SensorModel>
+					.Filter
+					.Where(s =>
+						s.sensorName == sensorName
+						&& s.records.Any(r => r.timestamp == timestamp));
 
-			return (result.MatchedCount == 1);
+				var update = Builders<SensorModel>
+					.Update
+					.Set(s => s.records[-1], record);
+				// -1 means index of previously (from the last query) matched element
 
+				var result = await collection.UpdateOneAsync(nameFilter, update);
+
+				return (result.ModifiedCount == 1);
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
+			}
 		}
 
-		public bool deleteRecord(string sensorName, long timestamp)
+		public async Task<bool> deleteRecord(string sensorName, long timestamp)
 		{
 
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return false;
 			}
 
 			string collectionName = config.sensorsCollection;
-			IMongoCollection<SensorModel> collection =
-					this.database.GetCollection<SensorModel>(collectionName);
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
 			var nameFilter = Builders<SensorModel>
 				.Filter
@@ -249,93 +345,122 @@ namespace CollectorService.Data
 			var update = Builders<SensorModel>
 				.Update
 				.PullFilter(rec => rec.records, timestampFilter);
+			try
+			{
+				UpdateResult result =
+					await collection.UpdateOneAsync(nameFilter, update);
 
-			UpdateResult result = collection.UpdateOne(nameFilter, update);
+				return (result.ModifiedCount == 1);
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
 
-			return (result.MatchedCount == 1);
+				return false;
+			}
 		}
 
-		public bool deleteSensorData(string sensorName)
+		public async Task<bool> deleteSensorData(string sensorName)
 		{
-
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return false;
 			}
 
-			IMongoCollection<SensorModel> collection =
-					this.database.GetCollection<SensorModel>(config.sensorsCollection);
+			string collectionName = config.sensorsCollection;
+			var collection = database.GetCollection<SensorModel>(collectionName);
 
 			var nameFilter = Builders<SensorModel>
 					.Filter
 					.Eq(rec => rec.sensorName, sensorName);
 
-			DeleteResult result = collection.DeleteOne(nameFilter);
-
-			return (result.DeletedCount == 1);
-		}
-
-		// TODO make this async
-		public int getRecordsCount(string sensorName)
-		{
-
-			if (!this.createConnection())
-			{
-				return 0;
-			}
-
-			IMongoCollection<SensorModel> sensorsCollection =
-				database.GetCollection<SensorModel>(config.sensorsCollection);
-
-
-			var nameFilter = Builders<SensorModel>
-					.Filter.Eq(rec => rec.sensorName, sensorName);
-
-			var countQuery = Builders<SensorModel>
-					.Projection.Expression(rec => rec.records.Count);
-
-			int count = 0;
 			try
 			{
 
-				count = sensorsCollection
-					.Find<SensorModel>(nameFilter)
-					.Project<int>(countQuery)
-					.Single<int>();
+				DeleteResult result = await collection.DeleteOneAsync(nameFilter);
+
+				return (result.DeletedCount == 1);
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
+			}
+		}
+
+		public async Task<int> getRecordsCount(string sensorName)
+		{
+
+			if (!await createConnection())
+			{
+				return -1;
+			}
+
+			string collectionName = config.sensorsCollection;
+			var collection = database.GetCollection<SensorModel>(collectionName);
+
+			try
+			{
+				var dbResult = await collection
+					.Find(s => s.sensorName == sensorName)
+					.Project(s => new
+					{
+						count = s.records.Count
+					})
+					.FirstAsync();
+
+				if (dbResult != null)
+				{
+					return dbResult.count;
+				}
+				else
+				{
+					// somthing went wrong
+					// don't know when is dbResult gonna be null ... 
+					return -1;
+				}
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return -1;
 			}
 			catch (InvalidOperationException)
 			{
+				// if there are no records for the given sensorName
+				// this exception will be thrown 
 
-				// if there is no records for given sensorName
-				// this exception will happen 
-
-				count = 0;
+				return 0;
 			}
-
-			return count;
 
 		}
 
-		public void backupConfiguration(ServiceConfiguration oldConfig)
+		public async Task backupConfiguration(ServiceConfiguration oldConfig)
 		{
 
-			if (!this.createConnection())
+			if (!await createConnection())
 			{
 				return;
 			}
 
 			// TODO maybe this id should be read from config ... 
-			string serviceId = NetworkInterface.
-								GetAllNetworkInterfaces().
-								Where(nic => nic.OperationalStatus == OperationalStatus.Up
-											&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback).
-								Select(nic => nic.GetPhysicalAddress().ToString()).
-								FirstOrDefault();
+			string serviceId = NetworkInterface
+				.GetAllNetworkInterfaces()
+				.Where(nic =>
+					nic.OperationalStatus == OperationalStatus.Up
+					&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+				.Select(nic => nic.GetPhysicalAddress().ToString())
+				.FirstOrDefault();
 
 			ConfigFields config = ServiceConfiguration.Instance;
 
 			string collectionName = config.configurationBackupCollection;
-			IMongoCollection<ConfigBackupRecord> configCollection =
+			IMongoCollection<ConfigBackupRecord> collection =
 				database.GetCollection<ConfigBackupRecord>(collectionName);
 
 			DatedConfigRecord newRecord = new DatedConfigRecord(
@@ -350,8 +475,21 @@ namespace CollectorService.Data
 				.Update
 				.Push(r => r.oldConfigs, newRecord);
 
-			configCollection
-				.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
+			try
+			{
+				collection.UpdateOne(filter,
+					update,
+					new UpdateOptions { IsUpsert = true });
+
+				return;
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return;
+			}
 
 		}
 

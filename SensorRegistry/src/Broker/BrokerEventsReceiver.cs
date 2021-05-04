@@ -17,7 +17,6 @@ namespace SensorRegistry.Broker
 {
 	public class BrokerEventsReceiver : BackgroundService, IReloadable
 	{
-
 		private ILogger logger;
 
 		private IConnection connection;
@@ -31,7 +30,7 @@ namespace SensorRegistry.Broker
 		private CancellationTokenSource connectionRetryTokenSrc;
 
 		public BrokerEventsReceiver(ILogger logger,
-								IMediator mediator)
+			IMediator mediator)
 		{
 			this.logger = logger;
 			this.mediator = mediator;
@@ -39,35 +38,34 @@ namespace SensorRegistry.Broker
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-
-			this.masterToken = stoppingToken;
-			this.masterToken.Register(() =>
+			masterToken = stoppingToken;
+			masterToken.Register(() =>
 			{
-				if (this.connectionRetryTokenSrc != null)
+				// cancel connection retry if application shutdown is requested
+				if (connectionRetryTokenSrc != null)
 				{
-					this.connectionRetryTokenSrc.Cancel();
+					connectionRetryTokenSrc.Cancel();
 				}
 			});
-			// this will cancel connection reatry if application shutdown is requested
 
 			ServiceConfiguration.Instance.ListenForChange((IReloadable)this);
 
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			var config = ServiceConfiguration.Instance;
 
-			this.connectionRetryTokenSrc = new CancellationTokenSource();
+			connectionRetryTokenSrc = new CancellationTokenSource();
 
-			this.connectionRetryTask = this.establishConnection(this.connectionRetryTokenSrc.Token);
-			await this.connectionRetryTask;
+			connectionRetryTask = establishConnection(connectionRetryTokenSrc.Token);
+			await connectionRetryTask;
 
-			this.connectionRetryTokenSrc = null;
-			this.connectionRetryTask = null;
+			connectionRetryTokenSrc = null;
+			connectionRetryTask = null;
 
-			if (this.masterToken.IsCancellationRequested)
+			if (masterToken.IsCancellationRequested)
 			{
-				if (this.connection != null &&
-				this.connection.IsOpen)
+				if (connection != null &&
+				connection.IsOpen)
 				{
-					this.connection.Close();
+					connection.Close();
 				}
 
 				return;
@@ -95,7 +93,7 @@ namespace SensorRegistry.Broker
 					{
 						try
 						{
-							await Task.Delay(config.connectionRetryDelay);
+							await Task.Delay(config.connectionRetryDelay, token);
 						}
 						catch (TaskCanceledException)
 						{
@@ -107,10 +105,10 @@ namespace SensorRegistry.Broker
 
 				if (token.IsCancellationRequested)
 				{
-					if (this.connection != null &&
-					this.connection.IsOpen)
+					if (connection != null &&
+					connection.IsOpen)
 					{
-						this.connection.Close();
+						connection.Close();
 					}
 				}
 				else
@@ -123,9 +121,9 @@ namespace SensorRegistry.Broker
 
 		private bool ConfigureConnection()
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
+			var config = ServiceConfiguration.Instance;
 
-			ConnectionFactory connectionFactory = new ConnectionFactory
+			var connectionFactory = new ConnectionFactory
 			{
 				HostName = config.brokerAddress,
 				Port = config.brokerPort
@@ -133,12 +131,12 @@ namespace SensorRegistry.Broker
 			};
 			try
 			{
-				this.connection = connectionFactory.CreateConnection();
-				this.channel = this.connection.CreateModel();
+				connection = connectionFactory.CreateConnection();
+				channel = connection.CreateModel();
 			}
 			catch (Exception e)
 			{
-				this.logger.LogError($"Failed to create connection with broker: {e.Message}");
+				logger.LogError($"Failed to create connection with broker: {e.Message}");
 				return false;
 			}
 
@@ -305,9 +303,9 @@ namespace SensorRegistry.Broker
 			}
 
 			this.connectionRetryTokenSrc = new CancellationTokenSource();
-			this.connectionRetryTask = 
+			this.connectionRetryTask =
 				this.establishConnection(this.connectionRetryTokenSrc.Token);
-			
+
 			await this.connectionRetryTask;
 
 			this.connectionRetryTokenSrc = null;

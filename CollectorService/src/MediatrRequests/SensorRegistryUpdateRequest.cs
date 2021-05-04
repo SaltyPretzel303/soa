@@ -27,23 +27,23 @@ namespace CollectorService.MediatrRequests
 
 		protected override void Handle(SensorRegistryUpdateRequest request)
 		{
-
 			SensorRegistryEvent registryEvent = request.registryEvent;
 
 			if (registryEvent.eventType == SensorRegEventType.NewSensor)
 			{
 				Console.WriteLine("Registry update: add");
-				this.localRegistry.AddNewRecord(registryEvent.sensorRecord);
+				localRegistry.AddNewRecord(registryEvent.sensorRecord);
 			}
 			else if (registryEvent.eventType == SensorRegEventType.SensorUpdated)
 			{
+				// there is gonna be a lot of this so lets just comment them ... 
 				// Console.WriteLine("Registry update: update");
-				this.localRegistry.UpdateRecord(registryEvent.sensorRecord);
+				localRegistry.UpdateRecord(registryEvent.sensorRecord);
 			}
 			else if (registryEvent.eventType == SensorRegEventType.SensorRemoved)
 			{
 				Console.WriteLine("Registry update: remove");
-				this.localRegistry.RemoveRecord(registryEvent.sensorRecord);
+				localRegistry.RemoveRecord(registryEvent.sensorRecord);
 			}
 		}
 	}

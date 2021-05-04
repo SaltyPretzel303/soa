@@ -10,7 +10,7 @@ public interface IRegistryCache
 
 	void RemoveRecord(SensorRegistryRecord oldRecord);
 
-	void AddNewRecord(SensorRegistryRecord newRecord);
+	Task AddNewRecord(SensorRegistryRecord newRecord);
 
 	void UpdateRecord(SensorRegistryRecord newRecord);
 

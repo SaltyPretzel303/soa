@@ -2,7 +2,8 @@
 	"stage": "Production",
 	"Production": {
 		"port": 5000,
-		"dbAddress": "mongodb://soa-mongo-db:27017",
+		"dbAddress": "soa-mongo-db",
+		"dbPort": "27017",
 		"dbName": "soa_collector",
 		"sensorsCollection": "Sensors",
 		"configurationBackupCollection": "Configs",
@@ -32,6 +33,7 @@
 	"Development": {
 		"port": 5003,
 		"dbAddress": "mongodb://localhost:27017",
+		"dbPort": "27017",
 		"dbName": "soa_collector_dev",
 		"sensorsCollection": "Sensors",
 		"configurationBackupCollection": "Configs",

@@ -45,33 +45,24 @@ namespace CollectorService.Data
 		{
 			ServiceConfiguration.subscribeForChange((IReloadable)this);
 
-			startReading();
+			timer.Start();
+			Console.WriteLine("Started pulling data with interval: "
+				+ $"{timer.Interval} ms");
 
 			return Task.CompletedTask;
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
-			stopReading();
-			return Task.CompletedTask;
-		}
-
-		#endregion
-
-		public void startReading()
-		{
-			Console.WriteLine("Started pulling data with interval: " + this.timer.Interval + "ms");
-			timer.Start();
-		}
-
-		public void stopReading()
-		{
-			Console.WriteLine("Stopped pulling data ...");
 			if (timer != null)
 			{
 				timer.Stop();
 			}
+
+			return Task.CompletedTask;
 		}
+
+		#endregion
 
 		private async void timerEvent(Object source, ElapsedEventArgs arg)
 		{
@@ -93,16 +84,30 @@ namespace CollectorService.Data
 						singleSensor.Name,
 						out alreadyReadCount))
 				{
-					// initialize lastReadIndex if it doesn't exists for this sensor
+					// get the count of already read records from this sensor
+					// db access
 					alreadyReadCount = await mediator
 						.Send(new GetRecordsCountRequest(singleSensor.Name));
+
+					if (alreadyReadCount == -1)
+					{
+						Console.WriteLine("Failed to get read count for: "
+							+ $"{singleSensor.Name}");
+						// something went wrong
+						// most possibly failed to connect with the db
+
+						continue; // read from the next senor 
+					}
 
 					lastReadIndexes.Add(singleSensor.Name, alreadyReadCount);
 				}
 
 				if (alreadyReadCount >= singleSensor.AvailableRecords)
 				{
-					Console.WriteLine($"{singleSensor.Name} -> no new records ... ");
+					int diff = alreadyReadCount - singleSensor.AvailableRecords;
+					Console.WriteLine($"{singleSensor.Name} -> no new records "
+						+ $"waiting for: {diff} reads ... ");
+
 					continue; // read from the next sensor 
 				}
 
@@ -137,7 +142,7 @@ namespace CollectorService.Data
 							false,
 							e.Message);
 
-						// this request is not async 
+						// handler for this request is not async 
 						// but i guess it is a good idea to await it anyway 
 						await mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
@@ -146,7 +151,8 @@ namespace CollectorService.Data
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine($"Exception in gettin data: {e.ToString()}");
+					Console.WriteLine($"Unexpected exception while pulling data: "
+						+ $" {e.ToString()}");
 					continue; // pull from the next sensor
 				}
 
@@ -160,7 +166,7 @@ namespace CollectorService.Data
 						false,
 						"Sensor returned bad response.");
 
-					// this request is not async 
+					// handler for this request is not async 
 					// but i guess it is a good idea to await it anyway 
 					await mediator.Send(new PublishCollectorPullEventRequest(newEvent));
 
@@ -183,11 +189,20 @@ namespace CollectorService.Data
 
 				Console.WriteLine($"returned {dataRecords.RecordsCount} rows ... ");
 
-				await mediator.Send(new AddRecordsToSensorRequest(
-											singleSensor.Name,
-											dataRecords.Records));
+				var addResult = await mediator.Send(
+					new AddRecordsToSensorRequest(singleSensor.Name,
+						dataRecords.Records));
 
-				// update read index for every sensor
+				if (addResult != true)
+				{
+					// adding the new records was not successfull
+					// most possibly database is down ... 
+					// this records will have to be pulled again
+
+					continue;
+				}
+
+				// update read index for every sensor that returned records
 				// at this point lastReadIndex[singleSensor.Name] has to exists 
 				// (look at the beginning of this for loop)
 				lastReadIndexes[singleSensor.Name] =
@@ -199,7 +214,7 @@ namespace CollectorService.Data
 			timer.Start();
 		}
 
-		public void reload(ConfigFields newConfig)
+		public Task reload(ConfigFields newConfig)
 		{
 			// with every timerEvent configuration is read again
 			// only readInterval is kept from the initial service construction
@@ -215,10 +230,11 @@ namespace CollectorService.Data
 				{
 					timer.Start();
 				}
-
 			}
 
 			Console.WriteLine("Data puller reloaded ...  ");
+
+			return Task.CompletedTask;
 		}
 
 	}
