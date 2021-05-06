@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
 using ServiceObserver.Broker;
 using ServiceObserver.Data;
@@ -15,24 +17,27 @@ namespace ServiceObserver.MediatrRequests
 		}
 	}
 
-	public class UnstableServiceRequestHandler :
-			RequestHandler<UnstableServiceRequest>
+	public class UnstableServiceRequestHandler
+		: IRequestHandler<UnstableServiceRequest, Unit>
 	{
 
 		public IDatabaseService db;
 		public IMessageBroker broker;
 
 		public UnstableServiceRequestHandler(IDatabaseService db,
-									IMessageBroker broker)
+			IMessageBroker broker)
 		{
 			this.db = db;
 			this.broker = broker;
 		}
 
-		protected override void Handle(UnstableServiceRequest request)
+		public async Task<Unit> Handle(UnstableServiceRequest request,
+			CancellationToken token)
 		{
-			db.SaveUnstableRecord(request.record);
+			await db.SaveUnstableRecord(request.record);
 			// TODO maybe also publish it on the broker
+
+			return Unit.Value;
 		}
 	}
 

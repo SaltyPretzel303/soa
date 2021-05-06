@@ -172,25 +172,25 @@ namespace ServiceObserver.Broker
 		{
 
 			string configEventQueue = this.channel.QueueDeclare().QueueName;
-			this.channel.QueueBind(configEventQueue,
-								config.configUpdateTopic,
-								config.serviceTypeFilter,
-								null);
+			channel.QueueBind(configEventQueue,
+				config.configUpdateTopic,
+				config.serviceTypeFilter,
+				null);
 
 
-			EventingBasicConsumer configEventConsumer = new EventingBasicConsumer(this.channel);
+			var configEventConsumer = new EventingBasicConsumer(this.channel);
 			configEventConsumer.Received += (srcChannel, eventArg) =>
 			{
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 
 				JObject newConfig = JObject.Parse(txtContent);
 
-				this.mediator.Send(new ConfigChangeRequest(newConfig));
+				mediator.Send(new ConfigChangeRequest(newConfig));
 			};
 
-			this.channel.BasicConsume(configEventQueue,
-									true,
-									configEventConsumer);
+			channel.BasicConsume(configEventQueue,
+				true,
+				configEventConsumer);
 
 		}
 
@@ -203,26 +203,26 @@ namespace ServiceObserver.Broker
 								config.lifetimeEventFilter,
 								null);
 
-			EventingBasicConsumer lifetimeEventConsumer = new EventingBasicConsumer(this.channel);
+			var lifetimeEventConsumer = new EventingBasicConsumer(this.channel);
 			lifetimeEventConsumer.Received += (srcChannel, eventArg) =>
 			{
 
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
 
-				ServiceLifetimeEvent newEvent = JsonConvert
-							.DeserializeObject<ServiceLifetimeEvent>(txtContent);
+				var newEvent = JsonConvert
+					.DeserializeObject<ServiceLifetimeEvent>(txtContent);
 
 				Console.WriteLine($"LifeEvent => {newEvent.lifeStage.ToString()}, "
 					+ $"s.Type: {newEvent.sourceType}, "
 					+ $"s.Name: {newEvent.sourceId}");
 
-				this.mediator.Send(new SaveEventRequest(newEvent));
+				mediator.Send(new SaveEventRequest(newEvent));
 
 			};
 
-			this.channel.BasicConsume(lifetimeQueue,
-									true,
-									lifetimeEventConsumer);
+			channel.BasicConsume(lifetimeQueue,
+				true,
+				lifetimeEventConsumer);
 
 		}
 
@@ -242,7 +242,7 @@ namespace ServiceObserver.Broker
 		}
 
 		// has to be async because of the connection retry 
-		public async void reload(ConfigFields newConfig)
+		public async Task reload(ConfigFields newConfig)
 		{
 
 			// TODO add check if this service has to be reloaded
@@ -297,8 +297,8 @@ namespace ServiceObserver.Broker
 				return;
 			}
 
-			this.SetupConfigEventConsumer();
-			this.SetupLifetimeEventConsumer();
+			SetupConfigEventConsumer();
+			SetupLifetimeEventConsumer();
 
 			Console.WriteLine("BrokerEventReceiver reloaded using new config ... ");
 		}

@@ -17,7 +17,6 @@ namespace CollectorService.Data
 			this.configRecord = configRecord;
 			this.backupDate = backupDate;
 		}
-
 	}
 
 	public class ConfigBackupRecord

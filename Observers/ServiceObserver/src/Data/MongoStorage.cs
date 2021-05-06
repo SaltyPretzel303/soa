@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using CollectorService.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -25,170 +26,232 @@ namespace ServiceObserver.Data
 
 		private bool createConnection()
 		{
-			this.client = new MongoClient(config.dbAddress);
+			client = new MongoClient(config.dbAddress);
 
-			if (this.client != null)
+			if (client != null)
 			{
+				database = this.client.GetDatabase(config.dbName);
 
-				this.database = this.client.GetDatabase(config.dbName);
-
-				if (this.database != null)
+				if (database != null)
 				{
 					return true;
 				}
-
 			}
 
-			Console.Write("Failed to establish connection with mongo ... ");
 			return false;
 		}
 
-		public void BackupConfiguration(ServiceConfiguration oldConfig)
+		public async Task<bool> BackupConfiguration(ServiceConfiguration oldConfig)
 		{
-			if (!this.createConnection())
+			if (!createConnection())
 			{
-				// if connection fails 
-				return;
+				return false;
 			}
 
 			String serviceId = NetworkInterface
-					.GetAllNetworkInterfaces()
-					.Where(nic => nic.OperationalStatus == OperationalStatus.Up
-								&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-					.Select(nic => nic.GetPhysicalAddress()
-					.ToString())
-					.FirstOrDefault();
+				.GetAllNetworkInterfaces()
+				.Where(nic => nic.OperationalStatus == OperationalStatus.Up
+							&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+				.Select(nic => nic.GetPhysicalAddress()
+				.ToString())
+				.FirstOrDefault();
 
 			// at this point this.config still contains the old config. 
 			string collectionName = config.configBackupCollection;
-			IMongoCollection<ConfigBackupRecord> configCollection =
-				database.GetCollection<ConfigBackupRecord>(collectionName);
+			var collection = database
+				.GetCollection<ConfigBackupRecord>(collectionName);
 
-			DatedConfigRecord newRecord = new DatedConfigRecord(oldConfig, DateTime.Now);
-
-			var filter = Builders<ConfigBackupRecord>
-				.Filter
-				.Eq(r => r.serviceId, serviceId);
+			var newRecord = new DatedConfigRecord(oldConfig, DateTime.Now);
 
 			var update = Builders<ConfigBackupRecord>
 				.Update
 				.Push<DatedConfigRecord>(r => r.oldConfigs, newRecord);
 
-			configCollection.UpdateOne(filter, update,
-									new UpdateOptions { IsUpsert = true });
-			// upsert -> create if doesn't exists
-
-		}
-
-		public void SaveUnstableRecord(UnstableRuleRecord newRecord)
-		{
-			if (!this.createConnection())
+			try
 			{
-				// failed to establish connection 
-				return;
+				var updateResult = await collection.UpdateOneAsync(
+					c => c.serviceId == serviceId,
+					update,
+					new UpdateOptions { IsUpsert = true });
+
+				return (updateResult.ModifiedCount > 0);
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
 			}
 
-			UnstableServiceDbRecord dbRecord = new UnstableServiceDbRecord(
-															newRecord.serviceId,
-															newRecord.downCount,
-															newRecord.downEvents,
-															newRecord.time);
-
-			IMongoCollection<UnstableServiceDbRecord> dbCollection =
-						database.GetCollection<UnstableServiceDbRecord>(
-												config.unstableRecordCollection);
-
-			dbCollection.InsertOne(dbRecord);
 		}
 
-		public ConfigBackupRecord GetConfigs()
+		public async Task<ConfigBackupRecord> GetConfigs()
 		{
-			if (!this.createConnection())
+			if (!createConnection())
 			{
 				// if connection fails 
 				return null;
 			}
 
 			String serviceAddr = NetworkInterface.
-					GetAllNetworkInterfaces()
-					.Where(nic => nic.OperationalStatus == OperationalStatus.Up
-								&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-					.Select(nic => nic.GetPhysicalAddress()
-					.ToString())
-					.FirstOrDefault();
+				GetAllNetworkInterfaces()
+				.Where(nic => nic.OperationalStatus == OperationalStatus.Up
+							&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+				.Select(nic => nic.GetPhysicalAddress()
+				.ToString())
+				.FirstOrDefault();
 
+			var collection = database
+				.GetCollection<ConfigBackupRecord>(config.configBackupCollection);
 
-			IMongoCollection<ConfigBackupRecord> collection =
-				database.GetCollection<ConfigBackupRecord>(config.configBackupCollection);
-			var filter = Builders<ConfigBackupRecord>
-				.Filter
-				.Eq(r => r.serviceId, serviceAddr);
+			IAsyncCursor<ConfigBackupRecord> dbCursor = await collection
+				.FindAsync(r => r.serviceId == serviceAddr);
 
-			ConfigBackupRecord dbResult = collection
-											.Find(filter)
-											.First();
+			// await dbCursor.AnyAsync<ConfigBackupRecord>()
+			// cursor.FirstAsync() called after prev. line will throw
+			// invalid operation exception: Cannot access a disposed object
 
-			return dbResult;
+			if (dbCursor != null)
+			{
+				try
+				{
+					var record = await dbCursor.FirstAsync<ConfigBackupRecord>();
+
+					return record;
+				}
+				catch (InvalidOperationException)
+				{
+					// most likely sequence contains no elements
+
+					return new ConfigBackupRecord(serviceAddr,
+						new List<DatedConfigRecord>());
+				}
+				catch (TimeoutException)
+				{
+					Console.WriteLine($"Failed to connect with the database on: "
+						+ $"{config.dbAddress} ... ");
+
+					return null;
+				}
+			}
+
+			return null;
 		}
 
-		public List<UnstableServiceDbRecord> GetAllUnstableRecords()
+
+		public async Task<bool> SaveUnstableRecord(UnstableRuleRecord newRecord)
 		{
-			if (!this.createConnection())
+			if (!createConnection())
+			{
+				// failed to establish connection 
+				return false;
+			}
+
+			var dbRecord = new UnstableServiceDbRecord(
+				newRecord.serviceId,
+				newRecord.downCount,
+				newRecord.downEvents,
+				newRecord.time);
+
+			var collection = database.GetCollection<UnstableServiceDbRecord>(
+				config.unstableRecordCollection);
+
+			try
+			{
+				await collection.InsertOneAsync(dbRecord);
+
+				return true;
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return false;
+			}
+		}
+
+		public async Task<List<UnstableServiceDbRecord>> GetAllUnstableRecords()
+		{
+			if (!createConnection())
 			{
 				return null;
 			}
 
-			IMongoCollection<UnstableServiceDbRecord> dbCollection =
-						database.GetCollection<UnstableServiceDbRecord>(
-												config.unstableRecordCollection);
+			var collection = database.GetCollection<UnstableServiceDbRecord>(
+					config.unstableRecordCollection);
 
-			return dbCollection.Find<UnstableServiceDbRecord>(new BsonDocument())
-							.ToList<UnstableServiceDbRecord>();
+			try
+			{
+				IAsyncCursor<UnstableServiceDbRecord> dbCursor = await collection
+					.FindAsync(_ => true);
+
+				return await dbCursor.ToListAsync<UnstableServiceDbRecord>();
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
+
+				return null;
+			}
 		}
 
-		public List<UnstableServiceDbRecord> GetUnstableRecordsForService(string serviceId)
+		public async Task<List<UnstableServiceDbRecord>> GetUnstableRecordsForService(string serviceId)
 		{
-
-			if (!this.createConnection())
+			if (!createConnection())
 			{
 				return null;
 			}
 
-			IMongoCollection<UnstableServiceDbRecord> dbCollection =
-						database.GetCollection<UnstableServiceDbRecord>(
-									config.unstableRecordCollection);
+			var collection = database.GetCollection<UnstableServiceDbRecord>(
+				config.unstableRecordCollection);
 
-			FilterDefinition<UnstableServiceDbRecord> filter =
-								Builders<UnstableServiceDbRecord>
-								.Filter.Eq(r => r.serviceId, serviceId);
+			try
+			{
+				IAsyncCursor<UnstableServiceDbRecord> dbCursor = await collection
+					.FindAsync<UnstableServiceDbRecord>(r => r.serviceId == serviceId);
 
-			List<UnstableServiceDbRecord> result = dbCollection
-										.Find<UnstableServiceDbRecord>(filter)
-										.ToList<UnstableServiceDbRecord>();
+				return await dbCursor.ToListAsync<UnstableServiceDbRecord>();
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
 
-
-			return result;
+				return null;
+			}
 		}
 
-		public UnstableServiceDbRecord GetLatestRecord()
+		public async Task<UnstableServiceDbRecord> GetLatestRecord()
 		{
-			if (!this.createConnection())
+			if (!createConnection())
 			{
 				return null;
 			}
 
-			IMongoCollection<UnstableServiceDbRecord> dbCollection =
-						database.GetCollection<UnstableServiceDbRecord>(
-									config.unstableRecordCollection);
+			string collectionName = config.unstableRecordCollection;
+			var collection = database
+				.GetCollection<UnstableServiceDbRecord>(collectionName);
 
-			BsonDocument allFilter = new BsonDocument();
+			try
+			{
+				var dbRecord = await collection
+					.Find<UnstableServiceDbRecord>(_ => true)
+					.SortByDescending(r => r.recordedTime)
+					.FirstAsync<UnstableServiceDbRecord>();
 
-			UnstableServiceDbRecord dbRecord = dbCollection
-							.Find<UnstableServiceDbRecord>(allFilter)
-							.SortByDescending(r => r.recordedTime)
-							.First<UnstableServiceDbRecord>();
+				return dbRecord;
+			}
+			catch (TimeoutException)
+			{
+				Console.WriteLine($"Failed to connect with the database on: "
+					+ $"{config.dbAddress} ... ");
 
-			return dbRecord;
+				return null;
+			}
+
 		}
 	}
 }

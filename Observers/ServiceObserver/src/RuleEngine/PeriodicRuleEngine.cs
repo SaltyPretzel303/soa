@@ -26,7 +26,7 @@ namespace ServiceObserver.RuleEngine
 		private ConfigFields config;
 
 		public PeriodicRuleEngine(IEventsCache eventsCache,
-							IServiceProvider provider)
+			IServiceProvider provider)
 		{
 			this.eventsCache = eventsCache;
 
@@ -38,7 +38,6 @@ namespace ServiceObserver.RuleEngine
 
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-
 			ServiceConfiguration.subscribeForReload((IReloadable)this);
 
 			setupRuleEngine();
@@ -46,7 +45,7 @@ namespace ServiceObserver.RuleEngine
 			timer = new System.Timers.Timer();
 			timer.Interval = config.ruleEngineTriggerInterval;
 			timer.Elapsed += this.timerEvent;
-			timer.AutoReset = true;
+			timer.AutoReset = false;
 
 			timer.Start();
 
@@ -62,15 +61,18 @@ namespace ServiceObserver.RuleEngine
 			ISessionFactory factory = ruleRepo.Compile();
 
 			engineSession = factory.CreateSession();
-			engineSession.DependencyResolver = new AspNetCoreDepResolver(this.serviceProvider);
+			engineSession.DependencyResolver =
+				new AspNetCoreDepResolver(serviceProvider);
 
 		}
 
 		private void timerEvent(Object source, ElapsedEventArgs arg)
 		{
+			timer.Stop();
+
 			List<ServiceEvent> cacheContent = eventsCache.GetEvents();
 
-			foreach (ServiceEvent singleEvent in cacheContent)
+			foreach (var singleEvent in cacheContent)
 			{
 				engineSession.Insert(singleEvent);
 			}
@@ -85,6 +87,8 @@ namespace ServiceObserver.RuleEngine
 			// }
 
 			engineSession.Fire();
+
+			timer.Start();
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)
@@ -97,13 +101,10 @@ namespace ServiceObserver.RuleEngine
 			return Task.CompletedTask;
 		}
 
-		public void reload(ConfigFields newConfig)
+		public Task reload(ConfigFields newConfig)
 		{
-
-			if (timer != null)
-			{
-				timer.Stop();
-			}
+			bool timerWasEnabled = timer.Enabled;
+			timer.Stop();
 
 			// currently there is no point in recreating ruleEngine
 			// it doesn't depend on current configuration
@@ -112,15 +113,16 @@ namespace ServiceObserver.RuleEngine
 
 			this.config = newConfig;
 
-			timer = new System.Timers.Timer();
 			timer.Interval = config.ruleEngineTriggerInterval;
-			timer.Elapsed += this.timerEvent;
-			timer.AutoReset = true;
 
-			timer.Start();
+			if (timerWasEnabled)
+			{
+				timer.Start();
+			}
 
 			Console.WriteLine("PeriodicRuleEngine reloaded using new config ... ");
 
+			return Task.CompletedTask;
 		}
 	}
 }

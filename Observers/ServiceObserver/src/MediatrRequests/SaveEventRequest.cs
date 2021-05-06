@@ -29,7 +29,7 @@ namespace ServiceObserver.MediatrRequests
 
 		protected override void Handle(SaveEventRequest request)
 		{
-			this.eventsCache.SaveEvent(request.newEvent);
+			eventsCache.SaveEvent(request.newEvent);
 		}
 	}
 

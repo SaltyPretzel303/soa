@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CollectorService.Data;
 using CommunicationModel.RestModels;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +29,9 @@ namespace ServiceObserver.Controller
 
 		[HttpGet]
 		[Route("getAll")]
-		public IActionResult getAllUnstableEvents()
+		public async Task<IActionResult> getAllUnstableEvents()
 		{
-			List<UnstableServiceDbRecord> dbRecords = db.GetAllUnstableRecords();
+			List<UnstableServiceDbRecord> dbRecords = await db.GetAllUnstableRecords();
 
 			if (dbRecords != null)
 			{
@@ -40,9 +40,9 @@ namespace ServiceObserver.Controller
 				foreach (UnstableServiceDbRecord dbRecord in dbRecords)
 				{
 					resList.Add(new UnstableServiceRecord(dbRecord.serviceId,
-													dbRecord.downCount,
-													dbRecord.downEvents,
-													dbRecord.recordedTime));
+									dbRecord.downCount,
+									dbRecord.downEvents,
+									dbRecord.recordedTime));
 				}
 
 				return new OkObjectResult(resList);
@@ -55,9 +55,10 @@ namespace ServiceObserver.Controller
 
 		[HttpGet]
 		[Route("getForService")]
-		public IActionResult getUnstableEventsForService([FromQuery] string serviceId)
+		public async Task<IActionResult> getUnstableEventsForService([FromQuery] string serviceId)
 		{
-			List<UnstableServiceDbRecord> dbRecords = db.GetUnstableRecordsForService(serviceId);
+			List<UnstableServiceDbRecord> dbRecords =
+				await db.GetUnstableRecordsForService(serviceId);
 
 			if (dbRecords != null)
 			{
@@ -81,19 +82,18 @@ namespace ServiceObserver.Controller
 
 		[HttpGet]
 		[Route("getLatest")]
-		public IActionResult getLatestUnstableEvent()
+		public async Task<IActionResult> getLatestUnstableEvent()
 		{
-
-			UnstableServiceDbRecord dbRecord = db.GetLatestRecord();
+			UnstableServiceDbRecord dbRecord = await db.GetLatestRecord();
 
 			if (dbRecord != null)
 			{
-
 				UnstableServiceRecord resRecord = new UnstableServiceRecord(
-													dbRecord.serviceId,
-													dbRecord.downCount,
-													dbRecord.downEvents,
-													dbRecord.recordedTime);
+					dbRecord.serviceId,
+					dbRecord.downCount,
+					dbRecord.downEvents,
+					dbRecord.recordedTime);
+
 				return new OkObjectResult(resRecord);
 			}
 			else
@@ -105,9 +105,9 @@ namespace ServiceObserver.Controller
 
 		[HttpGet]
 		[Route("getOldConfigs")]
-		public IActionResult getConfigs()
+		public async Task<IActionResult> getConfigs()
 		{
-			ConfigBackupRecord record = db.GetConfigs();
+			ConfigBackupRecord record = await db.GetConfigs();
 
 			if (record != null)
 			{

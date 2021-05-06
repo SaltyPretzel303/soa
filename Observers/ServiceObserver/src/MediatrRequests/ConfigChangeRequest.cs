@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
 using Newtonsoft.Json.Linq;
 using ServiceObserver.Configuration;
@@ -15,21 +17,25 @@ namespace ServiceObserver.MediatrRequests
 		}
 	}
 
-	public class ConfigChangeRequestHandler : RequestHandler<ConfigChangeRequest>
+	public class ConfigChangeRequestHandler
+		: IRequestHandler<ConfigChangeRequest, Unit>
 	{
 
-		private IDatabaseService db;
+		private IDatabaseService database;
 
 		public ConfigChangeRequestHandler(IDatabaseService db)
 		{
-			this.db = db;
+			this.database = db;
 		}
 
-		protected override void Handle(ConfigChangeRequest request)
+		public async Task<Unit> Handle(ConfigChangeRequest request,
+			CancellationToken token)
 		{
-			ServiceConfiguration.reload(
+			await ServiceConfiguration.reload(
 				request.NewConfig.ToObject<ServiceConfiguration>(),
-				db);
+				database);
+
+			return Unit.Value;
 		}
 	}
 

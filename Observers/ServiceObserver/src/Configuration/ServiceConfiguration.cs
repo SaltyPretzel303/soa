@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using ServiceObserver.Data;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ServiceObserver.Configuration
 {
@@ -27,7 +28,6 @@ namespace ServiceObserver.Configuration
 		{
 			get
 			{
-
 				if (instance == null)
 				{
 					instance = ServiceConfiguration.readFromFile();
@@ -52,7 +52,8 @@ namespace ServiceObserver.Configuration
 
 		private static ServiceConfiguration readFromFile()
 		{
-			Console.WriteLine($"Reading configuration file {ServiceConfiguration.CONFIGURATION_PATH} ... ");
+			Console.WriteLine($"Reading configuration file: "
+				+ $"{ServiceConfiguration.CONFIGURATION_PATH} ... ");
 
 			string txtConfig = File.ReadAllText(ServiceConfiguration.CONFIGURATION_PATH);
 			JObject jConfig = JObject.Parse(txtConfig);
@@ -62,8 +63,7 @@ namespace ServiceObserver.Configuration
 
 		private void writeToFile()
 		{
-			File.WriteAllText(
-				ServiceConfiguration.CONFIGURATION_PATH,
+			File.WriteAllText(ServiceConfiguration.CONFIGURATION_PATH,
 				JsonConvert.SerializeObject(instance));
 		}
 
@@ -73,11 +73,12 @@ namespace ServiceObserver.Configuration
 
 		private static List<IReloadable> reloadableTargets;
 
-		public static void reload(ServiceConfiguration newConfig, IDatabaseService db = null)
+		public static async Task reload(ServiceConfiguration newConfig,
+			IDatabaseService db = null)
 		{
 			if (db != null)
 			{
-				db.BackupConfiguration(ServiceConfiguration.instance);
+				await db.BackupConfiguration(ServiceConfiguration.instance);
 			}
 
 			ServiceConfiguration.instance = newConfig;
@@ -85,20 +86,18 @@ namespace ServiceObserver.Configuration
 
 			foreach (IReloadable target in ServiceConfiguration.reloadableTargets)
 			{
-				target.reload(ServiceConfiguration.Instance);
+				await target.reload(ServiceConfiguration.Instance);
 			}
 		}
 
 		public static void subscribeForReload(IReloadable reloadableTarget)
 		{
-
 			if (ServiceConfiguration.reloadableTargets == null)
 			{
 				ServiceConfiguration.reloadableTargets = new List<IReloadable>();
 			}
 
 			ServiceConfiguration.reloadableTargets.Add(reloadableTarget);
-
 		}
 
 		#endregion

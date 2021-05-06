@@ -35,7 +35,7 @@ namespace CollectorService.MediatrRequests
 		{
 			await ServiceConfiguration.reload(
 				request.NewConfig.ToObject<ServiceConfiguration>(),
-				this.database);
+				database);
 
 			// 'void' value in MediatR 
 			return Unit.Value;

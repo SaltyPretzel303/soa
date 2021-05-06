@@ -25,14 +25,15 @@ namespace ServiceObserver
 			services.AddTransient<IEventsCache, InMemoryEventsCache>();
 
 			services.AddMediatR(typeof(Startup));
-			services.AddTransient<RequestHandler<ConfigChangeRequest>,
-								 ConfigChangeRequestHandler>();
 
-			services.AddTransient<RequestHandler<SaveEventRequest>,
-			 					SaveEventRequestHandler>();
+			// services.AddTransient<RequestHandler<ConfigChangeRequest>,
+			// 					 ConfigChangeRequestHandler>();
 
-			services.AddTransient<RequestHandler<UnstableServiceRequest>,
-								UnstableServiceRequestHandler>();
+			// services.AddTransient<RequestHandler<SaveEventRequest>,
+			//  					SaveEventRequestHandler>();
+
+			// services.AddTransient<RequestHandler<UnstableServiceRequest>,
+			// 						UnstableServiceRequestHandler > ();
 
 			services.AddHostedService<BrokerEventReceiver>();
 			services.AddHostedService<PeriodicRuleEngine>();

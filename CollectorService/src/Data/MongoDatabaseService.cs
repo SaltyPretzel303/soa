@@ -460,16 +460,10 @@ namespace CollectorService.Data
 			ConfigFields config = ServiceConfiguration.Instance;
 
 			string collectionName = config.configurationBackupCollection;
-			IMongoCollection<ConfigBackupRecord> collection =
-				database.GetCollection<ConfigBackupRecord>(collectionName);
+			var collection = database
+				.GetCollection<ConfigBackupRecord>(collectionName);
 
-			DatedConfigRecord newRecord = new DatedConfigRecord(
-				oldConfig,
-				DateTime.Now);
-
-			var filter = Builders<ConfigBackupRecord>
-				.Filter
-				.Eq(r => r.serviceId, serviceId);
+			var newRecord = new DatedConfigRecord(oldConfig, DateTime.Now);
 
 			var update = Builders<ConfigBackupRecord>
 				.Update
@@ -477,7 +471,8 @@ namespace CollectorService.Data
 
 			try
 			{
-				collection.UpdateOne(filter,
+				collection.UpdateOne(
+					r => r.serviceId == serviceId,
 					update,
 					new UpdateOptions { IsUpsert = true });
 
