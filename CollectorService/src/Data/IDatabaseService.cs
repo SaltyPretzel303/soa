@@ -16,7 +16,7 @@ namespace CollectorService.Data
 
 		Task<SensorModel> getRecordRange(string sensorName,
 			long fromTimestamp = 0,
-			long toTimestamp = -1);
+			long toTimestamp = long.MaxValue);
 
 		Task<SensorModel> getRecordsList(string sensorName, List<long> timestamps);
 

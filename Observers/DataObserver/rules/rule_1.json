@@ -1,0 +1,25 @@
+{
+	"conditions": {
+		"all": [
+			{
+				"fact": "reader_data",
+				"operator": "equal",
+				"value": "1",
+				"path": "$.label_SITTING"
+			},
+			{
+				"fact": "reader_data",
+				"operator": "equal",
+				"value": "1",
+				"path": "$.label_IN_CLASS"
+			}
+		]
+	},
+	"event": {
+		"type": "Sitting_in_class_event",
+		"params": {
+			"message": "This guy is sitting in class ... ",
+		}
+	},
+	"name": "rule_2"
+}

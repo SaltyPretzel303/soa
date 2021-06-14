@@ -4,7 +4,9 @@
   "description": "Service that collects events published trough messageBroker, match them against multiple rules and store/publish matching results. It exposes rest api for accessing stored matching results.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --project ./",
+    "start": "npm run build && node ./ts_to_js/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +14,12 @@
     "amqplib": "^0.6.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mongoose": "^5.12.2"
+    "json-rules-engine": "^6.1.2",
+    "mongoose": "^5.12.2",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.8.0",
+    "@types/express": "^4.17.11"
   }
 }

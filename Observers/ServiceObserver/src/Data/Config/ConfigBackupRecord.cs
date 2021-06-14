@@ -12,7 +12,8 @@ namespace CollectorService.Data
 		public ServiceConfiguration configRecord;
 		public DateTime backupDate;
 
-		public DatedConfigRecord(ServiceConfiguration configRecord, DateTime backupDate)
+		public DatedConfigRecord(ServiceConfiguration configRecord,
+			 DateTime backupDate)
 		{
 			this.configRecord = configRecord;
 			this.backupDate = backupDate;
@@ -27,7 +28,8 @@ namespace CollectorService.Data
 		public string serviceId { get; set; }
 		public List<DatedConfigRecord> oldConfigs { get; set; }
 
-		public ConfigBackupRecord(string serviceId, List<DatedConfigRecord> oldConfigs)
+		public ConfigBackupRecord(string serviceId,
+			List<DatedConfigRecord> oldConfigs)
 		{
 			this.serviceId = serviceId;
 			this.oldConfigs = oldConfigs;

@@ -4,12 +4,26 @@
 		"listeningPort": 5005,
 		"dbAddress": "localhost",
 		"dbPort": 27017,
-		"dbName": "soa_data_observer_dev"
+		"dbName": "soa_data_observer_dev",
+		"dbRetryTimeout": 1500,
+		"brokerAddress": "localhost",
+		"brokerPort": 5672,
+		"ruleEngineReadPeriod": 4000,
+		"sensorDataTopic": "sensor_reader",
+		"sensorDataFilter": "read_event",
+		"rulesDirPath": "./rules/"
 	},
 	"Production": {
 		"listeningPort": 5000,
 		"dbAddress": "soa-mongo-db",
 		"dbPort": 27017,
-		"dbName": "soa_data_observer"
+		"dbName": "soa_data_observer",
+		"dbRetryTimeout": 1500,
+		"brokerAddress": "soa-broker",
+		"brokerPort": 5672,
+		"ruleEngineReadPeriod": 3000,
+		"sensorDataTopic": "sensor_reader",
+		"sensorDataFilter": "read_event",
+		"rulesDirPath": "./rules/"
 	}
 }

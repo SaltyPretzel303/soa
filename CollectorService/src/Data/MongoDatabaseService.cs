@@ -169,7 +169,7 @@ namespace CollectorService.Data
 
 		public async Task<SensorModel> getRecordRange(string sensorName,
 			long fromTimestamp,
-			long toTimestamp = long.MaxValue)
+			long toTimestamp)
 		{
 
 			if (!await createConnection())

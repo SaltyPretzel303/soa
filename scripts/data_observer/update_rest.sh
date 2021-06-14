@@ -1,0 +1,1 @@
+curl --request POST --data '{"id": "60ba0bc10ff7df32248c4117", "newValue":{"time":"321","priority":21,"description":"desc_11"}}' --header 'Content-type: application/json' --url localhost:8080/data/updateDataEvent

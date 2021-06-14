@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using SensorService.Broker;
 using CommunicationModel.BrokerModels;
 using MediatR;
-using SensorService.MediatorRequests;
 
 namespace SensorService
 {

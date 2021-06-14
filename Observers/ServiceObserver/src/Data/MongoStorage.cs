@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using CollectorService.Data;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using ServiceObserver.Configuration;
 using ServiceObserver.RuleEngine;

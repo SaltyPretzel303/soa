@@ -1,6 +1,7 @@
-const controller = require('./data-events-controller')
+import type { Express } from 'express';
+import * as controller from './data-events-controller'
 
-module.exports.setupRoutes = (app) => {
+export default function setupRoutes(app: Express) {
 
 	// get all saved dataEvents from database 
 	app.get('/data/getAll', controller.getAllData);
@@ -15,9 +16,7 @@ module.exports.setupRoutes = (app) => {
 		requires data in format:
 		{
 			id: "someRandomCharacters", // id of document to update
-			fieldToUpdate: "someFieldName" // which field you want to update
-			newValue: "someNewValue"
-			// new value which is going to be assigned to the field 'fieldToUpdate'
+			newValue: "value that will replace existing document (if it exists)"
 		}
 	*/
 	app.post("/data/updateDataEvent", controller.updateData);
