@@ -61,3 +61,12 @@ services:
     #   - soa-mongo-db      
     ports:
     - "5004:5000"
+  
+  soa-data-observer:
+    container_name: soa-data-observer
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.ServiceObserver
+    image: soa/data-observer
+    ports:
+      - "5005:5000"
