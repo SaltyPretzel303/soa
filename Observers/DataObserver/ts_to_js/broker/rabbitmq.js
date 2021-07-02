@@ -106,3 +106,4 @@ process.on('exit', function (code) {
         connection.close();
     }
 });
+//# sourceMappingURL=rabbitmq.js.map

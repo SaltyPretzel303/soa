@@ -69,7 +69,9 @@ data_events_routes_1.default(server);
     });
 }); })()
     .then(function () {
+    console.log('All services initialized ... ');
+    server.listen(8080, function () {
+        console.log('Server is up and running (port 8080) ...');
+    });
 });
-var serverApp = server.listen(8080, function () {
-    console.log('Server is up and running (port 8080) ...');
-});
+//# sourceMappingURL=server.js.map

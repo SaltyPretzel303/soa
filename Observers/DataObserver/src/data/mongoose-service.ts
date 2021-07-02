@@ -12,6 +12,7 @@ const dbUrl = "mongodb://" + dbAddress + ":" + dbPort + "/" + dbName;
 const options = {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
+	useFindAndModify: false
 }
 
 let retryCounter = 0;
@@ -38,6 +39,8 @@ export default function createConnection(): void {
 			timer = setTimeout(createConnection, retryTimeout);
 		});
 }
+
+mongoose.connection.readyState
 
 process.on('exit', (code) => {
 	if (timer != null) {

@@ -207,3 +207,6 @@ EdgexFoundary/*
 output
 SensorService/msg_log
 SensorService/error_log
+
+# .ts translated to .js, this is done with every `npm run build`
+Observers/DataObserver/ts_to_js/**

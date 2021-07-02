@@ -41,7 +41,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var amqplib_1 = __importDefault(require("amqplib"));
 var service_configuration_1 = require("../config/service-configuration");
-var data_cache_1 = require("../rule-engine/data-cache");
+// import { queueData } from '../rule-engine/data-cache'
+var reader_data_cache_1 = require("../data/reader-data-cache/reader-data-cache");
 var config = service_configuration_1.ServiceConfig.GetInstance();
 var url = "amqp://" + config.brokerAddress + ":" + config.brokerPort;
 var connection;
@@ -96,7 +97,8 @@ function initReceiver(channel) {
                             var sData = msg === null || msg === void 0 ? void 0 : msg.content.toString();
                             if (sData != null && sData != undefined) {
                                 var receivedData = JSON.parse(sData);
-                                data_cache_1.queueData(receivedData);
+                                reader_data_cache_1.Cache.enqueueData(receivedData);
+                                // queueData(receivedData); // prev. implementation 
                                 // console.log(`${JSON.stringify(receivedData)}`);
                             }
                         })];
@@ -113,3 +115,4 @@ process.on('exit', function (code) {
         connection.close();
     }
 });
+//# sourceMappingURL=broker-receiver.js.map

@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import DataEvent from '../rule-engine/data-event'
+import { readerDataSchema } from './reader-data-cache/reader-data-model'
 
 const dataEventSchema = new mongoose.Schema({
-	time: String,
-	priority: Number,
-	description: String,
+	time: Date,
+	ruleName: String,
+	eventName: String,
+	eventMessage: String,
+	processedData: readerDataSchema
 });
 
 export interface IDataEvent extends DataEvent, mongoose.Document {
@@ -31,9 +34,8 @@ export async function getById(id: string): Promise<IDataEvent | null> {
 }
 
 export async function insertOne(newData: DataEvent): Promise<IDataEvent> {
-	const dbData: IDataEvent = await dataModel.create<DataEvent>(newData);
 	// TODO handle errors somehow ... 
-	return dbData.save();
+	return dataModel.create<DataEvent>(newData);
 }
 
 // this just doesn't work ...

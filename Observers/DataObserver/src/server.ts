@@ -23,11 +23,10 @@ setupRoutes(server);
 	await startBrokerReceiver();
 	await startRuleEngine();
 })()
-.then(()=>{
-	
-})
+	.then(() => {
+		console.log('All services initialized ... ');
 
-
-const serverApp = server.listen(8080, function () {
-	console.log('Server is up and running (port 8080) ...');
-});
+		server.listen(8080, function () {
+			console.log('Server is up and running (port 8080) ...');
+		});
+	})

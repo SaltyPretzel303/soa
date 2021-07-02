@@ -39,3 +39,4 @@ function setupRoutes(app) {
     app.delete("/data/deleteDataEvent", controller.deleteData);
 }
 exports.default = setupRoutes;
+//# sourceMappingURL=data-events-routes.js.map

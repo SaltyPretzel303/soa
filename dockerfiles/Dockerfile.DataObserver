@@ -1,0 +1,20 @@
+FROM node:14.15.1
+
+WORKDIR /DataObserver
+
+# COPY src/ rules/ service_config.json package.json package-lock.json tsconfig.json 
+COPY Observers/DataObserver/src ./src
+COPY Observers/DataObserver/rules ./rules
+COPY Observers/DataObserver/service_config.json \
+	Observers/DataObserver/package.json \ 
+	Observers/DataObserver/package-lock.json \
+	Observers/DataObserver/tsconfig.json \
+	./
+
+RUN ls -l
+
+RUN npm install
+RUN npm run build
+
+EXPOSE 5000
+ENTRYPOINT ["npm","run","start"]

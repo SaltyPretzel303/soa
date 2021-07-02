@@ -13,6 +13,7 @@ var dbUrl = "mongodb://" + dbAddress + ":" + dbPort + "/" + dbName;
 var options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false
 };
 var retryCounter = 0;
 var retryTimeout = config.dbRetryTimeout;
@@ -34,9 +35,11 @@ function createConnection() {
     });
 }
 exports.default = createConnection;
+mongoose_1.default.connection.readyState;
 process.on('exit', function (code) {
     if (timer != null) {
         clearTimeout(timer);
     }
     mongoose_1.default.disconnect();
 });
+//# sourceMappingURL=mongoose-service.js.map

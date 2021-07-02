@@ -1,5 +1,5 @@
 {
-	"stage": "Development",
+	"stage": "Production",
 	"Development": {
 		"listeningPort": 5005,
 		"dbAddress": "localhost",
@@ -11,7 +11,9 @@
 		"ruleEngineReadPeriod": 4000,
 		"sensorDataTopic": "sensor_reader",
 		"sensorDataFilter": "read_event",
-		"rulesDirPath": "./rules/"
+		"rulesDirPath": "./rules/",
+		"observingResultsTopic": "rule_engine_results",
+		"observingResultsFilter": "data"
 	},
 	"Production": {
 		"listeningPort": 5000,
@@ -24,6 +26,8 @@
 		"ruleEngineReadPeriod": 3000,
 		"sensorDataTopic": "sensor_reader",
 		"sensorDataFilter": "read_event",
-		"rulesDirPath": "./rules/"
+		"rulesDirPath": "./rules/",
+		"observingResultsTopic": "rule_engine_results",
+		"observingResultsFilter": "data"
 	}
 }

@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,10 +59,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
-var data_cache_1 = require("./data-cache");
 var service_configuration_1 = require("../config/service-configuration");
+var reader_data_cache_1 = require("../data/reader-data-cache/reader-data-cache");
 var json_rules_engine_1 = require("json-rules-engine");
 var data_reader_fact_1 = __importDefault(require("./data-reader-fact"));
+var data_event_1 = __importDefault(require("./data-event"));
+var broker_sender_1 = require("../broker/broker-sender");
+var eventModel = __importStar(require("../data/data-event-model"));
 var config = service_configuration_1.ServiceConfig.GetInstance();
 var timer;
 var engine;
@@ -111,51 +133,82 @@ function startRuleEngine() {
 }
 exports.default = startRuleEngine;
 function timerEventHandler() {
-    if (data_cache_1.getCacheCount() > 0) {
-        var dataArray = data_cache_1.getCachedData();
-        var factsArray = [];
-        console.log("Read: " + dataArray.length + " records from cache ... ");
-        for (var _i = 0, dataArray_1 = dataArray; _i < dataArray_1.length; _i++) {
-            var data = dataArray_1[_i];
-            var data_as_fact = new data_reader_fact_1.default(data);
-            engine.addFact('reader_data', data_as_fact);
-            // factsArray.push(data_as_fact);
-            // engine.addFact<ReaderData>(data_as_fact);
-        }
-        // "path": "$.label_IN_CLASS"
-        // engine.on('success', (event: Event, almanac: Almanac, ruleResult: RuleResult) => {
-        // 	console.log("engine reported some success ... ");
-        // });
-        // engine.on('failure', (event: Event, almanac: Almanac, ruleResult: RuleResult) => {
-        // 	console.log("engine reported some failure ... ");
-        // 	console.log(`type: ${event.type}, ${JSON.stringify(event.params)}`);
-        // });
-        // engine.run(factsArray)
-        engine.run()
-            .then(function (result) {
-            console.log("Got " + result.events.length + " successful events from engine ... ");
-            for (var _i = 0, _a = result.events; _i < _a.length; _i++) {
-                var event_1 = _a[_i];
-                console.log("\t type: " + event_1.type);
+    return __awaiter(this, void 0, void 0, function () {
+        var dataArray, _i, dataArray_1, data, data_as_fact, engine_result, _a, _b, result, fact, message, rule_name, new_data_event, err_2;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, reader_data_cache_1.Cache.getDataCount()];
+                case 1:
+                    if ((_c.sent()) == 0) {
+                        console.log("No data to process ... ");
+                        timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, reader_data_cache_1.Cache.getCachedData()];
+                case 2:
+                    dataArray = _c.sent();
+                    console.log("Read: " + dataArray.length + " records from cache ... ");
+                    _i = 0, dataArray_1 = dataArray;
+                    _c.label = 3;
+                case 3:
+                    if (!(_i < dataArray_1.length)) return [3 /*break*/, 14];
+                    data = dataArray_1[_i];
+                    _c.label = 4;
+                case 4:
+                    _c.trys.push([4, 12, , 13]);
+                    data_as_fact = new data_reader_fact_1.default("reader_data", data);
+                    return [4 /*yield*/, engine.run({ "reader_data": data_as_fact })];
+                case 5:
+                    engine_result = _c.sent();
+                    _a = 0, _b = engine_result.results;
+                    _c.label = 6;
+                case 6:
+                    if (!(_a < _b.length)) return [3 /*break*/, 11];
+                    result = _b[_a];
+                    return [4 /*yield*/, engine_result.almanac.factValue('reader_data')];
+                case 7:
+                    fact = _c.sent();
+                    message = 'none';
+                    if (result.event != null &&
+                        result.event.params != null &&
+                        result.event.params.message != undefined) {
+                        message = result.event.params.message;
+                    }
+                    rule_name = "";
+                    if (result.event != null) {
+                        rule_name = result.event.type;
+                    }
+                    new_data_event = new data_event_1.default(new Date(), result.name, rule_name, message, fact);
+                    console.log("data-event: " + new_data_event.shortPrint());
+                    return [4 /*yield*/, broker_sender_1.sendDataEvent(new_data_event)];
+                case 8:
+                    _c.sent();
+                    return [4 /*yield*/, eventModel.insertOne(new_data_event)];
+                case 9:
+                    _c.sent();
+                    _c.label = 10;
+                case 10:
+                    _a++;
+                    return [3 /*break*/, 6];
+                case 11: return [3 /*break*/, 13];
+                case 12:
+                    err_2 = _c.sent();
+                    console.log("Error during engine run " + JSON.stringify(err_2) + " ");
+                    return [3 /*break*/, 13];
+                case 13:
+                    _i++;
+                    return [3 /*break*/, 3];
+                case 14:
+                    timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
+                    return [2 /*return*/];
             }
-            console.log("Got " + result.failureEvents.length + " failed events from engine ... ");
-            for (var _b = 0, _c = result.failureEvents; _b < _c.length; _b++) {
-                var event_2 = _c[_b];
-                console.log("\t type: " + event_2.type);
-            }
-        })
-            .catch(function (reason) {
-            console.log("Engine processing failed: " + reason);
-        })
-            .finally(function () {
-            timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
         });
-    }
-    else {
-        console.log("Engine's data cache is empty ... ");
-    }
+    });
 }
 process.on('exit', function (code) {
     clearTimeout(timer);
-    // TODO also include stopping rule engine processing
+    if (engine != null && engine != undefined) {
+        engine.stop();
+    }
 });
+//# sourceMappingURL=rule-engine.js.map

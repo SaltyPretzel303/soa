@@ -32,7 +32,7 @@ function getAllData(req, res, next) {
         var clientReadyData = [];
         for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
             var record = data_1[_i];
-            var singleData = new data_event_1.default(record.time, record.priority, record.description);
+            var singleData = new data_event_1.default(record.time, record.ruleName, record.eventName, record.eventMessage, record.processedData);
             clientReadyData.push(singleData);
         }
         res
@@ -53,7 +53,7 @@ function getDataById(req, res, next) {
     dataModel.getById(reqId)
         .then(function (data) {
         if (data != null) {
-            var clientReadyData = new data_event_1.default(data.time, data.priority, data.description);
+            var clientReadyData = new data_event_1.default(data.time, data.ruleName, data.eventName, data.eventMessage, data.processedData);
             res
                 .type('application/json')
                 .status(200)
@@ -76,11 +76,8 @@ exports.getDataById = getDataById;
 function insertData(req, res, next) {
     var newData = req.body;
     dataModel.insertOne(newData)
-        .then(function (addedData) {
-        var clientReadyResponse = new data_event_1.default(addedData.time, addedData.priority, addedData.description);
-        // TODO maybe instead returning object same as the one that is sent
-        // create a new class which is gonna encapsulate that obj. and some message
-        // it is unnecessary but pretty ... 
+        .then(function (record) {
+        var clientReadyResponse = new data_event_1.default(record.time, record.ruleName, record.eventName, record.eventMessage, record.processedData);
         res
             .status(200)
             .send(clientReadyResponse);
@@ -104,9 +101,9 @@ function updateData(req, res, next) {
         .send(message);
     return;
     dataModel.updateOne(id, newValue)
-        .then(function (updatedData) {
-        if (updatedData != null) {
-            var clientReadyData = new data_event_1.default(updatedData.time, updatedData.priority, updatedData.description);
+        .then(function (record) {
+        if (record != null) {
+            var clientReadyData = new data_event_1.default(record.time, record.ruleName, record.eventName, record.eventMessage, record.processedData);
             res
                 .status(200)
                 .send(clientReadyData);
@@ -129,9 +126,9 @@ function deleteData(req, res, next) {
     var id = req.query.id;
     console.log("requesting data removal id: " + id);
     dataModel.removeById(id)
-        .then(function (removedData) {
-        if (removedData != null) {
-            var clientReadyData = new data_event_1.default(removedData.time, removedData.priority, removedData.description);
+        .then(function (record) {
+        if (record != null) {
+            var clientReadyData = new data_event_1.default(record.time, record.ruleName, record.eventName, record.eventMessage, record.processedData);
             res
                 .status(200)
                 .send(clientReadyData);
@@ -150,3 +147,4 @@ function deleteData(req, res, next) {
 }
 exports.deleteData = deleteData;
 ;
+//# sourceMappingURL=data-events-controller.js.map

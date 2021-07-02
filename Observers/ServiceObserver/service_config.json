@@ -16,7 +16,7 @@
 		"lifetimeEventFilter": "#",
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
-		"observingResultsTopic": "service_observing_results",
+		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "service",
 		"ruleEngineTriggerInterval": 5000,
 		"unstableRecordsLimit": 3
@@ -37,7 +37,7 @@
 		"lifetimeEventFilter": "#",
 		"serviceLogTopic": "service_log",
 		"serviceTypeFilter": "service_observer",
-		"observingResultsTopic": "service_observing_results",
+		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "service",
 		"ruleEngineTriggerInterval": 3000,
 		"unstableRecordsLimit": 3

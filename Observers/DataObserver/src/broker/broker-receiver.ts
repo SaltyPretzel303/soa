@@ -1,7 +1,8 @@
 import amqp from 'amqplib'
 import { ServiceConfig, ConfigFields } from '../config/service-configuration'
 import { ReaderData } from './reader-data'
-import { queueData } from '../rule-engine/data-cache'
+// import { queueData } from '../rule-engine/data-cache'
+import { Cache } from "../data/reader-data-cache/reader-data-cache"
 
 const config: ConfigFields = ServiceConfig.GetInstance();
 const url = `amqp://${config.brokerAddress}:${config.brokerPort}`
@@ -9,7 +10,6 @@ const url = `amqp://${config.brokerAddress}:${config.brokerPort}`
 let connection: amqp.Connection;
 
 export default async function startBrokerReceiver(): Promise<boolean> {
-
 	try {
 		connection = await amqp.connect(url);
 		console.log(`Broker connection established on: ${url} ... `);
@@ -50,7 +50,8 @@ async function initReceiver(channel: amqp.Channel): Promise<boolean> {
 			if (sData != null && sData != undefined) {
 
 				let receivedData: ReaderData = JSON.parse(sData);
-				queueData(receivedData);
+				Cache.enqueueData(receivedData);
+				// queueData(receivedData); // prev. implementation 
 
 				// console.log(`${JSON.stringify(receivedData)}`);
 			}

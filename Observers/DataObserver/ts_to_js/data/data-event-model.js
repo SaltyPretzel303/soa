@@ -41,10 +41,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeById = exports.updateOne = exports.insertOne = exports.getById = exports.getAll = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
+var reader_data_model_1 = require("./reader-data-cache/reader-data-model");
 var dataEventSchema = new mongoose_1.default.Schema({
-    time: String,
-    priority: Number,
-    description: String,
+    time: Date,
+    ruleName: String,
+    eventName: String,
+    eventMessage: String,
+    processedData: reader_data_model_1.readerDataSchema
 });
 var dataModel = mongoose_1.default.model('DataEvent', dataEventSchema, 'DataEvents');
 function getAll() {
@@ -72,15 +75,9 @@ function getById(id) {
 exports.getById = getById;
 function insertOne(newData) {
     return __awaiter(this, void 0, void 0, function () {
-        var dbData;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, dataModel.create(newData)];
-                case 1:
-                    dbData = _a.sent();
-                    // TODO handle errors somehow ... 
-                    return [2 /*return*/, dbData.save()];
-            }
+            // TODO handle errors somehow ... 
+            return [2 /*return*/, dataModel.create(newData)];
         });
     });
 }
@@ -117,3 +114,4 @@ function removeById(id) {
     });
 }
 exports.removeById = removeById;
+//# sourceMappingURL=data-event-model.js.map

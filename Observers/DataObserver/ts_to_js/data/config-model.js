@@ -98,3 +98,4 @@ function removeById(id) {
     });
 }
 exports.removeById = removeById;
+//# sourceMappingURL=config-model.js.map

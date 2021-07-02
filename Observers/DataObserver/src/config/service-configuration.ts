@@ -83,6 +83,8 @@ interface ConfigFields {
 	sensorDataTopic: string;
 	sensorDataFilter: string;
 	rulesDirPath: string;
+	observingResultsTopic: string;
+	observingResultsFilter: string;
 }
 
 export { ConfigFields };

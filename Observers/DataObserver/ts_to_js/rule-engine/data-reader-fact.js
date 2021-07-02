@@ -18,9 +18,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var json_rules_engine_1 = require("json-rules-engine");
 var DataClassFact = /** @class */ (function (_super) {
     __extends(DataClassFact, _super);
-    function DataClassFact(data) {
-        return _super.call(this, data.NewData.timestamp.toString(), data) || this;
+    function DataClassFact(fact_id, data) {
+        return _super.call(this, fact_id, data) || this;
     }
     return DataClassFact;
 }(json_rules_engine_1.Fact));
 exports.default = DataClassFact;
+//# sourceMappingURL=data-reader-fact.js.map

@@ -13,8 +13,10 @@ export function getAllData(req: Request, res: Response, next: NextFunction) {
 
 				let singleData: DataEvent = new DataEvent(
 					record.time,
-					record.priority,
-					record.description);
+					record.ruleName,
+					record.eventName,
+					record.eventMessage,
+					record.processedData);
 
 				clientReadyData.push(singleData);
 			}
@@ -43,10 +45,10 @@ export function getDataById(req: Request, res: Response, next: NextFunction) {
 
 				const clientReadyData: DataEvent = new DataEvent(
 					data.time,
-					data.priority,
-					data.description
-				);
-
+					data.ruleName,
+					data.eventName,
+					data.eventMessage,
+					data.processedData);
 				res
 					.type('application/json')
 					.status(200)
@@ -72,17 +74,15 @@ export function insertData(req: Request, res: Response, next: NextFunction) {
 	const newData: DataEvent = req.body as DataEvent;
 
 	dataModel.insertOne(newData)
-		.then((addedData: dataModel.IDataEvent) => {
+		.then((record: dataModel.IDataEvent) => {
 
 			const clientReadyResponse: DataEvent = new DataEvent(
-				addedData.time,
-				addedData.priority,
-				addedData.description
-			);
+				record.time,
+				record.ruleName,
+				record.eventName,
+				record.eventMessage,
+				record.processedData);
 
-			// TODO maybe instead returning object same as the one that is sent
-			// create a new class which is gonna encapsulate that obj. and some message
-			// it is unnecessary but pretty ... 
 			res
 				.status(200)
 				.send(clientReadyResponse);
@@ -113,14 +113,15 @@ export function updateData(req: Request, res: Response, next: NextFunction) {
 	return;
 
 	dataModel.updateOne(id, newValue)
-		.then((updatedData: dataModel.IDataEvent | null) => {
-			if (updatedData != null) {
+		.then((record: dataModel.IDataEvent | null) => {
+			if (record != null) {
 
 				const clientReadyData: DataEvent = new DataEvent(
-					updatedData.time,
-					updatedData.priority,
-					updatedData.description
-				);
+					record.time,
+					record.ruleName,
+					record.eventName,
+					record.eventMessage,
+					record.processedData);
 
 				res
 					.status(200)
@@ -145,14 +146,15 @@ export function deleteData(req: Request, res: Response, next: NextFunction) {
 	console.log(`requesting data removal id: ${id}`);
 
 	dataModel.removeById(id)
-		.then((removedData: dataModel.IDataEvent | null) => {
+		.then((record: dataModel.IDataEvent | null) => {
 
-			if (removedData != null) {
+			if (record != null) {
 				const clientReadyData: DataEvent = new DataEvent(
-					removedData.time,
-					removedData.priority,
-					removedData.description
-				);
+					record.time,
+					record.ruleName,
+					record.eventName,
+					record.eventMessage,
+					record.processedData);
 
 				res
 					.status(200)

@@ -1,8 +1,9 @@
 export interface ReaderData {
+	time: Date;
 	SensorName: string;
-	LastReadIndex: string;
+	LastReadIndex: number;
 	IpAddress: string;
-	ListeningPort: string;
+	ListeningPort: number;
 	DataHeader: string[];
 	NewData: SensorValues;
 }

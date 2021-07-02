@@ -1,7 +1,7 @@
 import fs from 'fs'
 
-import { getCachedData, getCacheCount } from './data-cache'
 import { ConfigFields, ServiceConfig } from '../config/service-configuration'
+import { Cache } from '../data/reader-data-cache/reader-data-cache'
 import { ReaderData } from '../broker/reader-data'
 import {
 	Engine,
@@ -13,7 +13,9 @@ import {
 	Event
 } from 'json-rules-engine'
 import DataReaderFact from './data-reader-fact'
-
+import DataEvent from './data-event'
+import { sendDataEvent } from '../broker/broker-sender';
+import * as eventModel from '../data/data-event-model'
 
 const config: ConfigFields = ServiceConfig.GetInstance();
 
@@ -64,61 +66,60 @@ export default async function startRuleEngine(): Promise<number> {
 	return rules.length;
 }
 
-function timerEventHandler() {
-	if (getCacheCount() > 0) {
-		let dataArray: ReaderData[] = getCachedData();
-		let factsArray: DataReaderFact[] = [];
+async function timerEventHandler() {
 
-		console.log(`Read: ${dataArray.length} records from cache ... `);
-
-		for (let data of dataArray) {
-			let data_as_fact = new DataReaderFact("reader_data", data);
-
-			// engine.addFact('reader_data', data_as_fact);
-			engine.addFact<ReaderData>(data_as_fact);
-
-			factsArray.push(data_as_fact);
-		}
-
-		/*
-				NOTE		TODO		REFACTOR
-			
-			instead pulling all data together, passing them to engine and calling run 
-			pull them on by one, pass it to engine with the same id/name, 
-			wait for the result and then repeat until cache is empty ... 
-			hopefully engine will be able to process all the cached events before 
-			cache gets overflowed/tooBig 
-			at that point maybe create two engines and run them parallel with 
-			the same rules ... 
-
-		*/
-
-		// engine.run(factsArray)
-		engine.run()
-			.then(function (result: EngineResult) {
-
-				console.log(`Got ${result.events.length} successful events from engine ... `);
-				for (let event of result.events) {
-					console.log(`\t type: ${event.type}`)
-				}
-
-				console.log(`Got ${result.failureEvents.length} failed events from engine ... `);
-				for (let event of result.failureEvents) {
-					console.log(`\t type: ${event.type}`);
-				}
-
-			})
-			.catch(function (reason) {
-				console.log(`Engine processing failed: ${reason}`);
-			})
-			.finally(() => {
-				timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
-			});
-
-	} else {
-		console.log("Engine's data cache is empty ... ");
+	if (await Cache.getDataCount() == 0) {
+		console.log("No data to process ... ");
+		timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
+		return;
 	}
 
+	let dataArray: ReaderData[] = await Cache.getCachedData();
+
+	console.log(`Read: ${dataArray.length} records from cache ... `);
+
+	for (let data of dataArray) {
+
+		try {
+			// this conversion is not needed apparently 
+			// but yeah ... lets keep it
+			let data_as_fact = new DataReaderFact("reader_data", data);
+			let engine_result = await engine.run({ "reader_data": data_as_fact });
+
+			for (let result of engine_result.results) {
+
+				let fact: ReaderData = await engine_result.almanac.factValue('reader_data');
+				let message = 'none';
+				if (result.event != null &&
+					result.event.params != null &&
+					result.event.params.message != undefined) {
+					message = result.event.params.message;
+				}
+				let rule_name = "";
+				if (result.event != null) {
+					rule_name = result.event.type;
+				}
+
+				let new_data_event: DataEvent = new DataEvent(
+					new Date(),
+					result.name,
+					rule_name,
+					message,
+					fact
+				);
+
+				console.log(`data-event: ${new_data_event.shortPrint()}`)
+
+				await sendDataEvent(new_data_event);
+				await eventModel.insertOne(new_data_event);
+			}
+
+		} catch (err) {
+			console.log(`Error during engine run ${JSON.stringify(err)} `);
+		}
+	}
+
+	timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
 }
 
 process.on('exit', (code) => {

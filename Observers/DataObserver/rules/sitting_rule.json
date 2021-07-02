@@ -5,21 +5,21 @@
 				"fact": "reader_data",
 				"operator": "equal",
 				"value": "1",
-				"path": "$.label_SITTING"
+				"path": "$.NewData.label_SITTING"
 			},
 			{
 				"fact": "reader_data",
 				"operator": "equal",
 				"value": "1",
-				"path": "$.label_IN_CLASS"
+				"path": "$.NewData.label_IN_CLASS"
 			}
 		]
 	},
 	"event": {
-		"type": "Sitting_in_class_event",
+		"type": "sitting_in_class_event",
 		"params": {
-			"message": "This guy is sitting in class ... ",
+			"message": "This guy is sitting in class ... "
 		}
 	},
-	"name": "rule_2"
+	"name": "sitting_rule"
 }
