@@ -12,7 +12,8 @@ namespace CommunicationModel.RestModels.CollectorCRUDRequest
 
 		}
 
-		public UpdateRecordArg(string sensorName,
+		public UpdateRecordArg(
+			string sensorName,
 			long timestamp,
 			string field,
 			string value)

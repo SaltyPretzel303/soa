@@ -1,6 +1,7 @@
 {
 	"stage": "Production",
 	"Development": {
+		"serviceId": "registry_0",
 		"listeningPort": 5002,
 		"brokerAddress": "localhost",
 		"brokerPort": 5672,
@@ -16,12 +17,13 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event",
+		"sensorReadEventFilter": "read_event.#",
 		"sensorLifetimeFilter": "sensor",
 		"sensorInfoPath": "sensor/data/info",
 		"sensorInfoNameArg": "sensorName"
 	},
 	"Production": {
+		"serviceId": "registry_0",
 		"listeningPort": 5000,
 		"brokerAddress": "soa-broker",
 		"brokerPort": 5672,
@@ -37,7 +39,7 @@
 		"sensorRemovedFilter": "sensor_removed",
 		"sensorUpdateFilter": "sensor_update",
 		"sensorEventTopic": "sensor_reader",
-		"sensorReadEventFilter": "read_event",
+		"sensorReadEventFilter": "read_event.#",
 		"sensorLifetimeFilter": "sensor",
 		"sensorInfoPath": "sensor/data/info",
 		"sensorInfoNameArg": "sensorName"

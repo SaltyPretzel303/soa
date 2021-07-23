@@ -23,7 +23,7 @@ namespace CollectorService.Data
 		private System.Timers.Timer timer;
 		private HttpClient httpClient;
 
-		private Dictionary<string, int> lastReadIndexes;
+		private Dictionary<string, long> lastReadIndexes;
 
 		public DataPuller(IMediator mediator)
 		{
@@ -36,7 +36,7 @@ namespace CollectorService.Data
 
 			httpClient = new HttpClient();
 
-			lastReadIndexes = new Dictionary<string, int>();
+			lastReadIndexes = new Dictionary<string, long>();
 		}
 
 		#region IHostedService methods
@@ -76,10 +76,11 @@ namespace CollectorService.Data
 			List<SensorRegistryRecord> availableSensors =
 				await mediator.Send(new GetAllSensorsRequest());
 
-			Console.WriteLine($"Pulling data from: {availableSensors.Count} sensors ... ");
+			int triedToPullCount = 0;
+			Console.WriteLine($"Available sensors count: {availableSensors.Count} ... ");
 			foreach (var singleSensor in availableSensors)
 			{
-				int alreadyReadCount = 0;
+				long alreadyReadCount = 0;
 				if (!lastReadIndexes.TryGetValue(
 						singleSensor.Name,
 						out alreadyReadCount))
@@ -104,7 +105,7 @@ namespace CollectorService.Data
 
 				if (alreadyReadCount >= singleSensor.AvailableRecords)
 				{
-					int diff = alreadyReadCount - singleSensor.AvailableRecords;
+					long diff = alreadyReadCount - singleSensor.AvailableRecords;
 					Console.WriteLine($"{singleSensor.Name} -> no new records "
 						+ $"waiting for: {diff} reads ... ");
 
@@ -123,10 +124,15 @@ namespace CollectorService.Data
 				HttpResponseMessage response = null;
 				try
 				{
+					triedToPullCount++;
 					response = await this.httpClient.GetAsync(sensorUri);
 				}
 				catch (AggregateException e)
 				{
+					// most possibly this exception happened because data pulling 
+					// is started with old list of sensors
+					// sensors are removed from registry (shutdown events are received)
+					// after 'current sensors list is returned'
 					if (e.InnerException is HttpRequestException)
 					{
 						string message =
@@ -138,8 +144,10 @@ namespace CollectorService.Data
 							+ $"Sensor addr. : {sensorUri.ToString()}\n");
 
 						var newEvent = new CollectorPullEvent(
+							config.serviceId,
 							sensorUri.ToString(),
 							false,
+							0,
 							e.Message);
 
 						// handler for this request is not async 
@@ -148,6 +156,30 @@ namespace CollectorService.Data
 
 						continue; // pull from the next sensor
 					}
+				}
+				catch (HttpRequestException e)
+				{
+					// same handler as for above catch ... 
+					// i guess aggregateException is removed after some update
+					string message = e.Message;
+
+					Console.WriteLine(
+						$"\nHttp req. exception, message: {message} ... "
+						+ $"sensor may be down.\n"
+						+ $"Sensor addr. : {sensorUri.ToString()}\n");
+
+					var newEvent = new CollectorPullEvent(
+						config.serviceId,
+						sensorUri.ToString(),
+						false,
+						0,
+						e.Message);
+
+					// handler for this request is not async 
+					// but i guess it is a good idea to await it anyway 
+					await mediator.Send(new PublishCollectorPullEventRequest(newEvent));
+
+					continue; // pull from the next sensor
 				}
 				catch (Exception e)
 				{
@@ -158,12 +190,14 @@ namespace CollectorService.Data
 
 				if (response == null || !response.IsSuccessStatusCode)
 				{
-					// this will continue prevous Console.Write( ... );
+					// this will continue previous Console.Write( ... );
 					Console.WriteLine($" bad response ... ");
 
 					var newEvent = new CollectorPullEvent(
+						config.serviceId,
 						sensorUri.ToString(),
 						false,
+						0,
 						"Sensor returned bad response.");
 
 					// handler for this request is not async 
@@ -189,9 +223,20 @@ namespace CollectorService.Data
 
 				Console.WriteLine($"returned {dataRecords.RecordsCount} rows ... ");
 
+				var pullEvent = new CollectorPullEvent(
+					config.serviceId,
+					sensorUri.ToString(),
+					true,
+					dataRecords.RecordsCount);
+
+				await mediator.Send(new PublishCollectorPullEventRequest(pullEvent));
+
 				var addResult = await mediator.Send(
-					new AddRecordsToSensorRequest(singleSensor.Name,
-						dataRecords.Records));
+					new AddRecordsToSensorRequest(
+						singleSensor.Name,
+						dataRecords.CsvHeader,
+						dataRecords.CsvValues)
+					);
 
 				if (addResult != true)
 				{
@@ -210,6 +255,7 @@ namespace CollectorService.Data
 
 			}
 
+			Console.WriteLine($"Tried to pull from: {triedToPullCount} ...");
 			// 'schedule' the next data pulling
 			timer.Start();
 		}
@@ -238,5 +284,4 @@ namespace CollectorService.Data
 		}
 
 	}
-
 }

@@ -76,21 +76,23 @@ namespace SensorService
 					sensorIndex++)
 			{
 				string sensorName = config.sensorNamePrefix + sensorIndex;
-				var newEvent = new SensorLifetimeEvent(LifetimeStages.Startup,
-											sensorName,
-											config.hostIP,
-											config.listeningPort,
-											0);
+				var newEvent = new SensorLifetimeEvent(
+					config.serviceId,
+					LifetimeStages.Startup,
+					sensorName,
+					config.hostIP,
+					config.listeningPort,
+					0);
 
-				broker.PublishLifetimeEvent(newEvent);
+				var ret = broker.PublishLifetimeEvent(newEvent).Result;
 			}
 
 		}
 
 		private void onShutDown()
 		{
-			this.serviceProvider.GetService<ILogger>()
-								?.logMessage("Sensor is going down ... ");
+			this.serviceProvider
+				.GetService<ILogger>()?.logMessage("Sensor is going down ... ");
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 			IMessageBroker broker = serviceProvider.GetService<IMessageBroker>();
@@ -101,13 +103,15 @@ namespace SensorService
 					sensorIndex++)
 			{
 				string sensorName = config.sensorNamePrefix + sensorIndex;
-				var newEvent = new SensorLifetimeEvent(LifetimeStages.Shutdown,
-											sensorName,
-											config.hostIP,
-											config.listeningPort,
-											cache.GetLastReadIndex(sensorName));
+				var newEvent = new SensorLifetimeEvent(
+					config.serviceId,
+					LifetimeStages.Shutdown,
+					sensorName,
+					config.hostIP,
+					config.listeningPort,
+					cache.GetLastReadIndex(sensorName));
 
-				broker.PublishLifetimeEvent(newEvent);
+				var res = broker.PublishLifetimeEvent(newEvent).Result;
 			}
 
 

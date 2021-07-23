@@ -12,7 +12,7 @@ namespace CollectorService.Data
 
 		Task<bool> AddToSensor(string sensorName, List<SensorValues> newRecords);
 
-		Task<List<SensorModel>> GetAllSamples();
+		Task<List<SensorModel>> GetAllValues();
 
 		Task<SensorModel> getRecordRange(string sensorName,
 			long fromTimestamp = 0,
@@ -26,7 +26,7 @@ namespace CollectorService.Data
 
 		Task<bool> deleteSensorData(string sensorName);
 
-		Task<int> getRecordsCount(string sensorName);
+		Task<long> getRecordsCount(string sensorName);
 
 		Task backupConfiguration(ServiceConfiguration oldConfig);
 	}

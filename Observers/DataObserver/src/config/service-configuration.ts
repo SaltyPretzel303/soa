@@ -67,7 +67,7 @@ class ServiceConfig {
 
 }
 
-// TODO whenever updating this class don't forget to update
+// NOTE whenever updating this class don't forget to update
 // configFieldsSchema mongooseSchema in config-model.ts
 // there is not really better solution :(
 

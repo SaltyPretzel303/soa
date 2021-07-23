@@ -1,6 +1,7 @@
 {
-	"stage": "Production",
+	"stage": "Development",
 	"Development": {
+		"serviceId": "data_observer_0",
 		"listeningPort": 5005,
 		"dbAddress": "localhost",
 		"dbPort": 27017,
@@ -10,12 +11,13 @@
 		"brokerPort": 5672,
 		"ruleEngineReadPeriod": 4000,
 		"sensorDataTopic": "sensor_reader",
-		"sensorDataFilter": "read_event",
+		"sensorDataFilter": "read_event.#",
 		"rulesDirPath": "./rules/",
 		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "data"
 	},
 	"Production": {
+		"serviceId": "data_observer_0",
 		"listeningPort": 5000,
 		"dbAddress": "soa-mongo-db",
 		"dbPort": 27017,
@@ -23,9 +25,9 @@
 		"dbRetryTimeout": 1500,
 		"brokerAddress": "soa-broker",
 		"brokerPort": 5672,
-		"ruleEngineReadPeriod": 3000,
+		"ruleEngineReadPeriod": 5000,
 		"sensorDataTopic": "sensor_reader",
-		"sensorDataFilter": "read_event",
+		"sensorDataFilter": "read_event.#",
 		"rulesDirPath": "./rules/",
 		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "data"

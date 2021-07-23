@@ -1,0 +1,71 @@
+{
+	"stage": "Development",
+	"Development": {
+		"serviceId": "tboard_rabbit_adapter_0",
+		"brokerAddress": "localhost",
+		"brokerPort": 5672,
+		"sensorReaderTopic": "sensor_reader",
+		"sensorReaderFilter": "read_event.#",
+		"collectorEventTopic": "collector",
+		"collectorPullEventFilter": "sensor_pull",
+		"collectorAccessEventFilter": "collector_access",
+		"registryEventTopic": "sensor_registry",
+		"registryEventFilter": "#",
+		"dbAddress": "localhost",
+		"dbPort": 27017,
+		"tBoardAddress": "localhost",
+		"tBoardPort": 8081,
+		"tBoardTenantUsername": "tenant@thingsboard.org",
+		"tBoardTenantPassword": "tenant",
+		"tBoardCustomerUsername": "nemanja.m.303@gmail.com",
+		"tBoardCustomerPassword": "123456",
+		"tBoardSensorDeviceType": "soa-sensor-profile",
+		"tBoardCollectorDeviceType": "soa-collector-profile",
+		"tBoardRegistryDeviceType": "soa-registry-profile",
+		"handlersInfo": [
+			{
+				"deviceType": "soa-sensor-profile",
+				"deviceTopic": "sensor_reader",
+				"deviceFilter": "read_event.#"
+			},
+			{
+				"deviceType": "soa-collector-profile",
+				"deviceTopic": "collector",
+				"deviceFilter": "sensor_pull"
+			},
+			{
+				"deviceType": "soa-collector-profile",
+				"deviceTopic": "collector",
+				"deviceFilter": "collector_access"
+			},
+			{
+				"deviceType": "soa-registry-profile",
+				"deviceTopic": "sensor_registry",
+				"deviceFilter": "#"
+			}
+		]
+	},
+	"Production": {
+		"serviceId": "tboard_rabbit_adapter_0",
+		"brokerAddress": "soa-broker",
+		"brokerPort": 5672,
+		"sensorReaderTopic": "sensor_reader",
+		"sensorReaderFilter": "read_event.#",
+		"collectorEventTopic": "collector",
+		"collectorPullEventFilter": "sensor_pull",
+		"collectorAccessEventFilter": "collector_access",
+		"registryEventTopic": "sensor_registry",
+		"registryEventFilter": "#",
+		"dbAddress": "soa-mongo-db",
+		"dbPort": 27017,
+		"tBoardAddress": "soa-thingsboard",
+		"tBoardPort": 9090,
+		"tenantUsername": "tenant@thingsboard.org",
+		"tenantPassword": "tenant",
+		"tBoardCustomerUsername": "nemanja.m.303@gmail.com",
+		"tBoardCustomerPassword": "123456",
+		"tBoardSensorDeviceType": "soa-sensor-profile",
+		"tBoardCollectorDeviceType": "soa-collector-profile",
+		"tBoardRegistryDeviceType": "soa-registry-profile"
+	}
+}

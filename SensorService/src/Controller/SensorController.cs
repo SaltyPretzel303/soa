@@ -42,15 +42,17 @@ namespace DataCollector.Controller
 
 			logger.logMessage($"Data range request - sensor: {sensorName} index: {index} ");
 
-			CacheRecord cachedRecord = this.dataCache.GetSensorRecordsFrom(sensorName, index);
+			CacheRecord cachedRecord =
+				this.dataCache.GetSensorRecordsFrom(sensorName, index);
 			if (cachedRecord != null &&
-				cachedRecord.Records.Count > 0)
+				cachedRecord.CsvRecords.Count > 0)
 			{
 
-				SensorDataRecords reqResult = new SensorDataRecords(
-							sensorName,
-							cachedRecord.Records.Count,
-							cachedRecord.Records);
+				var reqResult = new SensorDataRecords(
+					sensorName,
+					cachedRecord.CsvRecords.Count,
+					cachedRecord.CsvHeader,
+					cachedRecord.CsvRecords);
 
 				return new OkObjectResult(reqResult);
 			}

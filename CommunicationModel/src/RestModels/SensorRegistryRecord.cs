@@ -6,7 +6,7 @@ namespace CommunicationModel
 		public string Name { get; set; }
 		public string Address { get; set; }
 		public int Port { get; set; }
-		public int AvailableRecords { get; set; }
+		public long AvailableRecords { get; set; }
 
 		public SensorRegistryRecord()
 		{

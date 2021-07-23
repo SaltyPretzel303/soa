@@ -1,8 +1,18 @@
-version: '3'
+version: '3.5'
+
+networks:
+  default:
+    name: soa-network
+    external: true
+
+# ===============================
+
 services:
   soa-mongo-db:
     container_name: soa-mongo-db
     image: mongo:latest
+    volumes:
+        - /home/nemanja/soa_mongo_data:/data/db
     ports:
     - "0.0.0.0:27017:27017"
 
@@ -20,9 +30,6 @@ services:
     image: soa/sensor-service
     volumes: 
       - /home/nemanja/soa_data:/data
-    # depends_on:
-    #   - soa-registry
-    #   - soa-broker
     ports:
     - "5001:5000"
 
@@ -32,8 +39,6 @@ services:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.SensorRegistry
     image: soa/sensor-registry
-    # depends_on:
-    #   - soa-broker
     ports:
     - "5002:5000"
 
@@ -43,10 +48,11 @@ services:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.CollectorService
     image: soa/collector-service
-    # depends_on:
-    #   - soa-broker
-    #   - soa-registry
-    #   - soa-mongo-db
+    # deopoy can only be used in swarm ... 
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 200M
     ports:
     - "5003:5000"
 
@@ -56,9 +62,6 @@ services:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.ServiceObserver
     image: soa/service-observer
-    # depends_on:
-    #   - soa-broker 
-    #   - soa-mongo-db      
     ports:
     - "5004:5000"
   
@@ -66,7 +69,36 @@ services:
     container_name: soa-data-observer
     build:
       context: ./
-      dockerfile: ./dockerfiles/Dockerfile.ServiceObserver
+      dockerfile: ./dockerfiles/Dockerfile.DataObserver
     image: soa/data-observer
     ports:
       - "5005:5000"
+      
+  soa-tboard-rabbit-adapter:
+    container_name: soa-tboard-rabbit-adapter
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/Dockerfile.TBoardRabbitAdapter.Prod
+    image: soa/tboard-rabbit-adapter
+    # this wont actually help beacuse this is gonna be used once container is started
+    # problem is how to speed up build stage
+    # volumes:
+    #   - /home/nemanja/.m2:/root/.m2
+
+  soa-thingsboard:
+    container_name: soa-thingsboard
+    # restart: always # will start container with every docker startup
+    image: "thingsboard/tb-postgres"
+    ports:
+      - "8081:9090"
+      - "1884:1883"
+      - "5684:5683/udp"
+    environment:
+      TB_QUEUE_TYPE: rabbitmq
+      TB_QUEUE_RABBIT_MQ_USERNAME: "guest"
+      TB_QUEUE_RABBIT_MQ_PASSWORD: "guest"
+      TB_QUEUE_RABBIT_MQ_HOST: "soa-broker"
+      TB_QUEUE_RABBIT_MQ_PORT: 5672
+    volumes:
+      - /home/nemanja/soa_tboard_data:/data
+      # - ~/.mytb-logs:/var/log/thingsboard

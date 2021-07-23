@@ -69,7 +69,7 @@ export default async function startRuleEngine(): Promise<number> {
 async function timerEventHandler() {
 
 	if (await Cache.getDataCount() == 0) {
-		console.log("No data to process ... ");
+		// console.log("No data to process ... ");
 		timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
 		return;
 	}

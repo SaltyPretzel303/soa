@@ -1,0 +1,20 @@
+FROM openjdk:16-alpine3.13
+
+WORKDIR /AdapterProgram
+
+ADD DashboardClient/TBoardRabbitAdapter/pom.xml ./
+
+COPY DashboardClient/TBoardRabbitAdapter/mvnw \
+	DashboardClient/TBoardRabbitAdapter/service_config.json \
+	./
+
+COPY DashboardClient/TBoardRabbitAdapter/.mvn/ ./.mvn
+
+# RUN ./mvnw dependency:go-offline
+# RUN ./mvnw install # would be used in production 
+
+COPY DashboardClient/TBoardRabbitAdapter/src ./src
+
+VOLUME /home/nemanja/.m2:/root/.m2
+
+ENTRYPOINT ["./mvnw","install", "exec:java", "-Dexec.mainClass=Launcher"] 

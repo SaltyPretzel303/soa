@@ -37,6 +37,8 @@ namespace SensorRegistry.Configuration
 
 		public string stage { get; private set; }
 
+		public string serviceId { get; set; }
+
 		public int listeningPort { get; set; }
 		public string brokerAddress { get; set; }
 		public int brokerPort { get; set; }

@@ -1,14 +1,15 @@
 {
 	"stage": "Production",
 	"Development": {
-		"dataPath": "/home/nemanja/soa_data_new",
+		"serviceId": "sensor_0",
+		"dataPath": "/home/nemanja/soa_data/",
 		"samplePrefix": "user_",
 		"sampleExtension": ".csv",
 		"sensorsRange": {
 			"From": 0,
-			"To": 2
+			"To": 1
 		},
-		"readInterval": 10000,
+		"readInterval": 500,
 		"listeningPort": 5001,
 		"hostIP": "127.0.0.1",
 		"sensorNamePrefix": "sensor_",
@@ -33,9 +34,12 @@
 		"brokerConfigTopic": "config",
 		"brokerConfigFilter": "reader",
 		"serviceLifetimeTopic": "service_lifetime",
-		"sensorLifetimeFilter": "sensor"
+		"sensorLifetimeFilter": "sensor",
+		"fsCachePath": "/home/nemanja/soa_reader_cache/",
+		"fsCacheFileExtension": ".json"
 	},
 	"Production": {
+		"serviceId": "sensor_0",
 		"dataPath": "/data/",
 		"samplePrefix": "user_",
 		"sampleExtension": ".csv",
@@ -43,7 +47,7 @@
 			"From": 55,
 			"To": 60
 		},
-		"readInterval": 500,
+		"readInterval": 1000,
 		"listeningPort": 5000,
 		"hostIP": "172.19.0.2",
 		"sensorNamePrefix": "sensor_",
@@ -68,6 +72,8 @@
 		"brokerConfigTopic": "config",
 		"brokerConfigFilter": "reader",
 		"serviceLifetimeTopic": "service_lifetime",
-		"sensorLifetimeFilter": "sensor"
+		"sensorLifetimeFilter": "sensor",
+		"fsCachePath": "/reader_cache/",
+		"fsCacheFileExtension": ".json"
 	}
 }

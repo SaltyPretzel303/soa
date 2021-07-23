@@ -73,7 +73,8 @@ namespace CollectorService.Configuration
 
 		private static List<IReloadable> ReloadableTargets;
 
-		public static async Task reload(ServiceConfiguration newConfig,
+		public static async Task reload(
+			ServiceConfiguration newConfig,
 		 	IDatabaseService db = null)
 		{
 			Console.WriteLine("Configuration reload requested  ... ");
@@ -90,7 +91,6 @@ namespace CollectorService.Configuration
 
 			foreach (IReloadable target in ServiceConfiguration.ReloadableTargets)
 			{
-				// TODO reload method can also be 
 				await target.reload(ServiceConfiguration.Instance);
 			}
 		}

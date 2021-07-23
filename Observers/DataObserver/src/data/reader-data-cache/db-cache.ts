@@ -49,10 +49,12 @@ export default class DbCache implements IReaderDataCache {
 			return ret_obj as ReaderData;
 		});
 
+		let remove_count = 0;
 		for (let record of dbData) {
-			console.log(`Removing record: ${record._id}`);
 			await DataModel.findByIdAndRemove(record._id);
+			remove_count++;
 		}
+		console.log(`Removed {remove_count} records from mongo-cache ... `);
 
 		return retData;
 	}

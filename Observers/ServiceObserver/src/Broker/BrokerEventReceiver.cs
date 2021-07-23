@@ -245,8 +245,12 @@ namespace ServiceObserver.Broker
 		public async Task reload(ConfigFields newConfig)
 		{
 
-			// TODO add check if this service has to be reloaded
-			// if address and port number are the same don't reload it ...
+			// this.config should refer to old config
+			if (config.brokerAddress == newConfig.brokerAddress
+			&& config.brokerPort == newConfig.brokerPort)
+			{
+				return;
+			}
 
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)

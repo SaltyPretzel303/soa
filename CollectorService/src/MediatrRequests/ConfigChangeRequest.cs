@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CollectorService.Data;
 using MediatR;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CollectorService.MediatrRequests

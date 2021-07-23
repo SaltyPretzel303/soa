@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using CommunicationModel.BrokerModels;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -10,56 +11,46 @@ namespace SensorService.Broker
 	public class RabbitMqBroker : IMessageBroker
 	{
 
+		private ServiceConfiguration config;
+
 		public RabbitMqBroker()
 		{
+			this.config = ServiceConfiguration.Instance;
 		}
 
-		public void PublishLog(ServiceLog log)
+		public async Task<bool> PublishLog(ServiceLog log)
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			this.Publish(log,
+			return await Publish(log,
 					config.serviceLogTopic,
 					config.sensorLogFilter);
 		}
 
-		public void PublishSensorEvent(SensorReaderEvent sensorEvent, string filter)
+		public async Task<bool> PublishSensorEvent(
+			SensorReaderEvent sensorEvent,
+			string filter)
 		{
-
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			this.Publish(sensorEvent,
+			return await this.Publish(
+					sensorEvent,
 					config.sensorReaderEventTopic,
 					filter);
 		}
 
-		public void PublishLifetimeEvent(ServiceLifetimeEvent newEvent)
+		public async Task<bool> PublishLifetimeEvent(ServiceLifetimeEvent newEvent)
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			this.Publish(newEvent,
+			return await Publish(newEvent,
 					config.serviceLifetimeTopic,
 					config.sensorLifetimeFilter);
 		}
 
-		private void Publish(ServiceEvent serviceEvent, string topic, string filter)
+		private async Task<bool> Publish(ServiceEvent serviceEvent, string topic, string filter)
 		{
-			ServiceConfiguration config = ServiceConfiguration.Instance;
-
-			ConnectionFactory factory = new ConnectionFactory()
-			{
-				HostName = config.brokerAddress,
-				Port = config.brokerPort
-			};
 
 			IConnection connection = null;
 			IModel channel = null;
 
 			try
 			{
-
-				connection = factory.CreateConnection();
+				connection = await createConnection();
 				channel = connection.CreateModel();
 
 				string txtContent = JsonConvert.SerializeObject(serviceEvent);
@@ -78,10 +69,13 @@ namespace SensorService.Broker
 									null,
 									content);
 
+
+				return true;
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine($"Failed to establish connection with message broker: address: {config.brokerAddress}:{config.brokerPort}, reason: {e.Message}");
+				return false;
 			}
 			finally
 			{
@@ -95,9 +89,22 @@ namespace SensorService.Broker
 				{
 					connection.Close();
 				}
-
 			}
 
+		}
+
+		private Task<IConnection> createConnection()
+		{
+			return Task.Run(() =>
+			{
+				var factory = new ConnectionFactory()
+				{
+					HostName = config.brokerAddress,
+					Port = config.brokerPort
+				};
+
+				return factory.CreateConnection();
+			});
 		}
 
 	}

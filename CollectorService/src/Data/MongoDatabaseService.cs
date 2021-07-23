@@ -27,7 +27,7 @@ namespace CollectorService.Data
 			this.config = ServiceConfiguration.Instance;
 		}
 
-		// TODO this does not have to be async actually
+		// this does not have to be async actually
 		// connection is gonna be established once query is run 
 		// new MongoClient and getDatabase are just ... offline I guess ...  
 		private Task<bool> createConnection()
@@ -43,7 +43,7 @@ namespace CollectorService.Data
 					client = new MongoClient(settings);
 
 					// not sure but his can't be null I think
-					// either exceptions is gonna be throwh
+					// either exceptions is gonna be thrown
 					// or a valid object is gonna be created
 					// same with .GetDatabase ...  
 					if (client != null)
@@ -63,7 +63,8 @@ namespace CollectorService.Data
 
 		// interface implementation
 
-		public async Task<bool> AddToSensor(string sensorName,
+		public async Task<bool> AddToSensor(
+			string sensorName,
 			SensorValues newValues)
 		{
 			if (!await createConnection())
@@ -71,26 +72,36 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			string collectionName = config.sensorsCollection;
+			string sensorsCollName = config.sensorsCollection;
+			string valuesCollName = config.sensorValuesCollection;
 
-			var collection = database.GetCollection<SensorModel>(collectionName);
+			var sensorColl = database.GetCollection<SensorModel>(sensorsCollName);
 
-			var sensorFilter = Builders<SensorModel>
-				.Filter
-				.Eq(s => s.sensorName, sensorName);
-
-			var update = Builders<SensorModel>
-				.Update
-				.Push<SensorValues>(s => s.records, newValues);
-
-			UpdateResult addResult = null;
 			try
 			{
-				addResult = await collection.UpdateOneAsync(
-					sensorFilter,
-					update,
-					new UpdateOptions { IsUpsert = true });
+				SensorModel parentSensor = null;
 
+				var sensorCursor = await sensorColl.FindAsync<SensorModel>(
+					(record) => record.sensorName == sensorName);
+
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() > 0)
+				{
+					parentSensor = sensorCursor.Current.First();
+				}
+				else
+				{
+					sensorCursor.Dispose();
+					parentSensor = new SensorModel(sensorName);
+					await sensorColl.InsertOneAsync(parentSensor);
+				}
+
+				var valuesModel = getValuesModel(newValues, parentSensor.id);
+
+				var valuesColl =
+					database.GetCollection<SensorValuesModel>(valuesCollName);
+
+				await valuesColl.InsertOneAsync(valuesModel);
 			}
 			catch (TimeoutException)
 			{
@@ -100,10 +111,36 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			return (addResult.ModifiedCount > 0);
+			// var sensorFilter = Builders<SensorModel>
+			// 	.Filter
+			// 	.Eq(s => s.sensorName, sensorName);
+
+			// var update = Builders<SensorModel>
+			// 	.Update
+			// 	.Push<SensorValues>(s => s.records, newValues);
+
+			// UpdateResult addResult = null;
+			// try
+			// {
+			// 	addResult = await sensorColl.UpdateOneAsync(
+			// 		sensorFilter,
+			// 		update,
+			// 		new UpdateOptions { IsUpsert = true });
+
+			// }
+			// catch (TimeoutException)
+			// {
+			// 	Console.WriteLine($"Failed to connect with the database on: "
+			// 		+ $"{config.dbAddress} ... ");
+
+			// 	return false;
+			// }
+
+			return true;
 		}
 
-		public async Task<bool> AddToSensor(String sensorName,
+		public async Task<bool> AddToSensor(
+			String sensorName,
 			List<SensorValues> newRecords)
 		{
 			if (!await createConnection())
@@ -111,50 +148,61 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			string collectionName = config.sensorsCollection;
-
-			var collection = database.GetCollection<SensorModel>(collectionName);
-
-			var sensorFilter = Builders<SensorModel>
-					.Filter
-					.Eq(s => s.sensorName, sensorName);
-
-			var update = Builders<SensorModel>
-					.Update
-					.PushEach<SensorValues>(s => s.records, newRecords);
-
-			UpdateResult addResult = null;
-			try
+			foreach (var record in newRecords)
 			{
-				addResult = await collection.UpdateOneAsync(sensorFilter,
-						update,
-						new UpdateOptions { IsUpsert = true });
-			}
-			catch (TimeoutException)
-			{
-				Console.WriteLine($"Failed to connect with the database on: "
-					+ $"{config.dbAddress} ... ");
-
-				return false;
+				await this.AddToSensor(sensorName, record);
 			}
 
-			return (addResult.ModifiedCount > 0);
+			return true;
 		}
 
-		public async Task<List<SensorModel>> GetAllSamples()
+		private SensorValuesModel getValuesModel(SensorValues values, ObjectId parentId)
+		{
+			var str_values = Newtonsoft.Json.JsonConvert.SerializeObject(values);
+			var obj_values = (JObject.Parse(str_values)).ToObject<SensorValuesModel>();
+			obj_values.sensorId = parentId;
+
+			return obj_values;
+		}
+
+		public async Task<List<SensorModel>> GetAllValues()
 		{
 			if (!await createConnection())
 			{
 				return null;
 			}
 
-			string collectionName = config.sensorsCollection;
-			var collection = database.GetCollection<SensorModel>(collectionName);
+			string sensorCollName = config.sensorsCollection;
+			var sensorsColl = database.GetCollection<SensorModel>(sensorCollName);
 
-			IAsyncCursor<SensorModel> cursor = null;
 			try
 			{
-				cursor = await collection.FindAsync(_ => true);
+				var sensorCursor = await sensorsColl.FindAsync(_ => true);
+
+				var valuesCollName = config.sensorValuesCollection;
+				var valuesColl =
+					database.GetCollection<SensorValuesModel>(valuesCollName);
+
+				var sensors = new List<SensorModel>();
+
+				while (await sensorCursor.MoveNextAsync())
+				{
+					foreach (var sensor in sensorCursor.Current)
+					{
+						var valuesCursor = await valuesColl.FindAsync(
+							(value) => value.sensorId == sensor.id);
+
+						while (await valuesCursor.MoveNextAsync())
+						{
+							sensor.values.AddRange(valuesCursor.Current.ToList());
+						}
+
+						sensors.Add(sensor);
+					}
+				}
+
+				return sensors;
+
 			}
 			catch (TimeoutException)
 			{
@@ -164,7 +212,6 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			return await cursor.ToListAsync();
 		}
 
 		public async Task<SensorModel> getRecordRange(string sensorName,
@@ -187,7 +234,7 @@ namespace CollectorService.Data
 					.Project(s => new
 					{
 						sensorName = s.sensorName,
-						records = s.records
+						records = s.values
 							.Where(r =>
 								r.timestamp >= fromTimestamp
 								&& r.timestamp <= toTimestamp)
@@ -233,7 +280,7 @@ namespace CollectorService.Data
 					.Project(s => new
 					{
 						sensorName = s.sensorName,
-						records = s.records
+						records = s.values
 							.AsQueryable()
 							.Where(r => timestamps.Contains(r.timestamp))
 					})
@@ -243,8 +290,7 @@ namespace CollectorService.Data
 				{
 					return new SensorModel(
 						dbResult.sensorName,
-						dbResult.records.ToList()
-					);
+						dbResult.records.ToList());
 				}
 				else
 				{
@@ -260,7 +306,8 @@ namespace CollectorService.Data
 			}
 		}
 
-		public async Task<bool> updateRecord(string sensorName,
+		public async Task<bool> updateRecord(
+			string sensorName,
 			long timestamp,
 			string field,
 			string newValue)
@@ -271,48 +318,40 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			var collection = database.GetCollection<SensorModel>(config.sensorsCollection);
+			var sensorColl = database.GetCollection<SensorModel>(config.sensorsCollection);
 
 			try
 			{
-				var findResult = await collection
-					.Aggregate()
-					.Match(s => s.sensorName == sensorName)
-					.Project(s => new
-					{
-						record = s.records
-							.Where(r => r.timestamp == timestamp)
-							.First()
-					})
-					.FirstAsync();
 
-				if (findResult == null)
+				var sensorCursor = await sensorColl.FindAsync(
+					(sensor) => sensor.sensorName == sensorName);
+
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() == 0)
 				{
-					// TODO log some message ... 
 					return false;
 				}
 
-				SensorValues record = findResult.record;
+				var sensor = sensorCursor.Current.First();
 
-				// I could also try to serialize obj to json/bson 
-				// then change field's value (accessed by string) 
-				// then deserialize it back to obj 
-				record.GetType().GetProperty(field).SetValue(record, newValue);
+				var valuesCollName = config.sensorValuesCollection;
+				var valuesColl =
+					database.GetCollection<SensorValuesModel>(valuesCollName);
 
-				var nameFilter = Builders<SensorModel>
-					.Filter
-					.Where(s =>
-						s.sensorName == sensorName
-						&& s.records.Any(r => r.timestamp == timestamp));
+				var sensorValues = await valuesColl.FindOneAndDeleteAsync(
+					(value) =>
+						value.sensorId == sensor.id
+						&& value.timestamp == timestamp
+				);
 
-				var update = Builders<SensorModel>
-					.Update
-					.Set(s => s.records[-1], record);
-				// -1 means index of previously (from the last query) matched element
+				sensorValues
+					.GetType()
+					.GetProperty(field)
+					.SetValue(sensorValues, newValue);
 
-				var result = await collection.UpdateOneAsync(nameFilter, update);
+				await valuesColl.InsertOneAsync(sensorValues);
 
-				return (result.ModifiedCount == 1);
+				return true;
 			}
 			catch (TimeoutException)
 			{
@@ -331,26 +370,48 @@ namespace CollectorService.Data
 				return false;
 			}
 
-			string collectionName = config.sensorsCollection;
-			var collection = database.GetCollection<SensorModel>(collectionName);
+			string sensorCollName = config.sensorsCollection;
+			var sensorColl = database.GetCollection<SensorModel>(sensorCollName);
 
-			var nameFilter = Builders<SensorModel>
-				.Filter
-				.Eq(rec => rec.sensorName, sensorName);
+			// var nameFilter = Builders<SensorModel>
+			// 	.Filter
+			// 	.Eq(rec => rec.sensorName, sensorName);
 
-			var timestampFilter = Builders<SensorValues>
-				.Filter
-				.Eq(rec => rec.timestamp, timestamp);
+			// var timestampFilter = Builders<SensorValues>
+			// 	.Filter
+			// 	.Eq(rec => rec.timestamp, timestamp);
 
-			var update = Builders<SensorModel>
-				.Update
-				.PullFilter(rec => rec.records, timestampFilter);
+			// var update = Builders<SensorModel>
+			// 	.Update
+			// 	.PullFilter(rec => rec.records, timestampFilter);
 			try
 			{
-				UpdateResult result =
-					await collection.UpdateOneAsync(nameFilter, update);
+				var sensorCursor = await sensorColl.FindAsync(
+					(sensor) => sensor.sensorName == sensorName
+				);
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() == 0)
+				{
+					return false;
+				}
 
-				return (result.ModifiedCount == 1);
+				var sensor = sensorCursor.Current.First();
+
+				var valuesCollName = config.sensorValuesCollection;
+				var valuesColl =
+					database.GetCollection<SensorValuesModel>(valuesCollName);
+
+				var res = await valuesColl.DeleteOneAsync(
+					(value) =>
+						value.sensorId == sensor.id
+						&& value.timestamp == timestamp);
+
+				return (res.DeletedCount == 1);
+
+				// UpdateResult result =
+				// 	await collection.UpdateOneAsync(nameFilter, update);
+
+				// return (result.ModifiedCount == 1);
 			}
 			catch (TimeoutException)
 			{
@@ -391,7 +452,7 @@ namespace CollectorService.Data
 			}
 		}
 
-		public async Task<int> getRecordsCount(string sensorName)
+		public async Task<long> getRecordsCount(string sensorName)
 		{
 
 			if (!await createConnection())
@@ -399,29 +460,29 @@ namespace CollectorService.Data
 				return -1;
 			}
 
-			string collectionName = config.sensorsCollection;
-			var collection = database.GetCollection<SensorModel>(collectionName);
+			string sensorCollName = config.sensorsCollection;
+			var sensorColl = database.GetCollection<SensorModel>(sensorCollName);
 
 			try
 			{
-				var dbResult = await collection
-					.Find(s => s.sensorName == sensorName)
-					.Project(s => new
-					{
-						count = s.records.Count
-					})
-					.FirstAsync();
+				var sensorCursor = await sensorColl.FindAsync(
+					(sensor) => sensor.sensorName == sensorName);
 
-				if (dbResult != null)
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() == 0)
 				{
-					return dbResult.count;
+					return 0;
 				}
-				else
-				{
-					// somthing went wrong
-					// don't know when is dbResult gonna be null ... 
-					return -1;
-				}
+
+				var sensor = sensorCursor.Current.First();
+
+				var valuesCollName = config.sensorValuesCollection;
+				var valuesColl =
+					database.GetCollection<SensorValuesModel>(valuesCollName);
+
+				return await valuesColl.CountDocumentsAsync(
+					(values) => values.sensorId == sensor.id);
+
 			}
 			catch (TimeoutException)
 			{
@@ -448,15 +509,6 @@ namespace CollectorService.Data
 				return;
 			}
 
-			// TODO maybe this id should be read from config ... 
-			string serviceId = NetworkInterface
-				.GetAllNetworkInterfaces()
-				.Where(nic =>
-					nic.OperationalStatus == OperationalStatus.Up
-					&& nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-				.Select(nic => nic.GetPhysicalAddress().ToString())
-				.FirstOrDefault();
-
 			ConfigFields config = ServiceConfiguration.Instance;
 
 			string collectionName = config.configurationBackupCollection;
@@ -472,7 +524,7 @@ namespace CollectorService.Data
 			try
 			{
 				collection.UpdateOne(
-					r => r.serviceId == serviceId,
+					r => r.serviceId == config.serviceId,
 					update,
 					new UpdateOptions { IsUpsert = true });
 

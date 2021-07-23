@@ -98,6 +98,7 @@ export function insertData(req: Request, res: Response, next: NextFunction) {
 
 export function updateData(req: Request, res: Response, next: NextFunction) {
 
+	// TODO implement
 	const id: string = req.body.id;
 	const newValue: DataEvent = req.body.newValue as DataEvent;
 

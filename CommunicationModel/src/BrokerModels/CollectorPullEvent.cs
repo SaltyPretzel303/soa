@@ -3,17 +3,22 @@ namespace CommunicationModel.BrokerModels
 	public class CollectorPullEvent : ServiceEvent
 	{
 
-		public string sensorAddress;
+		public string sensorAddress { get; set; }
+		public bool success { get; set; }
+		public int returnedCount { get; set; }
 
-		public bool success;
+		public CollectorPullEvent(
+				string serviceId,
+				string sensorAddress,
+				bool success,
+				int returnedCount,
+				string additionalDesc = "")
 
-		public CollectorPullEvent(string sensorAddress,
-								bool success,
-								string additionalDesc = "")
-				: base(ServiceType.DataCollector, additionalDesc)
+				: base(serviceId, ServiceType.DataCollector, additionalDesc)
 		{
 			this.sensorAddress = sensorAddress;
 			this.success = success;
+			this.returnedCount = returnedCount;
 		}
 
 	}

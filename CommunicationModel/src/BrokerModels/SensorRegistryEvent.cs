@@ -12,10 +12,13 @@ namespace CommunicationModel.BrokerModels
 		public SensorRegEventType eventType;
 		public SensorRegistryRecord sensorRecord;
 
-		public SensorRegistryEvent(SensorRegEventType eventType,
-								SensorRegistryRecord sensorRecord,
-								string customMessage = "") :
-				base(ServiceType.SensorRegistry, customMessage)
+		public SensorRegistryEvent(
+			string serviceId,
+			SensorRegEventType eventType,
+			SensorRegistryRecord sensorRecord,
+			string customMessage = "")
+
+			: base(serviceId, ServiceType.SensorRegistry, customMessage)
 		{
 			this.eventType = eventType;
 			this.sensorRecord = sensorRecord;

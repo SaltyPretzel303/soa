@@ -6,7 +6,6 @@ using CommunicationModel.RestModels;
 using MediatR;
 using Newtonsoft.Json;
 using SensorRegistry.Configuration;
-using SensorRegistry.Registry;
 
 namespace SensorRegistry.MediatorRequests
 {
@@ -16,7 +15,10 @@ namespace SensorRegistry.MediatorRequests
 		public string SensorIp { get; set; }
 		public int SensorPort { get; set; }
 
-		public CheckSensorInfoRequest(string sensorName, string sensorIp, int sensorPort)
+		public CheckSensorInfoRequest(
+			string sensorName,
+			string sensorIp,
+			int sensorPort)
 		{
 			SensorName = sensorName;
 			SensorIp = sensorIp;

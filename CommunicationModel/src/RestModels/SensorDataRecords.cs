@@ -7,20 +7,20 @@ namespace CommunicationModel
 		public string SensorName { get; set; }
 		public int RecordsCount { get; set; }
 
-		public List<SensorValues> Records { get; set; }
+		public string CsvHeader { get; set; }
+		public List<string> CsvValues { get; set; }
 
-		public SensorDataRecords()
-		{
-			Records = new List<SensorValues>();
-		}
-
-		public SensorDataRecords(string sensorName,
-				int count,
-				List<SensorValues> records)
+		public SensorDataRecords(
+			string sensorName,
+			int count,
+			string csvHeader,
+			List<string> csvValues)
 		{
 			this.SensorName = sensorName;
 			this.RecordsCount = count;
-			this.Records = records;
+
+			this.CsvHeader = csvHeader;
+			this.CsvValues = csvValues;
 		}
 	}
 }

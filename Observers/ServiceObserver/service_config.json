@@ -1,6 +1,7 @@
 {
 	"stage": "Production",
 	"Development": {
+		"serviceId": "service_observer_0",
 		"port": "5004",
 		"dbAddress": "mongodb://localhost:27017",
 		"dbName": "soa_service_observer",
@@ -10,7 +11,6 @@
 		"brokerAddress": "localhost",
 		"brokerPort": "5672",
 		"connectionRetryDelay": 2000,
-		"observerReportTopic": "observer_reports",
 		"configUpdateTopic": "config",
 		"serviceLifetimeTopic": "service_lifetime",
 		"lifetimeEventFilter": "#",
@@ -18,10 +18,12 @@
 		"serviceTypeFilter": "service_observer",
 		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "service",
+		"unstableServiceFilter": "unstable_service",
 		"ruleEngineTriggerInterval": 5000,
 		"unstableRecordsLimit": 3
 	},
 	"Production": {
+		"serviceId": "service_observer_0",
 		"port": "5000",
 		"dbAddress": "mongodb://soa-mongo-db:27017",
 		"dbName": "soa_service_observer",
@@ -31,7 +33,6 @@
 		"brokerAddress": "soa-broker",
 		"brokerPort": "5672",
 		"connectionRetryDelay": 2000,
-		"observerReportTopic": "observer_reports",
 		"configUpdateTopic": "config",
 		"serviceLifetimeTopic": "service_lifetime",
 		"lifetimeEventFilter": "#",
@@ -39,6 +40,7 @@
 		"serviceTypeFilter": "service_observer",
 		"observingResultsTopic": "rule_engine_results",
 		"observingResultsFilter": "service",
+		"unstableServiceFilter": "unstable_service",
 		"ruleEngineTriggerInterval": 3000,
 		"unstableRecordsLimit": 3
 	}

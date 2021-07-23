@@ -108,7 +108,7 @@ def resolveFilter(cli_input):
 parser = argparse.ArgumentParser(
     "Listen on specific topic with specific filter.\n\
 	If Topic and filter are not specified script will listen on all available topics.\n\
-	Default broker adress: localhost:5672")
+	Default broker address: localhost:5672")
 
 # optional arguments
 parser.add_argument("--address",
@@ -129,6 +129,11 @@ parser.add_argument("--filter",
                     dest="filter",
                     help="Filter to use on specified/all topics. Default: #")
 
+parser.add_argument("--short",
+                    # dest="short",
+                    action="store_true",
+                    help="If set only first 80 character of every event is gonna be printed")
+
 cli_input = parser.parse_args()
 
 broker_address = resolveAddress(cli_input)
@@ -142,6 +147,7 @@ channel = connection.channel()
 
 topics = resolveTopics(cli_input)
 filter = resolveFilter(cli_input)
+short = cli_input.short
 
 for single_topic in topics:
     channel.exchange_declare(single_topic,
@@ -159,8 +165,12 @@ for single_topic in topics:
 
     def event_callback(ch, method, properties, body):
         txt_content = body.decode("utf-8")
+        short_content = txt_content[0:80]
 
-        print(txt_content)  # this will print json in one line
+        if short:
+            print(short_content)
+        else:
+            print(txt_content)  # this will print json in one line
 
         # next section will print json with propper formating
         # json_obj = json.loads(txt_content)
@@ -173,6 +183,8 @@ for single_topic in topics:
                           event_callback)
 
 # handling ctrl+c (SIGINT)
+
+
 def sig_handler(sig, frame):
 
     print("\nCancellation requested ... ")

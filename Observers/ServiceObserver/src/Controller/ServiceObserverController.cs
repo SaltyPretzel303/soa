@@ -13,7 +13,6 @@ namespace ServiceObserver.Controller
 	[ApiController]
 	public class ServiceObserverController : ControllerBase
 	{
-
 		private IDatabaseService db;
 
 		public ServiceObserverController(IDatabaseService db)
@@ -22,7 +21,7 @@ namespace ServiceObserver.Controller
 		}
 
 		[HttpGet]
-		public string getSomeString()
+		public string getHelloString()
 		{
 			return "Hello there, I am observing, don't worry ... ";
 		}
@@ -55,7 +54,8 @@ namespace ServiceObserver.Controller
 
 		[HttpGet]
 		[Route("getForService")]
-		public async Task<IActionResult> getUnstableEventsForService([FromQuery] string serviceId)
+		public async Task<IActionResult> getUnstableEventsForService(
+			[FromQuery] string serviceId)
 		{
 			List<UnstableServiceDbRecord> dbRecords =
 				await db.GetUnstableRecordsForService(serviceId);

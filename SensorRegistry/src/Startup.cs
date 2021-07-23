@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using SensorRegistry.Broker;
 using SensorRegistry.Configuration;
 using SensorRegistry.Logger;
-using SensorRegistry.MediatorRequests;
 using SensorRegistry.Registry;
 
 namespace SensorRegistry
@@ -45,8 +44,8 @@ namespace SensorRegistry
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app,
-							IWebHostEnvironment env,
-							IHostApplicationLifetime lifetime)
+			IWebHostEnvironment env,
+			IHostApplicationLifetime lifetime)
 		{
 			this.provider = app.ApplicationServices;
 
@@ -74,8 +73,10 @@ namespace SensorRegistry
 			if (broker != null)
 			{
 				broker.publishLifetimeEvent(
-					new ServiceLifetimeEvent(LifetimeStages.Startup,
-							ServiceType.SensorRegistry));
+					new ServiceLifetimeEvent(
+						config.serviceId,
+						LifetimeStages.Startup,
+						ServiceType.SensorRegistry));
 			}
 		}
 
@@ -87,8 +88,10 @@ namespace SensorRegistry
 			if (broker != null)
 			{
 				broker.publishLifetimeEvent(
-					 new ServiceLifetimeEvent(LifetimeStages.Shutdown,
-							ServiceType.SensorRegistry));
+					 new ServiceLifetimeEvent(
+						config.serviceId,
+						LifetimeStages.Shutdown,
+						ServiceType.SensorRegistry));
 			}
 		}
 

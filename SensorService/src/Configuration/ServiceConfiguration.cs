@@ -33,6 +33,8 @@ namespace SensorService.Configuration
 		#region mapped fields
 		public string stage { get; private set; }
 
+		public string serviceId { get; set; }
+
 		public string dataPath { get; set; }
 		public string samplePrefix { get; set; }
 		public string sampleExtension { get; set; }
@@ -68,6 +70,9 @@ namespace SensorService.Configuration
 		public string brokerConfigFilter { get; set; }
 		public string serviceLifetimeTopic { get; set; }
 		public string sensorLifetimeFilter { get; set; }
+
+		public string fsCachePath { get; set; }
+		public string fsCacheFileExtension { get; set; }
 
 		#endregion
 

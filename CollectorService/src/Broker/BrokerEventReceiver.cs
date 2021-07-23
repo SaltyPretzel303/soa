@@ -202,7 +202,7 @@ namespace CollectorService.Broker
 								null);
 
 
-			EventingBasicConsumer configEventConsumer = new EventingBasicConsumer(this.channel);
+			var configEventConsumer = new EventingBasicConsumer(this.channel);
 			configEventConsumer.Received += (srcChannel, eventArg) =>
 			{
 				string txtContent = Encoding.UTF8.GetString(eventArg.Body.ToArray());
@@ -212,10 +212,7 @@ namespace CollectorService.Broker
 				mediator.Send(new ConfigChangeRequest(newConfig));
 			};
 
-			this.channel.BasicConsume(configEventQueue,
-									true,
-									configEventConsumer);
-
+			this.channel.BasicConsume(configEventQueue, true, configEventConsumer);
 		}
 
 
@@ -238,8 +235,14 @@ namespace CollectorService.Broker
 		public async Task reload(ConfigFields newConfig)
 		{
 
-			// TODO add check if this service has to be reloaded
-			// if address and port number are the same don't reload it 
+			// this.config should refer to old config
+			if (config.brokerAddress == newConfig.brokerAddress
+				&& config.brokerPort == newConfig.brokerPort)
+			{
+				// there is no need to reload this service
+				return;
+			}
+
 
 			// in case that connection (using old config) is still not established
 			if (this.connectionRetryTokenSrc != null)

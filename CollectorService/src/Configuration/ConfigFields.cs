@@ -2,12 +2,15 @@ namespace CollectorService.Configuration
 {
 	public class ConfigFields
 	{
+		public string serviceId { get; set; }
+
 		public int port { get; set; }
 
 		public string dbAddress { get; set; }
 		public string dbPort { get; set; }
 		public string dbName { get; set; }
 		public string sensorsCollection { get; set; }
+		public string sensorValuesCollection { get; set; }
 		public string configurationBackupCollection { get; set; }
 
 		public string headerUrl { get; set; }

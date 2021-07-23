@@ -7,7 +7,7 @@ namespace CommunicationModel.BrokerModels
 
 	public class ServiceEvent
 	{
-		// mac address 
+		// read from configuration
 		public string sourceId { get; set; }
 
 		public ServiceType sourceType { get; set; }
@@ -16,22 +16,36 @@ namespace CommunicationModel.BrokerModels
 
 		public string customMessage { get; set; }
 
-		public ServiceEvent()
-		{
+		// public ServiceEvent()
+		// {
 
-		}
+		// }
 
-		public ServiceEvent(ServiceType type, string customMessage)
+		public ServiceEvent(
+			String serviceId,
+			ServiceType type,
+			string customMessage)
 		{
-			this.sourceId = NetworkInterface.
-							GetAllNetworkInterfaces().
-							Where((nic) =>
-							{
-								return nic.OperationalStatus == OperationalStatus.Up &&
-								nic.NetworkInterfaceType != NetworkInterfaceType.Loopback;
-							}).
-							Select((nic) => { return nic.GetPhysicalAddress().ToString(); }).
-							FirstOrDefault();
+			// should be removed 
+			// left just as an example how to get mac address of networkDevice
+			// if (sourceId == null)
+			// {
+			// 	this.sourceId = NetworkInterface.
+			// 					GetAllNetworkInterfaces().
+			// 					Where((nic) =>
+			// 					{
+			// 						return nic.OperationalStatus == OperationalStatus.Up &&
+			// 						nic.NetworkInterfaceType != NetworkInterfaceType.Loopback;
+			// 					}).
+			// 					Select((nic) => { return nic.GetPhysicalAddress().ToString(); }).
+			// 					FirstOrDefault();
+			// }
+			// else
+			// {
+			// 	this.sourceId = sourceId;
+			// }
+
+			this.sourceId = serviceId;
 			this.time = DateTime.Now;
 			this.sourceType = type;
 			this.customMessage = customMessage;

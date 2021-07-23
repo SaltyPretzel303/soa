@@ -1,6 +1,7 @@
 using System;
 using CommunicationModel.BrokerModels;
 using MediatR;
+using SensorRegistry.Logger;
 using SensorRegistry.Registry;
 
 namespace SensorRegistry.MediatorRequests
@@ -19,10 +20,14 @@ namespace SensorRegistry.MediatorRequests
 	{
 
 		private ISensorRegistry LocalRegistry;
+		private ILogger logger;
 
-		public SensorLifetimeRequestHandler(ISensorRegistry localRegistry)
+		public SensorLifetimeRequestHandler(
+			ISensorRegistry localRegistry,
+			ILogger logger)
 		{
-			LocalRegistry = localRegistry;
+			this.LocalRegistry = localRegistry;
+			this.logger = logger;
 		}
 
 		protected override void Handle(SensorLifetimeRequest request)
@@ -42,8 +47,7 @@ namespace SensorRegistry.MediatorRequests
 				}
 				else
 				{
-					// TODO use logger
-					Console.WriteLine("Startup event for ALREADY registered sensor ... ");
+					logger.LogMessage("Startup event for ALREADY registered sensor ... ");
 				}
 
 			}
@@ -57,8 +61,7 @@ namespace SensorRegistry.MediatorRequests
 				}
 				else
 				{
-					// TODO use logger
-					Console.WriteLine("Shutdown event for NOT registered sensor ... ");
+					logger.LogMessage("Shutdown event for NOT registered sensor ... ");
 				}
 
 			}

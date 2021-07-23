@@ -63,23 +63,26 @@ namespace SensorRegistry.Registry
 
 		#region ISensorRegistry
 
-		public RegistryResponse addSensorRecord(string sensorName,
-											string sensorAddr,
-											int sensorPort,
-											int readIndex)
+		public RegistryResponse addSensorRecord(
+			string sensorName,
+			string sensorAddr,
+			int sensorPort,
+			int readIndex)
 		{
 
 			ServiceConfiguration config = ServiceConfiguration.Instance;
 
-			SensorRegistryRecord newRecord = new SensorRegistryRecord(sensorName,
-																	sensorAddr,
-																	sensorPort,
-																	readIndex);
+			var newRecord = new SensorRegistryRecord(
+				sensorName,
+				sensorAddr,
+				sensorPort,
+				readIndex);
 
 			if (Registry.TryAdd(sensorName, newRecord))
 			{
 
 				var newEvent = new SensorRegistryEvent(
+					config.serviceId,
 					SensorRegEventType.NewSensor,
 					newRecord);
 
@@ -116,6 +119,7 @@ namespace SensorRegistry.Registry
 				Registry.TryAdd(name, newRecord);
 
 				SensorRegistryEvent newEvent = new SensorRegistryEvent(
+					config.serviceId,
 					SensorRegEventType.SensorUpdated,
 					newRecord);
 
@@ -138,6 +142,7 @@ namespace SensorRegistry.Registry
 			{
 
 				var newEvent = new SensorRegistryEvent(
+					config.serviceId,
 					SensorRegEventType.SensorRemoved,
 					record);
 

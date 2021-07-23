@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CollectorService.Configuration;
 using CollectorService.Data;
@@ -45,20 +46,26 @@ namespace CollectorService.Controller
 				return StatusCode(500);
 			}
 
-			List<SensorModel> dbResponse = await database.GetAllSamples();
+			List<SensorModel> dbResponse = await database.GetAllValues();
 
 			if (dbResponse == null)
 			{
 				return StatusCode(500);
 			}
 
-			List<SensorDataRecords> retData = new List<SensorDataRecords>();
+
+			var retData = new List<CollectorDataRecords>();
 			foreach (SensorModel model in dbResponse)
 			{
-				var newRecord = new SensorDataRecords(
+				var newRecord = new CollectorDataRecords(
 						model.sensorName,
-						model.records.Count,
-						model.records);
+						model.values.Count,
+						model.values.Select((value) =>
+						{
+							var str_value = JsonConvert.SerializeObject(value);
+							return (JObject.Parse(str_value)).ToObject<SensorValues>();
+						}).ToList()
+						);
 
 				retData.Add(newRecord);
 			}
@@ -86,17 +93,22 @@ namespace CollectorService.Controller
 				return BadRequest(message);
 			}
 
-			SensorModel records = await database.getRecordRange(
+			SensorModel dbRecord = await database.getRecordRange(
 				sensorName,
 				fromTimestamp,
 				toTimestamp);
 
-			if (records != null)
+			if (dbRecord != null)
 			{
-				var retData = new SensorDataRecords(
-					records.sensorName,
-					records.records.Count,
-					records.records);
+				var retData = new CollectorDataRecords(
+					dbRecord.sensorName,
+					dbRecord.values.Count,
+					dbRecord.values.Select((value) =>
+						{
+							var str_value = JsonConvert.SerializeObject(value);
+							return (JObject.Parse(str_value)).ToObject<SensorValues>();
+						}).ToList()
+					);
 
 				return Ok(retData);
 			}
@@ -116,10 +128,15 @@ namespace CollectorService.Controller
 
 			if (dbResult != null)
 			{
-				var retData = new SensorDataRecords(
+				var retData = new CollectorDataRecords(
 					dbResult.sensorName,
-					dbResult.records.Count,
-					dbResult.records);
+					dbResult.values.Count,
+					dbResult.values.Select((value) =>
+						{
+							var str_value = JsonConvert.SerializeObject(value);
+							return (JObject.Parse(str_value)).ToObject<SensorValues>();
+						}).ToList()
+					);
 
 				return new OkObjectResult(retData);
 			}
@@ -136,7 +153,6 @@ namespace CollectorService.Controller
 			return new OkResult();
 		}
 
-		// TODO this is not refactored to use SensorModel
 		[HttpPost]
 		[Route("updateRecord")]
 		public async Task<IActionResult> updateRecord([FromBody] UpdateRecordArg reqArg)

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunicationModel.BrokerModels;
@@ -53,6 +54,7 @@ namespace SensorRegistry.MediatorRequests
 
 				// this request will check if that sensor is still alive
 				// and return it's info if it is alive
+
 				var result = await mediator.Send(new CheckSensorInfoRequest(
 					request.NewEvent.SensorName,
 					request.NewEvent.IpAddress,

@@ -92,7 +92,6 @@ function initReceiver(channel) {
                     return [4 /*yield*/, channel.bindQueue(queue_assert_res.queue, topic, filter)];
                 case 3:
                     _a.sent();
-                    // TODO note that this maybe [doesn't have to be/should not be] awaited 
                     return [4 /*yield*/, channel.consume(queue_assert_res.queue, function (msg) {
                             var sData = msg === null || msg === void 0 ? void 0 : msg.content.toString();
                             if (sData != null && sData != undefined) {
@@ -103,7 +102,6 @@ function initReceiver(channel) {
                             }
                         })];
                 case 4:
-                    // TODO note that this maybe [doesn't have to be/should not be] awaited 
                     _a.sent();
                     return [2 /*return*/, true];
             }

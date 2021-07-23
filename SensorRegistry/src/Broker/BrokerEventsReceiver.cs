@@ -27,9 +27,10 @@ namespace SensorRegistry.Broker
 		private CancellationToken masterToken;
 
 		private Task connectionRetryTask;
-		private CancellationTokenSource connectionRetryTokenSrc;
+		private CancellationTokenSource connRetryTokenSrc;
 
-		public BrokerEventsReceiver(ILogger logger,
+		public BrokerEventsReceiver(
+			ILogger logger,
 			IMediator mediator)
 		{
 			this.logger = logger;
@@ -42,9 +43,9 @@ namespace SensorRegistry.Broker
 			masterToken.Register(() =>
 			{
 				// cancel connection retry if application shutdown is requested
-				if (connectionRetryTokenSrc != null)
+				if (connRetryTokenSrc != null)
 				{
-					connectionRetryTokenSrc.Cancel();
+					connRetryTokenSrc.Cancel();
 				}
 			});
 
@@ -52,12 +53,12 @@ namespace SensorRegistry.Broker
 
 			var config = ServiceConfiguration.Instance;
 
-			connectionRetryTokenSrc = new CancellationTokenSource();
+			connRetryTokenSrc = new CancellationTokenSource();
 
-			connectionRetryTask = establishConnection(connectionRetryTokenSrc.Token);
+			connectionRetryTask = establishConnection(connRetryTokenSrc.Token);
 			await connectionRetryTask;
 
-			connectionRetryTokenSrc = null;
+			connRetryTokenSrc = null;
 			connectionRetryTask = null;
 
 			if (masterToken.IsCancellationRequested)
@@ -70,6 +71,8 @@ namespace SensorRegistry.Broker
 
 				return;
 			}
+
+			Console.WriteLine("Setting up broker consumers ... ");
 
 			this.setupConfigConsumer();
 			this.setupSensorLifetimeConsumer();
@@ -241,20 +244,20 @@ namespace SensorRegistry.Broker
 				var sensorEvent = JsonConvert
 					.DeserializeObject<SensorReaderEvent>(txtContent);
 
-				Console.WriteLine($"event => Reader: {sensorEvent.SensorName} "
-					+ $"readIndex: {sensorEvent.LastReadIndex}");
+				// Console.WriteLine($"event => Reader: {sensorEvent.SensorName} "
+				// 	+ $"readIndex: {sensorEvent.LastReadIndex}");
 
 				mediator.Send(new SensorUpdateRequest(sensorEvent));
 			};
 
 			this.channel.QueueBind(sensorReadEventQueue,
-							config.sensorEventTopic,
-							config.sensorReadEventFilter,
-							null);
+				config.sensorEventTopic,
+				config.sensorReadEventFilter,
+				null);
 
 			this.channel.BasicConsume(sensorReadEventQueue,
-									true,
-									sensorEventConsumer);
+				true,
+				sensorEventConsumer);
 
 		}
 
@@ -280,13 +283,13 @@ namespace SensorRegistry.Broker
 
 			if (this.connectionRetryTask != null)
 			{
-				if (this.connectionRetryTokenSrc != null)
+				if (this.connRetryTokenSrc != null)
 				{
-					this.connectionRetryTokenSrc.Cancel();
+					this.connRetryTokenSrc.Cancel();
 					await this.connectionRetryTask;
 
 					this.connectionRetryTask = null;
-					this.connectionRetryTokenSrc = null;
+					this.connRetryTokenSrc = null;
 				}
 			}
 
@@ -302,13 +305,13 @@ namespace SensorRegistry.Broker
 				this.connection.Close();
 			}
 
-			this.connectionRetryTokenSrc = new CancellationTokenSource();
+			this.connRetryTokenSrc = new CancellationTokenSource();
 			this.connectionRetryTask =
-				this.establishConnection(this.connectionRetryTokenSrc.Token);
+				this.establishConnection(this.connRetryTokenSrc.Token);
 
 			await this.connectionRetryTask;
 
-			this.connectionRetryTokenSrc = null;
+			this.connRetryTokenSrc = null;
 			this.connectionRetryTask = null;
 
 			if (this.masterToken.IsCancellationRequested)

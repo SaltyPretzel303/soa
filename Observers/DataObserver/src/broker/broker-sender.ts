@@ -55,13 +55,14 @@ export async function sendDataEvent(newEvent: DataEvent): Promise<boolean> {
 	}
 	let str_message = JSON.stringify(newEvent);
 
+	let channel;
 	try {
 
 		// if (connection == null) {
 		// 	await establishConnection();
 		// }
 
-		let channel = await getChannel();
+		channel = await getChannel();
 		if (channel == null) {
 			return false;
 		}
@@ -75,6 +76,10 @@ export async function sendDataEvent(newEvent: DataEvent): Promise<boolean> {
 	} catch (err) {
 		console.log(`Failed to publish event: ${err}`);
 		return false;
+	} finally {
+		if (channel != null && channel != undefined) {
+			channel.close();
+		}
 	}
 }
 

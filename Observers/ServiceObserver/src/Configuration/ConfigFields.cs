@@ -2,6 +2,9 @@ namespace ServiceObserver.Configuration
 {
 	public class ConfigFields
 	{
+
+		public string serviceId { get; set; }
+
 		// REST api listening port 
 		public int port { get; set; }
 
@@ -11,7 +14,7 @@ namespace ServiceObserver.Configuration
 		public string observerReportsCollection { get; set; }
 		public string configBackupCollection { get; set; }
 
-		// rule engine records
+		// rule engine db records
 		public string unstableRecordCollection { get; set; }
 
 		// message broker
@@ -20,16 +23,16 @@ namespace ServiceObserver.Configuration
 		public int connectionRetryDelay { get; set; }
 
 		// topics and filters
-		public string observerReportTopic { get; set; }
 		public string configUpdateTopic { get; set; }
 		public string serviceLifetimeTopic { get; set; }
-		public string lifetimeEventFilter { get; set; }
+		public string lifetimeEventFilter { get; set; } // used by ruleEngine
 		public string serviceLogTopic { get; set; }
 		public string serviceTypeFilter { get; set; }
 
 		// rule engine results
 		public string observingResultsTopic { get; set; }
 		public string observingResultsFilter { get; set; }
+		public string unstableServiceFilter { get; set; }
 
 		// rule engine
 		public int ruleEngineTriggerInterval { get; set; }

@@ -35,11 +35,21 @@ with open("./config_template.json") as text_config:
     dev_part["sensorsRange"] = samples_range
     prod_part["sensorsRange"] = samples_range
 
-    dev_part["listeningPort"] = int(port_num) + int(index)
-    prod_part["listeningPort"] = int(port_num) + int(index)
+    list_port = int(port_num) + int(index)
+    dev_part["listeningPort"] = list_port
+    prod_part["listeningPort"] = list_port
 
-    dev_part["sensorName"] = "sensor_" + index
-    prod_part["sensorName"] = "sensor_" + index
+    # in sensor context serviceId and sensorName have the same value
+    new_name = "sensor_" + index
+    dev_part["sensorName"] = new_name
+    prod_part["sensorName"] = new_name
+    dev_part["serviceId"] = new_name
+    prod_part["serviceId"] = new_name
+
+    old_filter = dev_part["sensorReadEventFilter"]
+    new_filter = old_filter + "." + new_name
+    dev_part["sensorReadEventFilter"] = new_filter
+    prod_part["sensorReadEventFilter"] = new_filter
 
     dev_part["hostIP"] = host_ip
     prod_part["hostIP"] = host_ip

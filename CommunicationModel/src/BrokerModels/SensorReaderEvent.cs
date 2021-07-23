@@ -14,14 +14,17 @@ namespace CommunicationModel.BrokerModels
 		public List<string> DataHeader { get; set; }
 		public SensorValues NewData { get; set; }
 
-		public SensorReaderEvent(string sensorName,
-							List<string> dataHeader,
-							int lastReadIndex,
-							SensorValues newData,
-							string ipAddress,
-							int listeningPort,
-							string customMessage = "") :
-			base(ServiceType.SensorReader, customMessage)
+		public SensorReaderEvent(
+			string serviceId,
+			string sensorName,
+			List<string> dataHeader,
+			int lastReadIndex,
+			SensorValues newData,
+			string ipAddress,
+			int listeningPort,
+			string customMessage = "")
+			
+			: base(serviceId, ServiceType.SensorReader, customMessage)
 		{
 			SensorName = sensorName;
 			LastReadIndex = lastReadIndex;

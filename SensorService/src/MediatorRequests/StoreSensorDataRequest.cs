@@ -1,8 +1,11 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunicationModel;
 using CommunicationModel.BrokerModels;
 using MediatR;
+using Newtonsoft.Json.Linq;
 using SensorService.Broker;
 using SensorService.Configuration;
 
@@ -12,23 +15,25 @@ namespace SensorService.MediatorRequests
 	{
 		public string SensorName { get; set; }
 
-		public List<string> Header { get; set; }
+		public string CsvHeader { get; set; }
 		public int ReadIndex { get; set; }
-		public SensorValues NewData { get; set; }
+		public string CsvValues { get; set; }
 
-		public StoreSensorDataRequest(string sensorName,
-					List<string> header,
-					int readIndex,
-					SensorValues newData)
+		public StoreSensorDataRequest(
+			string sensorName,
+			string csvHeader,
+			int readIndex,
+			string csvValues)
 		{
 			SensorName = sensorName;
-			Header = header;
+			CsvHeader = csvHeader;
 			ReadIndex = readIndex;
-			NewData = newData;
+			CsvValues = csvValues;
 		}
 	}
 
-	public class StoreSensorDataRequestHandler : RequestHandler<StoreSensorDataRequest>
+	public class StoreSensorDataRequestHandler
+		: AsyncRequestHandler<StoreSensorDataRequest>
 	{
 
 		private IDataCacheManager cache;
@@ -46,22 +51,46 @@ namespace SensorService.MediatorRequests
 			this.config = ServiceConfiguration.Instance;
 		}
 
-		protected override void Handle(StoreSensorDataRequest request)
+		protected override async Task Handle(
+			StoreSensorDataRequest request,
+			CancellationToken cancellationToken)
 		{
+			this.cache.AddData(
+				request.SensorName,
+				request.CsvHeader,
+				request.CsvValues);
 
-			cache.AddData(request.SensorName,
-				request.Header,
-				request.NewData);
+			var headerList = request.CsvHeader.Split(",").ToList();
+			var objValues = ParseCsv(headerList, request.CsvValues);
 
-			broker.PublishSensorEvent(
-				new SensorReaderEvent(request.SensorName,
-						request.Header,
-						request.ReadIndex,
-						request.NewData,
-						config.hostIP,
-						config.listeningPort),
+			await broker.PublishSensorEvent(
+				new SensorReaderEvent(
+					config.serviceId,
+					request.SensorName,
+					headerList,
+					request.ReadIndex,
+					objValues,
+					config.hostIP,
+					config.listeningPort),
 				config.sensorReadEventFilter);
 		}
+
+		private SensorValues ParseCsv(List<string> header, string row)
+		{
+			string[] values = row.Split(",");
+
+			JObject jObj = new JObject();
+			int index = 0;
+
+			foreach (string field in header)
+			{
+				jObj[field] = values[index];
+				index++;
+			}
+
+			return jObj.ToObject<SensorValues>();
+		}
+
 	}
 
 }

@@ -91,8 +91,11 @@ namespace CollectorService
 			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
 			if (broker != null)
 			{
-				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Startup,
-															ServiceType.DataCollector));
+				var config = ServiceConfiguration.Instance;
+				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(
+					config.serviceId,
+					LifetimeStages.Startup,
+					ServiceType.DataCollector));
 			}
 		}
 
@@ -101,8 +104,11 @@ namespace CollectorService
 			IMessageBroker broker = this.provider.GetService<IMessageBroker>();
 			if (broker != null)
 			{
-				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(LifetimeStages.Shutdown,
-															ServiceType.DataCollector));
+				var config = ServiceConfiguration.Instance;
+				broker.PublishLifetimeEvent(new ServiceLifetimeEvent(
+					config.serviceId,
+					LifetimeStages.Shutdown,
+					ServiceType.DataCollector));
 			}
 		}
 

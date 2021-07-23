@@ -17,7 +17,7 @@ collector requests:
 	- database
 		.backupConfig		- set
 	
-	*SensorRegistryHangler:
+	*SensorRegistryHandler:
 	- registryCache
 			.addRecord
 			.updateRecord

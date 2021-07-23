@@ -5,7 +5,7 @@ using MediatR;
 
 namespace CollectorService.MediatrRequests
 {
-	public class GetRecordsCountRequest : IRequest<int>
+	public class GetRecordsCountRequest : IRequest<long>
 	{
 		public string SensorName { get; private set; }
 
@@ -16,7 +16,7 @@ namespace CollectorService.MediatrRequests
 	}
 
 	public class GetRecordsCountRequestHandler
-		: IRequestHandler<GetRecordsCountRequest, int>
+		: IRequestHandler<GetRecordsCountRequest, long>
 	{
 
 		private IDatabaseService database;
@@ -26,7 +26,7 @@ namespace CollectorService.MediatrRequests
 			this.database = database;
 		}
 
-		public async Task<int> Handle(GetRecordsCountRequest request,
+		public async Task<long> Handle(GetRecordsCountRequest request,
 			CancellationToken cancellationToken)
 		{
 			return await database.getRecordsCount(request.SensorName);

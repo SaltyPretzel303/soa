@@ -3,10 +3,11 @@
 # default values
 num_of_instances="2"
 proc_per_instance="3"
+memory_per_proc="90"
 data_path="/home/nemanja/workspace/soa/SensorService/data"
 
-NETWORK="soa_default"
-IP_SUBNET="172.19.1"
+NETWORK="soa-network"
+IP_SUBNET="172.23.1"
 
 sensor_name_prefix="soa-sensor-"
 
@@ -72,6 +73,10 @@ else
 fi
 
 data_index="0"
+
+memory_per_container=$((memory_per_proc*proc_per_instance))
+echo "Starting containers with max of $memory_per_container MB of ram..."
+
 for (( container_ind=0; container_ind<$num_of_instances; container_ind++ ))
 do 
 
@@ -82,11 +87,16 @@ do
 
 	docker run -d \
 				--name "$sensor_name_prefix$container_ind" \
+				--memory $memory_per_container"m" \
 				--volume "$data_path:/data" \
 				--network "$NETWORK" \
 				--ip "$container_ip" \
 				 soa/sensor-service "$proc_per_instance" "$data_index" "$container_ip"
 
 	data_index=$(($data_index+$proc_per_instance))
+
+	sleep 0.2 
+	# just so that they are not started at the same time
+	# and than all the read events happen at the same time also 
 
 done

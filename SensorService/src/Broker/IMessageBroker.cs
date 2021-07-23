@@ -1,13 +1,14 @@
+using System.Threading.Tasks;
 using CommunicationModel.BrokerModels;
 
 namespace SensorService.Broker
 {
 	public interface IMessageBroker
 	{
-		void PublishLog(ServiceLog log);
+		Task<bool> PublishLog(ServiceLog log);
 
-		void PublishSensorEvent(SensorReaderEvent sensorEvent,string filter);
+		Task<bool> PublishSensorEvent(SensorReaderEvent sensorEvent, string filter);
 
-		void PublishLifetimeEvent(ServiceLifetimeEvent newEvent);
+		Task<bool> PublishLifetimeEvent(ServiceLifetimeEvent newEvent);
 	}
 }

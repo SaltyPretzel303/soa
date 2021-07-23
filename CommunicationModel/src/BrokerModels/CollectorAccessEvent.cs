@@ -4,31 +4,34 @@ namespace CommunicationModel.BrokerModels
 {
 	public class CollectorAccessEvent : ServiceEvent
 	{
-		public string method;
-		public string requestPath;
-		public string query;
+		public string method { get; set; }
+		public string requestPath { get; set; }
+		public string query { get; set; }
 
-		public string sourceAddr;
-		public int? sourcePort;
+		public string sourceAddr { get; set; }
+		public int? sourcePort { get; set; }
 
-		public DateTime requestReceivedTime;
-		public DateTime responseSendTime;
+		public DateTime requestReceivedTime { get; set; }
+		public DateTime responseSendTime { get; set; }
 
-		public int statusCode;
-		public string repsonseType;
-		public long? responseLength;
+		public int statusCode { get; set; }
+		public string responseType { get; set; }
+		public long? responseLength { get; set; }
 
-		public CollectorAccessEvent(string method,
-							string requestPath,
-							string query,
-							string sourceAddr,
-							int? sourcePort,
-							DateTime requestReceivedTime,
-							int statusCode,
-							string repsonseType,
-							long? responseLength,
-							string additionalDesc = "")
-				: base(ServiceType.DataCollector, additionalDesc)
+		public CollectorAccessEvent(
+			string serviceId,
+			string method,
+			string requestPath,
+			string query,
+			string sourceAddr,
+			int? sourcePort,
+			DateTime requestReceivedTime,
+			int statusCode,
+			string responseType,
+			long? responseLength,
+			string additionalDesc = "")
+
+			: base(serviceId, ServiceType.DataCollector, additionalDesc)
 		{
 			this.method = method;
 			this.requestPath = requestPath;
@@ -38,7 +41,7 @@ namespace CommunicationModel.BrokerModels
 			this.requestReceivedTime = requestReceivedTime;
 			this.responseSendTime = DateTime.Now;
 			this.statusCode = statusCode;
-			this.repsonseType = repsonseType;
+			this.responseType = responseType;
 			this.responseLength = responseLength;
 		}
 	}

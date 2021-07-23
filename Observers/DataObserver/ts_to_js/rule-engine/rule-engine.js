@@ -140,7 +140,7 @@ function timerEventHandler() {
                 case 0: return [4 /*yield*/, reader_data_cache_1.Cache.getDataCount()];
                 case 1:
                     if ((_c.sent()) == 0) {
-                        console.log("No data to process ... ");
+                        // console.log("No data to process ... ");
                         timer = setTimeout(timerEventHandler, config.ruleEngineReadPeriod);
                         return [2 /*return*/];
                     }

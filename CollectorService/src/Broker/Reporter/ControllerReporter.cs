@@ -1,3 +1,4 @@
+using CollectorService.Configuration;
 using CommunicationModel.BrokerModels;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -24,15 +25,17 @@ namespace CollectorService.Broker.Reporter
 
 			await next.Invoke(context);
 
-			CollectorAccessEvent newEvent = new CollectorAccessEvent(context.Request.Method,
-																context.Request.Path,
-																context.Request.QueryString.ToString(),
-																context.Connection.RemoteIpAddress.ToString(),
-																context.Connection.RemotePort,
-																requestTime,
-																context.Response.StatusCode,
-																context.Response.ContentType,
-																context.Response.ContentLength);
+			CollectorAccessEvent newEvent = new CollectorAccessEvent(
+				ServiceConfiguration.Instance.serviceId,
+				context.Request.Method,
+				context.Request.Path,
+				context.Request.QueryString.ToString(),
+				context.Connection.RemoteIpAddress.ToString(),
+				context.Connection.RemotePort,
+				requestTime,
+				context.Response.StatusCode,
+				context.Response.ContentType,
+				context.Response.ContentLength);
 
 			messageBroker.PublishCollectorAccessEvent(newEvent);
 

@@ -6,7 +6,7 @@ namespace ServiceObserver.Broker
 	{
 		void PublishLog(ServiceLog log);
 
-		// void PublishUnstableEvent(UnstableServiceEvent newEvent);
+		void PublishObserverReport(ServiceEvent newEvent,string filter);
 
 	}
 }

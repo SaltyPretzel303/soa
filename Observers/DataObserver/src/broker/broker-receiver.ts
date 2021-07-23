@@ -42,7 +42,7 @@ async function initReceiver(channel: amqp.Channel): Promise<boolean> {
 	);
 
 	await channel.bindQueue(queue_assert_res.queue, topic, filter);
-	// TODO note that this maybe [doesn't have to be/should not be] awaited 
+
 	await channel.consume(
 		queue_assert_res.queue,
 		(msg) => {

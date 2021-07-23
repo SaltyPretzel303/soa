@@ -1,19 +1,19 @@
-{
-	"conditions": {
-		"any": [
-			{
-				"fact": "reader_data",
-				"operator": "greaterThan",
-				"value": 1,
-				"path": "$.NewData.timestamp"
-			}
-		]
-	},
-	"event": {
-		"type": "normal_timestamp_event",
-		"params": {
-			"message": "This timestamp is greater than 1 ... "
-		}
-	},
-	"name": "timestamp_rule"
-}
+// {
+// 	"conditions": {
+// 		"any": [
+// 			{
+// 				"fact": "reader_data",
+// 				"operator": "greaterThan",
+// 				"value": 1,
+// 				"path": "$.NewData.timestamp"
+// 			}
+// 		]
+// 	},
+// 	"event": {
+// 		"type": "normal_timestamp_event",
+// 		"params": {
+// 			"message": "This timestamp is greater than 1 ... "
+// 		}
+// 	},
+// 	"name": "timestamp_rule"
+// }
