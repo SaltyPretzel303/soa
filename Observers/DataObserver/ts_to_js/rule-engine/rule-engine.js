@@ -71,45 +71,60 @@ var timer;
 var engine;
 function readRules() {
     return __awaiter(this, void 0, void 0, function () {
-        var read_rules, rule_files, _i, rule_files_1, f_rule, rule_path, s_rule, obj_rule, err_1;
+        var read_rules, rule_files, err_1, _i, rule_files_1, f_rule, rule_path, str_rule, read_err_1, obj_rule;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     read_rules = [];
+                    rule_files = [];
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 8, , 9]);
+                    _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, fs_1.default.promises.readdir(config.rulesDirPath)];
                 case 2:
                     rule_files = _a.sent();
                     console.log("Found " + rule_files.length + " rule files ... ");
-                    _i = 0, rule_files_1 = rule_files;
-                    _a.label = 3;
+                    return [3 /*break*/, 4];
                 case 3:
-                    if (!(_i < rule_files_1.length)) return [3 /*break*/, 7];
-                    f_rule = rule_files_1[_i];
-                    rule_path = "" + config.rulesDirPath + f_rule;
-                    return [4 /*yield*/, fs_1.default.promises.readFile(rule_path)];
-                case 4: return [4 /*yield*/, (_a.sent()).toString()];
-                case 5:
-                    s_rule = _a.sent();
-                    obj_rule = JSON.parse(s_rule);
-                    if (obj_rule == undefined && obj_rule == null) {
-                        console.log("Failed to parse rule " + rule_path + " ... ");
-                        return [3 /*break*/, 6];
-                    }
-                    read_rules.push(obj_rule);
-                    _a.label = 6;
-                case 6:
-                    _i++;
-                    return [3 /*break*/, 3];
-                case 7: return [2 /*return*/, read_rules];
-                case 8:
                     err_1 = _a.sent();
                     console.log("Failed to read rules from path: " + config.rulesDirPath);
                     console.log("Error: " + err_1);
                     return [2 /*return*/, []];
-                case 9: return [2 /*return*/];
+                case 4:
+                    _i = 0, rule_files_1 = rule_files;
+                    _a.label = 5;
+                case 5:
+                    if (!(_i < rule_files_1.length)) return [3 /*break*/, 11];
+                    f_rule = rule_files_1[_i];
+                    rule_path = "" + config.rulesDirPath + f_rule;
+                    str_rule = "";
+                    _a.label = 6;
+                case 6:
+                    _a.trys.push([6, 8, , 9]);
+                    return [4 /*yield*/, fs_1.default.promises.readFile(rule_path)];
+                case 7:
+                    str_rule = (_a.sent()).toString();
+                    return [3 /*break*/, 9];
+                case 8:
+                    read_err_1 = _a.sent();
+                    console.log("Failed to read rule: " + rule_path);
+                    console.log("Error: " + read_err_1);
+                    return [3 /*break*/, 10];
+                case 9:
+                    try {
+                        obj_rule = JSON.parse(str_rule);
+                        read_rules.push(obj_rule);
+                        console.log("Rule: " + rule_path + " successfully loaded ... ");
+                    }
+                    catch (json_err) {
+                        console.log("Failed to parse rule " + rule_path + " ... ");
+                        return [3 /*break*/, 10];
+                    }
+                    _a.label = 10;
+                case 10:
+                    _i++;
+                    return [3 /*break*/, 5];
+                case 11: return [2 /*return*/, read_rules];
             }
         });
     });
@@ -147,7 +162,6 @@ function timerEventHandler() {
                     return [4 /*yield*/, reader_data_cache_1.Cache.getCachedData()];
                 case 2:
                     dataArray = _c.sent();
-                    console.log("Read: " + dataArray.length + " records from cache ... ");
                     _i = 0, dataArray_1 = dataArray;
                     _c.label = 3;
                 case 3:

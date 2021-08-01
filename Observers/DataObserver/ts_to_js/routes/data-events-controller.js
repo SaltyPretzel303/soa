@@ -91,6 +91,7 @@ function insertData(req, res, next) {
 exports.insertData = insertData;
 ;
 function updateData(req, res, next) {
+    // TODO implement
     var id = req.body.id;
     var newValue = req.body.newValue;
     console.log("requesting data update of id: " + id);

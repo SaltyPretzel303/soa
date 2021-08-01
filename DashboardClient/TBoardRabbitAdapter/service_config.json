@@ -42,6 +42,16 @@
 				"deviceType": "soa-registry-profile",
 				"deviceTopic": "sensor_registry",
 				"deviceFilter": "#"
+			},
+			{
+				"deviceType": "soa-data-observer-profile",
+				"deviceTopic": "rule_engine_results",
+				"deviceFilter": "data"
+			},
+			{
+				"deviceType": "soa-service-observer-profile",
+				"deviceTopic": "rule_engine_results",
+				"deviceFilter": "service"
 			}
 		]
 	},
@@ -66,6 +76,38 @@
 		"tBoardCustomerPassword": "123456",
 		"tBoardSensorDeviceType": "soa-sensor-profile",
 		"tBoardCollectorDeviceType": "soa-collector-profile",
-		"tBoardRegistryDeviceType": "soa-registry-profile"
+		"tBoardRegistryDeviceType": "soa-registry-profile",
+		"handlersInfo": [
+			{
+				"deviceType": "soa-sensor-profile",
+				"deviceTopic": "sensor_reader",
+				"deviceFilter": "read_event.#"
+			},
+			{
+				"deviceType": "soa-collector-profile",
+				"deviceTopic": "collector",
+				"deviceFilter": "sensor_pull"
+			},
+			{
+				"deviceType": "soa-collector-profile",
+				"deviceTopic": "collector",
+				"deviceFilter": "collector_access"
+			},
+			{
+				"deviceType": "soa-registry-profile",
+				"deviceTopic": "sensor_registry",
+				"deviceFilter": "#"
+			},
+			{
+				"deviceType": "soa-data-observer-profile",
+				"deviceTopic": "rule_engine_results",
+				"deviceFilter": "data"
+			},
+			{
+				"deviceType": "soa-service-observer-profile",
+				"deviceTopic": "rule_engine_results",
+				"deviceFilter": "service"
+			}
+		]
 	}
 }

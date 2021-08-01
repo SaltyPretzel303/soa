@@ -1,0 +1,16 @@
+FROM thingsboard/tb-gateway
+
+VOLUME /thingsboard_gateway/config
+VOLUME /thingsboard_gateway/extensions
+
+# this may fail at some point if docker image gets updated to use different python
+# or path gets changed for some reason ... 
+COPY DashboardClient/TBoardGateway/tb_utility.py /usr/local/lib/python3.9/site-packages/thingsboard_gateway-2.6-py3.9.egg/thingsboard_gateway/tb_utility/
+
+# used in rabbit connector
+RUN pip install pika
+
+# copy start_gateway.sh
+# ENTRYPOINT ["/start-gateway.sh"]
+ENTRYPOINT ["python", "/thingsboard_gateway/tb_gateway.py"]
+# ENTRYPOINT ["python",""]

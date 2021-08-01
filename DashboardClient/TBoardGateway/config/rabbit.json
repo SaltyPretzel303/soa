@@ -1,0 +1,40 @@
+{
+	"name": "rabbit_connector",
+	"brokerAddress": "soa-broker",
+	"brokerPort": 5672,
+	"devices": [
+		{
+			"name": "soa-data-observer",
+			"converter": "RabbitDefaultConverter",
+			"deviceProfile": "soa-data-observer-profile",
+			"topics": [
+				{
+					"topic": "rule_engine_results",
+					"filter": "data"
+				}
+			]
+		},
+		{
+			"name": "soa-sensor",
+			"converter": "RabbitDefaultConverter",
+			"deviceProfile": "soa-sensor-profile",
+			"topics": [
+				{
+					"topic": "sensor_reader",
+					"filter": "read_event.#"
+				}
+			]
+		},
+		{
+			"name": "soa-service-observer",
+			"converter": "RabbitDefaultConverter",
+			"deviceProfile": "soa-service-observer-profile",
+			"topics": [
+				{
+					"topic": "rule_engine_results",
+					"filter": "service.#"
+				}
+			]
+		}
+	]
+}

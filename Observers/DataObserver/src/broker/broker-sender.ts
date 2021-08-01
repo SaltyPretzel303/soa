@@ -1,6 +1,8 @@
 import amqp from 'amqplib'
 import { ServiceConfig } from '../config/service-configuration'
 import DataEvent from '../rule-engine/data-event'
+import DataEventMessage from './data-event-message'
+import ServiceType from './service-type'
 
 const config = ServiceConfig.GetInstance();
 const url = `amqp://${config.brokerAddress}:${config.brokerPort}`;
@@ -53,7 +55,17 @@ export async function sendDataEvent(newEvent: DataEvent): Promise<boolean> {
 	let publish_options: amqp.Options.Publish = {
 		mandatory: false
 	}
-	let str_message = JSON.stringify(newEvent);
+
+	let service_event = new DataEventMessage(
+		config.serviceId,
+		ServiceType.SensorObserver,
+		newEvent.time,
+		newEvent.eventMessage,
+		newEvent.ruleName,
+		newEvent.eventName,
+		newEvent.processedData);
+
+	let str_message = JSON.stringify(service_event);
 
 	let channel;
 	try {

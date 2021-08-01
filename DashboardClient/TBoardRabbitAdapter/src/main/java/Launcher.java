@@ -32,7 +32,7 @@ public class Launcher {
 
 		var receiver = new BrokerReceiver(handlers);
 		var receiverThread = new Thread(receiver);
-		receiverThread.run();
+		receiverThread.start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -46,10 +46,11 @@ public class Launcher {
 
 		try {
 			// this should keep application running
-			System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
+			receiverThread.join();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
+
 	}
 
 	// next two static methods were used in development

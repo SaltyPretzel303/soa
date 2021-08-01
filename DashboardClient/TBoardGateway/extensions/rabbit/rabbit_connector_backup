@@ -1,0 +1,157 @@
+"""Import libraries"""
+from os import close
+import pika
+
+import time
+from threading import Thread
+from random import choice
+from string import ascii_lowercase
+# Import base class for connector and logger
+from thingsboard_gateway.connectors.connector import Connector, log
+from thingsboard_gateway.tb_utility.tb_utility import TBUtility
+
+
+# Define a connector class, it should inherit from "Connector" class.
+class RabbitConnector(Thread, Connector):
+    def __init__(self, gateway,  config, connector_type):
+        super().__init__()	  # Initialize parents classes
+        # Dictionary, will save information about count received and sent messages.
+        self.statistics = {'MessagesReceived': 0, 'MessagesSent': 0}
+        self.__config = config
+        self.__gateway = gateway
+        self.__connector_type = connector_type
+
+        # get from the configuration or create name for logs.
+        self.setName(self.__config.get("name", "Custom %s connector " % self.get_name(
+        ) + ''.join(choice(ascii_lowercase) for _ in range(5))))
+        # Send message to logger
+        log.info("Starting Custom %s connector", self.get_name())
+        self.daemon = True	  # Set self thread as daemon
+        self.stopped = True    # Service variable for check state
+        self.connected = False	  # Service variable for check connection to device
+        self.devices = {}	 # Dictionary with devices, will contain devices configurations, converters for devices and serial port objects
+        self.load_converters()
+
+        self._consumer_threads = []
+
+        self._rabbit_connection = None
+        self._rabbit_channels = []
+        self._rabbit_consumers = []
+
+        log.info('Custom connector %s initialization success.',
+                 self.get_name())	 # Message to logger
+        log.info("Devices in configuration file found: %s ", '\n'.join(
+            device for device in self.devices))    # Message to logger
+
+    def open(self):    # Function called by gateway on start
+        self.stopped = False
+        self.start()
+
+    def get_name(self):    # Function used for logging, sending data and statistic
+        return self.name
+
+    def is_connected(self):    # Function for checking connection state
+        return self.connected
+
+    # Function for search a converter and save it.
+    def load_converters(self):
+        devices_config = self.__config.get('devices')
+        try:
+            if devices_config is not None:
+                print("Devices config part loaded ... ")
+                for device_config in devices_config:
+                    if device_config.get('converter') is not None:
+                        converter = TBUtility.check_and_import(
+                            self.__connector_type, device_config['converter'])
+                        self.devices[device_config['name']] = {'converter': converter(
+                            device_config), 'device_config': device_config}
+                    else:
+                        log.error(
+                            'Converter configuration for the custom connector %s -- not found, please check your configuration file.', self.get_name())
+            else:
+                log.error(
+                    'Section "devices" in the configuration not found. A custom connector %s has being stopped.', self.get_name())
+                self.close()
+        except Exception as e:
+            log.exception(e)
+
+    def run(self):	  # Main loop of thread
+        broker_address = self.__config.get("brokerAddress")
+        broker_port = self.__config.get("brokerPort")
+
+        print("Trying to open connection ")
+        broker_params = pika.ConnectionParameters(
+            host=broker_address, port=broker_port)
+        self._rabbit_connection = pika.BlockingConnection(broker_params)
+
+        if self._rabbit_connection.is_open:
+            print("PIKA connection is open ... ")
+        else:
+            print("FAILED to establish connection with broker ... ")
+
+        devices = self.__config.get("devices")
+        for single_device_name in self.devices:
+            single_device = self.devices[single_device_name]
+
+            converter = single_device.get("converter")
+            single_config = single_device.get("device_config")
+            topics = single_config.get("topics")
+
+            for single_topic in topics:
+                topic = single_topic.get("topic")
+                topic_filter = single_topic.get("filter")
+
+                new_channel = self._rabbit_connection.channel()
+                new_channel.exchange_declare(
+                    topic, "topic", durable=True, auto_delete=True, arguments=None)
+                queue_result = new_channel.queue_declare(queue="")
+                queue_name = queue_result.method.queue
+
+                new_channel.queue_bind(queue_name, topic, topic_filter)
+
+                new_consumer = RabbitEventHandler(
+                    self.__gateway, converter, single_config, self.get_name())
+                self._rabbit_consumers.append(new_consumer)
+
+                new_channel.basic_consume(
+                    queue_name, new_consumer.rabbit_message_callback)
+
+                self._rabbit_channels.append(new_channel)
+
+            for single_channel in self._rabbit_channels:
+                print("Starting to listen ...")
+                single_channel.start_consuming()
+
+    def close(self):  # Close connect function, usually used if exception handled in gateway main loop or in connector main loop
+
+        # next lines will just throw multiple exceptions ...
+        # for single_channel in self._rabbit_channels:
+        #     single_channel.close()
+
+        # self._rabbit_connection.close()
+
+        self.stopped = True
+
+    # Function used for processing attribute update requests from ThingsBoard
+
+    def on_attributes_update(self, content):
+        print("attribute update requested and kinda processed ... ")
+        log.debug(content)
+
+    def server_side_rpc_handler(self, content):
+        pass
+
+
+class RabbitEventHandler:
+    def __init__(self, gateway, converter, device_config, just_a_name):
+        self.__gateway = gateway
+        self._converter = converter
+        self._device_config = device_config
+        self._just_a_name = just_a_name
+
+    def rabbit_message_callback(self, ch, method, properties, body):
+        print("RABBIT MESSAGE CALLBACK ... " + self._just_a_name)
+
+        converted_data = self._converter.convert(self._device_config, body)
+        # have no idea what is self.get_name() may be just for debugging ...
+        self.__gateway.send_to_storage(self._just_a_name, converted_data)

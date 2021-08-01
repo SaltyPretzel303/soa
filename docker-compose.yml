@@ -102,3 +102,14 @@ services:
     volumes:
       - /home/nemanja/soa_tboard_data:/data
       # - ~/.mytb-logs:/var/log/thingsboard
+    
+  soa-thingsboard-gateway:
+    container_name: soa-thingsboard-gateway
+    build:
+      context: /
+      dockerfile: ./dockerfiles/Dockerfile.TBoardGateway
+    image: soa/thingsboard-gateway
+    # image: thingsboard/tb-gateway
+    volumes:
+      - /home/nemanja/workspace/soa/DashboardClient/TBoardGateway/extensions:/thingsboard_gateway/extensions
+      - /home/nemanja/workspace/soa/DashboardClient/TBoardGateway/config:/thingsboard_gateway/config

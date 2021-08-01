@@ -4,17 +4,17 @@ export default class DataEvent {
 
 	time: Date;
 
-	ruleName: String;
-	eventName: String;
-	eventMessage: String;
+	ruleName: string;
+	eventName: string;
+	eventMessage: string;
 
 	processedData: ReaderData;
 
 	constructor(
 		time: Date,
-		ruleName: String,
-		eventName: String,
-		eventMessage: String,
+		ruleName: string,
+		eventName: string,
+		eventMessage: string,
 		data: ReaderData) {
 
 		this.time = time;

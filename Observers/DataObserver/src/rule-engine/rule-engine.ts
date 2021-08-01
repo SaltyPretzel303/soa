@@ -25,26 +25,11 @@ let engine: Engine;
 async function readRules(): Promise<RuleProperties[]> {
 	let read_rules: RuleProperties[] = [];
 
+	let rule_files: string[] = [] as string[];
 	try {
 
-		let rule_files: string[] = await fs.promises.readdir(config.rulesDirPath);
+		rule_files = await fs.promises.readdir(config.rulesDirPath);
 		console.log(`Found ${rule_files.length} rule files ... `);
-
-		for (let f_rule of rule_files) {
-
-			let rule_path = `${config.rulesDirPath}${f_rule}`;
-			let s_rule: string = await (await fs.promises.readFile(rule_path)).toString();
-			let obj_rule: RuleProperties = JSON.parse(s_rule);
-
-			if (obj_rule == undefined && obj_rule == null) {
-				console.log(`Failed to parse rule ${rule_path} ... `);
-				continue;
-			}
-
-			read_rules.push(obj_rule);
-		}
-
-		return read_rules;
 
 	} catch (err) {
 		console.log(`Failed to read rules from path: ${config.rulesDirPath}`);
@@ -53,6 +38,36 @@ async function readRules(): Promise<RuleProperties[]> {
 		return [] as RuleProperties[];
 	}
 
+	for (let f_rule of rule_files) {
+
+		let rule_path = `${config.rulesDirPath}${f_rule}`;
+		let str_rule = "";
+		try {
+			str_rule = (await fs.promises.readFile(rule_path)).toString();
+		} catch (read_err) {
+			console.log(`Failed to read rule: ${rule_path}`);
+			console.log(`Error: ${read_err}`)
+
+			continue;
+		}
+
+		try {
+			let obj_rule: RuleProperties = JSON.parse(str_rule);
+			read_rules.push(obj_rule);
+			console.log(`Rule: ${rule_path} successfully loaded ... `);
+		} catch (json_err) {
+			console.log(`Failed to parse rule ${rule_path} ... `);
+
+			continue;
+		}
+		// if (obj_rule == undefined && obj_rule == null) {
+		// 	console.log(`Failed to parse rule ${rule_path} ... `);
+		// 	continue;
+		// }
+
+	}
+
+	return read_rules;
 }
 
 export default async function startRuleEngine(): Promise<number> {
@@ -76,10 +91,9 @@ async function timerEventHandler() {
 
 	let dataArray: ReaderData[] = await Cache.getCachedData();
 
-	console.log(`Read: ${dataArray.length} records from cache ... `);
+	// console.log(`Read: ${dataArray.length} records from cache ... `);
 
 	for (let data of dataArray) {
-
 		try {
 			// this conversion is not needed apparently 
 			// but yeah ... lets keep it

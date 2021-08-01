@@ -72,6 +72,7 @@ class ServiceConfig {
 // there is not really better solution :(
 
 interface ConfigFields {
+	serviceId: string,
 	listeningPort: number;
 	dbAddress: string;
 	dbPort: number;

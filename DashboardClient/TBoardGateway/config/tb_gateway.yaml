@@ -1,0 +1,15 @@
+thingsboard:
+  host: soa-thingsboard
+  port: 1883
+  security:
+      accessToken: jQSa4usxATwA8UngGkX3
+storage:
+  type: memory
+  read_records_count: 100
+  max_records_count: 100000
+connectors:
+  -
+    name: "rabbit_connector"
+    type: "rabbit"
+    configuration: rabbit.json
+    class: "RabbitConnector"
