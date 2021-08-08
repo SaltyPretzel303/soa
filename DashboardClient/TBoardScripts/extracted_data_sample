@@ -1,0 +1,33 @@
+{
+    "msg": {
+        "IpAddress": "172.23.1.1",
+        "LastReadIndex": 453,
+        "ListeningPort": 5001,
+        "SensorName": "sensor_1",
+        "customMessage": "",
+        "sourceId": "sensor_1",
+        "sourceType": 0,
+        "time": "2021-08-02T15:19:49.8600456+00:00",
+        "Timestamp": 1438735647,
+        "IsAppActive": false,
+        "IsBatteryCharging": false,
+        "IsOnThePhone": false,
+        "AtSchool": false,
+        "AtTheGym": false,
+        "ComputerWork": false,
+        "DrinkingAlcohol": false,
+        "IsDriving": false,
+        "IsPassenger": false,
+        "IsSitting": false,
+        "IsInClass": false,
+        "SurfingInternet": true,
+        "WithFriends": false,
+        "BatteryLevel": "0.290000"
+    },
+    "metadata": {
+        "deviceType": "default",
+        "deviceName": "Test Device",
+        "ts": "1627919681532"
+    },
+    "msgType": "POST_TELEMETRY_REQUEST"
+}

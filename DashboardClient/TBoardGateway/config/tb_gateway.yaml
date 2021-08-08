@@ -2,7 +2,7 @@ thingsboard:
   host: soa-thingsboard
   port: 1883
   security:
-      accessToken: jQSa4usxATwA8UngGkX3
+      accessToken: ZrVyWHz7tmoU65OGVh15
 storage:
   type: memory
   read_records_count: 100

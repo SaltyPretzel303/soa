@@ -1,0 +1,32 @@
+var IsSitting = (msg.IsSitting === true)
+
+if(IsSitting){
+    
+    var time = new Date()
+    var sourceId = msg.sourceId
+    var sourceType = msg.sourceType
+    
+    var IsSitting = msg.IsSitting
+    var SensorName = msg.SensorName
+    
+    msg = {}
+    
+    msg.time = time
+    msg.sourceId = sourceId
+    msg.sourceType = sourceType
+    msg.customMessage = "This person is sitting."
+    msg.ruleName = "is_sitting_rule"
+    msg.eventName = "sitting_event"
+    
+    
+    data = {}
+    data.IsSitting = IsSitting
+    data.SensorName = SensorName
+    msg.data = data    
+
+    return {msg: msg, metadata: metadata, msgType: msgType};    
+}
+
+msg = {}
+metadata = {}
+return {msg: msg, metadata: metadata, msgType: "FAILURE"}

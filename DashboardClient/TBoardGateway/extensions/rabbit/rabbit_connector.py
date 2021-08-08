@@ -11,6 +11,8 @@ from string import ascii_lowercase
 from thingsboard_gateway.connectors.connector import Connector, log
 from thingsboard_gateway.tb_utility.tb_utility import TBUtility
 
+import traceback
+
 # look at this file for explanation why is this commented
 # from rabbit_receiver_thread import ReceiverThread
 
@@ -195,6 +197,7 @@ class ReceiverThread(Thread):
                   + self._get_address()
                   + " (will happen when shutting down connection thread) ... ")
             # print(e)
+            # traceback.print_exc()
 
     def _get_address(self):
         return str(self._host_addr + ":" + str(self._host_port))

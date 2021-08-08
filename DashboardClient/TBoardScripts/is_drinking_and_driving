@@ -1,0 +1,38 @@
+var IsDandD = (msg.DrinkingAlcohol === true && msg.IsDriving === true)
+
+var true_ex = true
+var false_ex = false
+
+return {}
+
+if(false_ex){
+    
+    return {msg:{"value":"some_value"}}
+    
+    // var isDrinking = msg.DrinkingAlcohol
+    // var isDriving = msg.IsDriving
+    // var sensorName = msg.SensorName
+    
+    // msg = {}
+    
+    // msg.time = new Date()
+    // msg.sourceId = "soa-tb-data-processor"
+    // msg.sourceType = "SensorObserver"
+    // msg.customMessage = "This person is drinking and driving !!!"
+    // msg.ruleName = "drinking_and_driving_rule"
+    // msg.eventName = "drinking_and_driving_event"
+    
+    // // msg.data = newData
+    
+    // data = {}
+    // data.IsDrinking = isDrinking
+    // data.IsDriving = isDriving
+    // data.SensorName = sensorName
+    // msg.data = data    
+
+    // return {msg: msg, metadata: metadata, msgType: msgType};    
+}
+
+msg = {}
+metadata = {}
+// return {msg: msg, metadata: metadata, msgType: "FAILURE"}

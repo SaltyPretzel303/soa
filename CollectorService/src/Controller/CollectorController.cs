@@ -92,7 +92,7 @@ namespace CollectorService.Controller
 
 				return BadRequest(message);
 			}
-
+			
 			SensorModel dbRecord = await database.getRecordRange(
 				sensorName,
 				fromTimestamp,

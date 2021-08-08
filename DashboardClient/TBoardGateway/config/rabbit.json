@@ -6,7 +6,7 @@
 		{
 			"name": "soa-data-observer",
 			"converter": "RabbitDefaultConverter",
-			"deviceProfile": "soa-data-observer-profile",
+			"deviceProfile": "soa-data-observer",
 			"topics": [
 				{
 					"topic": "rule_engine_results",
@@ -17,7 +17,7 @@
 		{
 			"name": "soa-sensor",
 			"converter": "RabbitDefaultConverter",
-			"deviceProfile": "soa-sensor-profile",
+			"deviceProfile": "soa-sensor",
 			"topics": [
 				{
 					"topic": "sensor_reader",
@@ -28,11 +28,49 @@
 		{
 			"name": "soa-service-observer",
 			"converter": "RabbitDefaultConverter",
-			"deviceProfile": "soa-service-observer-profile",
+			"deviceProfile": "soa-service-observer",
 			"topics": [
 				{
 					"topic": "rule_engine_results",
 					"filter": "service.#"
+				}
+			]
+		},
+		{
+			"name": "soa-collector",
+			"converter": "RabbitDefaultConverter",
+			"deviceProfile": "soa-collector",
+			"topics": [
+				{
+					"topic": "collector",
+					"filter": "sensor_pull"
+				},
+				{
+					"topic": "collector",
+					"filter": "collector_access"
+				}
+			]
+		},
+		{
+			"name": "soa-sensor-registry",
+			"converter": "RabbitDefaultConverter",
+			"deviceProfile": "soa-sensor-registry",
+			"topics": [
+				{
+					"topic": "sensor_registry",
+					"filter": "new_sensor"
+				},
+				{
+					"topic": "sensor_registry",
+					"filter": "sensor_removed"
+				},
+				{
+					"topic": "sensor_registry",
+					"filter": "sensor_update"
+				},
+				{
+					"topic": "sensor_reader",
+					"filter": "read_event.#"
 				}
 			]
 		}

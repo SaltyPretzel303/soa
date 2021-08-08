@@ -1,0 +1,25 @@
+msg.Time = msg.NewData.time
+msg.Timestamp = msg.NewData.timestamp
+
+msg.IsAppActive = (msg.NewData.discrete_app_state_is_active == "1.000000")
+msg.IsBatteryCharging = (msg.NewData.discrete_battery_state_is_charging == "1.000000")
+msg.IsOnThePhone = (msg.NewData.discrete_on_the_phone_is_True == "1.000000")
+msg.AtSchool = (msg.NewData.label_AT_SCHOOL == "1")
+msg.AtTheGym = (msg.NewData.label_AT_THE_GYM == "1")
+msg.ComputerWork = (msg.NewData.label_COMPUTER_WORK == "1")
+msg.DrinkingAlcohol = (msg.NewData.label_DRINKING__ALCOHOL_ == "1")
+msg.IsDriving = (msg.NewData.label_DRIVE___I_M_THE_DRIVER == "1")
+msg.IsPassenger = (msg.NewData.label_DRIVE___I_M_A_PASSENGER == "1")
+msg.IsSitting = (msg.NewData.label_SITTING == "1")
+msg.IsInClass = (msg.NewData.label_IN_CLASS == "1")
+msg.SurfingInternet  = (msg.NewData.label_SURFING_THE_INTERNET == "1")
+msg.WithFriends = (msg.NewData.label_WITH_FRIENDS == "1")
+msg.BatteryLevel = msg.NewData.lf_measurements_battery_level
+if (msg.BatteryLevel == "nan"){
+    msg.BatteryLevel = "-1"
+}
+
+delete msg.NewData
+delete msg.DataHeader
+
+return {msg: msg, metadata: metadata, msgType: msgType};

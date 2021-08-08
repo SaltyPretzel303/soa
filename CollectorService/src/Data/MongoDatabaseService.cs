@@ -224,33 +224,46 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			string collectionName = config.sensorsCollection;
-			var collection = database.GetCollection<SensorModel>(collectionName);
+			string sColName = config.sensorsCollection;
+			string vColName = config.sensorValuesCollection;
+
+			var sensorColl = database.GetCollection<SensorModel>(sColName);
 
 			try
 			{
-				var dbResult = await collection.Aggregate()
-					.Match(s => s.sensorName == sensorName)
-					.Project(s => new
-					{
-						sensorName = s.sensorName,
-						records = s.values
-							.Where(r =>
-								r.timestamp >= fromTimestamp
-								&& r.timestamp <= toTimestamp)
-					})
-					.FirstAsync();
 
-				if (dbResult != null)
+				SensorModel parentSensor = null;
+
+				var sensorCursor = await sensorColl.FindAsync<SensorModel>(
+					(record) => record.sensorName == sensorName);
+
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() > 0)
 				{
-					return new SensorModel(dbResult.sensorName,
-						dbResult.records.ToList()
-					);
+					parentSensor = sensorCursor.Current.First();
 				}
 				else
 				{
+					// sensor with this name is not found
 					return null;
 				}
+
+				var valuesColl = database.GetCollection<SensorValuesModel>(vColName);
+				var valuesCursor = await valuesColl.FindAsync(
+					(value) =>
+						value.sensorId == parentSensor.id
+						&& value.timestamp >= fromTimestamp
+						&& value.timestamp <= toTimestamp);
+
+				var retObj = new SensorModel(parentSensor.sensorName);
+				while (await valuesCursor.MoveNextAsync())
+				{
+					retObj.values.AddRange(valuesCursor.Current.ToList());
+				}
+
+				return retObj;
+
+
 			}
 			catch (TimeoutException)
 			{
@@ -270,32 +283,45 @@ namespace CollectorService.Data
 				return null;
 			}
 
-			var collection = database.GetCollection<SensorModel>(config.sensorsCollection);
+			string sColName = config.sensorsCollection;
+			string vColName = config.sensorValuesCollection;
+
+			var sensorColl = database.GetCollection<SensorModel>(sColName);
 
 			try
 			{
-				var dbResult = await collection
-					.Aggregate()
-					.Match(s => s.sensorName == sensorName)
-					.Project(s => new
-					{
-						sensorName = s.sensorName,
-						records = s.values
-							.AsQueryable()
-							.Where(r => timestamps.Contains(r.timestamp))
-					})
-					.FirstAsync();
 
-				if (dbResult != null)
+				SensorModel parentSensor = null;
+
+				var sensorCursor = await sensorColl.FindAsync<SensorModel>(
+					(record) => record.sensorName == sensorName);
+
+				await sensorCursor.MoveNextAsync();
+				if (sensorCursor.Current.Count() > 0)
 				{
-					return new SensorModel(
-						dbResult.sensorName,
-						dbResult.records.ToList());
+					parentSensor = sensorCursor.Current.First();
 				}
 				else
 				{
+					// sensor with this name is not found
 					return null;
 				}
+
+				var valuesColl = database.GetCollection<SensorValuesModel>(vColName);
+				var valuesCursor = await valuesColl.FindAsync(
+					(value) =>
+						value.sensorId == parentSensor.id
+						&& timestamps.Contains(value.timestamp));
+
+				var retObj = new SensorModel(parentSensor.sensorName);
+				while (await valuesCursor.MoveNextAsync())
+				{
+					retObj.values.AddRange(valuesCursor.Current.ToList());
+				}
+
+				return retObj;
+
+
 			}
 			catch (TimeoutException)
 			{

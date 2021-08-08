@@ -1,5 +1,7 @@
 {
+  "collector_0": "rabbit_connector",
   "data_observer_0": "rabbit_connector",
+  "registry_0": "rabbit_connector",
   "sensor_0": "rabbit_connector",
   "sensor_1": "rabbit_connector",
   "sensor_2": "rabbit_connector",
@@ -10,5 +12,5 @@
   "sensor_7": "rabbit_connector",
   "sensor_8": "rabbit_connector",
   "sensor_9": "rabbit_connector",
-  "soa-tboard-data-processor": "rabbit_connector"
+  "soa-tb-data-processor": "rabbit_connector"
 }

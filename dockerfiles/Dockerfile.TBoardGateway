@@ -1,5 +1,7 @@
 FROM thingsboard/tb-gateway
 
+# fill just 'document' those volumes
+# volumes are actually mounted from docker-compose or 'docker run' command
 VOLUME /thingsboard_gateway/config
 VOLUME /thingsboard_gateway/extensions
 

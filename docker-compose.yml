@@ -87,7 +87,6 @@ services:
 
   soa-thingsboard:
     container_name: soa-thingsboard
-    # restart: always # will start container with every docker startup
     image: "thingsboard/tb-postgres"
     ports:
       - "8081:9090"
@@ -99,10 +98,25 @@ services:
       TB_QUEUE_RABBIT_MQ_PASSWORD: "guest"
       TB_QUEUE_RABBIT_MQ_HOST: "soa-broker"
       TB_QUEUE_RABBIT_MQ_PORT: 5672
+      # postrgeres variables
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://soa-postgres-db:5432/thingsboard
     volumes:
       - /home/nemanja/soa_tboard_data:/data
-      # - ~/.mytb-logs:/var/log/thingsboard
-    
+      - /home/nemanja/soa_tboard_logs:/var/log/thingsboard
+      
+  soa-postgres-db:
+    container_name: soa-postgres-db
+    image: "postgres:latest"
+    ports:
+    - "5432"
+    environment:
+      POSTGRES_DB: thingsboard
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - /home/nemanja/soa_postgres_data:/var/lib/postgresql/data
+
   soa-thingsboard-gateway:
     container_name: soa-thingsboard-gateway
     build:

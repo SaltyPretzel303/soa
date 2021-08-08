@@ -16,12 +16,16 @@ class RabbitDefaultConverter(Converter):    # Definition of class.
 
     # Method for data conversion from device format to ThingsBoard format.
     def convert(self, config, data: bytes):
+        # print(data)
         str_data = data.decode('utf-8')
         json_data = json.loads(str(str_data))
 
-        sensor_id = json_data["sourceId"]
+        # if (self.result_dict["deviceType"] == "soa-data-observer"):
+        #     print("Rule engine data: " + str_data)
 
-        self.result_dict['deviceName'] = sensor_id
+        source_id = json_data["sourceId"]
+
+        self.result_dict['deviceName'] = source_id
         self.result_dict['attributes'] = []
         self.result_dict['telemetry'] = [json_data]
 

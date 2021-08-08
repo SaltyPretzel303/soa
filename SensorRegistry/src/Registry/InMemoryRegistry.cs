@@ -123,6 +123,9 @@ namespace SensorRegistry.Registry
 					SensorRegEventType.SensorUpdated,
 					newRecord);
 
+				// TODO this should be published from mediator request 
+				// and not from registry class
+				// this class should be used just as cache record ... nothing else
 				this.broker.publishRegistryEvent(newEvent,
 					config.sensorUpdateFilter);
 
