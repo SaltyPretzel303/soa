@@ -104,7 +104,7 @@ services:
 #      - /home/nemanja/soa_tboard_data:/data
       - ./volumes/tboard_data:/data
 #      - /home/nemanja/soa_tboard_logs:/var/log/thingsboard
-      - ./volumes/tboard_logs:/var/logs/thingsboard
+      - ./volumes/tboard_logs:/var/log/thingsboard
       
   soa-postgres-db:
     container_name: soa-postgres-db
