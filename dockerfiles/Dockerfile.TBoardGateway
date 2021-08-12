@@ -15,4 +15,3 @@ RUN pip install pika
 # copy start_gateway.sh
 # ENTRYPOINT ["/start-gateway.sh"]
 ENTRYPOINT ["python", "/thingsboard_gateway/tb_gateway.py"]
-# ENTRYPOINT ["python",""]

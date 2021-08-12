@@ -4,7 +4,7 @@
 num_of_instances="2"
 proc_per_instance="3"
 memory_per_proc="90"
-data_path="/home/nemanja/workspace/soa/SensorService/data"
+data_path="/home/nemanja/workspace/soa/volumes/sensor_data"
 
 NETWORK="soa-network"
 IP_SUBNET="172.23.1"
