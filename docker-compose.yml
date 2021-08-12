@@ -24,15 +24,17 @@ services:
     - "0.0.0.0:15672:15672"
 
   soa-sensor:
+    container_name: soa-test-sensor
     build:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.SensorService
     image: soa/sensor-service
     volumes: 
-      - /home/nemanja/soa_data:/data
+    # - /home/nemanja/soa_data:/data
+      - ./SensorService/data:/data
     ports:
     - "5001:5000"
-
+    
   soa-registry:
     container_name: soa-registry
     build:
@@ -48,11 +50,6 @@ services:
       context: ./
       dockerfile: ./dockerfiles/Dockerfile.CollectorService
     image: soa/collector-service
-    # deopoy can only be used in swarm ... 
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 200M
     ports:
     - "5003:5000"
 
@@ -122,6 +119,7 @@ services:
     build:
       context: /
       dockerfile: ./dockerfiles/Dockerfile.TBoardGateway
+    # image with fixed connectors path and installed 'pika' (python rabbitmq lib)
     image: soa/thingsboard-gateway
     # image: thingsboard/tb-gateway
     volumes:

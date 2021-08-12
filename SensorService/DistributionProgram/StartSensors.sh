@@ -9,9 +9,15 @@
 
 
 # default values
-sensor_count="60"
+# this values will be used only when container is not started with start_sensor_conatiners.sh script
+# (started with docker-compose or just docker run soa-sensor-service)
+
+# max value is 60, but 5 is just enough for testing
+sensor_count="5"
 first_sensor_index="0"
-host_ip="127.0.0.1"
+# docker dns will translate this container name to actall ip
+# container name is specified in docker-compose.yaml
+host_ip="soa-test-sensor"
 
 # overwrite default values with the ones passed from cli
 if [ "$#" -eq "3" ]

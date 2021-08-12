@@ -209,4 +209,9 @@ SensorService/msg_log
 SensorService/error_log
 
 # .ts translated to .js, this is done with every `npm run build`
+# this line is added to late, ts_to_js was already commited once
+# removing it would take too much time and effort and it is not worth it 
 Observers/DataObserver/ts_to_js/**
+
+volumes/*/**
+
