@@ -30,7 +30,7 @@
 		"observerReportsCollection": "observer_reports",
 		"configBackupCollection": "configs",
 		"unstableRecordCollection": "unstableRecords",
-		"brokerAddress": "soa-broker",
+		"brokerAddress": "nemanja.ddns.net",
 		"brokerPort": "5672",
 		"connectionRetryDelay": 2000,
 		"configUpdateTopic": "config",

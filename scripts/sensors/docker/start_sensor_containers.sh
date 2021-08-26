@@ -68,7 +68,7 @@ then
 	exit
 
 else
-	echo "No conlicting containers ... "
+	echo "No conflicting containers ... "
 	echo
 fi
 

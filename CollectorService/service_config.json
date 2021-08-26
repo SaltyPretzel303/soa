@@ -16,7 +16,7 @@
 		"sensorRegistryPort": "5000",
 		"sensorAddrResolutionPath": "sensor/registry/getAddress",
 		"sensorListReqPath": "sensor/registry/getSensors",
-		"brokerAddress": "soa-broker",
+		"brokerAddress": "nemanja.ddns.net",
 		"brokerPort": 5672,
 		"retryConnectionDelay": 2000,
 		"collectorTopic": "collector",

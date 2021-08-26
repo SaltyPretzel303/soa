@@ -63,7 +63,7 @@
 		"logErrorLevel": "error",
 		"logErrorDest": "/error_log",
 		"logMsgDest": "/msg_log",
-		"brokerAddress": "soa-broker",
+		"brokerAddress": "nemanja.ddns.net",
 		"brokerPort": 5672,
 		"serviceLogTopic": "service_log",
 		"sensorLogFilter": "sensor",

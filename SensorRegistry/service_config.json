@@ -25,7 +25,7 @@
 	"Production": {
 		"serviceId": "registry_0",
 		"listeningPort": 5000,
-		"brokerAddress": "soa-broker",
+		"brokerAddress": "nemanja.ddns.net",
 		"brokerPort": 5672,
 		"connectionRetryDelay": 3000,
 		"sensorRegistryTopic": "sensor_registry",
